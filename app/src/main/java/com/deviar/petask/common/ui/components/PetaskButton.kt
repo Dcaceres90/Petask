@@ -14,13 +14,18 @@ import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.ui.theme.Primary
 
 @Composable
-fun PetaskButton(onClick : () -> Unit, text:String) {
+fun PetaskButton(
+    onClick : () -> Unit,
+    text:String,
+    enabled: Boolean = true
+    ) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = Primary,
             contentColor = Color.Black
         ),
+        enabled = enabled,
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .padding(vertical = 8.dp)

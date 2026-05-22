@@ -7,13 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.deviar.petask.common.ui.theme.Background
 import com.deviar.petask.common.ui.theme.PetaskTheme
-import com.deviar.petask.login.ui.LoginScreen
+import com.deviar.petask.auth.ui.login.LoginScreen
+import com.deviar.petask.auth.ui.login.LoginViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +24,7 @@ class MainActivity : ComponentActivity() {
                     containerColor = Background
                 ) { innerPadding ->
                     LoginScreen(
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding), loginViewModel = LoginViewModel()
                     )
                 }
             }
