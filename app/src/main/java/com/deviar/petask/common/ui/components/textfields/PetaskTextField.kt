@@ -8,12 +8,13 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.ui.theme.Primary
 
 @Composable
-fun PetaskTextField(value:String, onValueChange: (String) -> Unit, label:String, modifier: Modifier = Modifier) {
+fun PetaskTextField(value:String, onValueChange: (String) -> Unit, label:String, error: String? = null, modifier: Modifier = Modifier) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -24,7 +25,14 @@ fun PetaskTextField(value:String, onValueChange: (String) -> Unit, label:String,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = Primary,
             focusedLabelColor = Primary
-        )
+        ),
+        isError = error != null
     )
+    if(error != null){
+        Text(
+            text = error,
+            color = Color.Red
+        )
+    }
 }
 

@@ -20,6 +20,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,16 +30,19 @@ import com.deviar.petask.common.ui.components.PetaskButton
 import com.deviar.petask.common.ui.components.textfields.PasswordTextField
 import com.deviar.petask.common.ui.components.texts.ClickableText
 import com.deviar.petask.common.ui.theme.Black
+import com.deviar.petask.common.ui.theme.Primary
 import com.deviar.petask.common.ui.theme.Secondary
 
 
 @Composable
 fun LoginScreen(
     modifier: Modifier,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    navigateToRegister: () -> Unit
 ) {
 
     val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
+    val recoveryMessage = uiState.recoveryMessage
 
     Column(
         modifier = modifier
@@ -53,9 +57,16 @@ fun LoginScreen(
         Spacer(Modifier.weight(1f))
 
         PetaskTextField(uiState.email, { loginViewModel.onEmailChanged(it) }, stringResource(R.string.textfield_user))
-        PasswordTextField(uiState.password, { loginViewModel.onPasswordChanged(it) })
+        PasswordTextField(uiState.password, { loginViewModel.onPasswordChanged(it) }, label = stringResource(R.string.textfield_password))
 
-        ClickableText(stringResource(R.string.forgot_password), onClick = {})
+        ClickableText(stringResource(R.string.forgot_password), onClick = {loginViewModel.resetPassword()})
+        if(recoveryMessage != null){
+
+            Text(
+                text = recoveryMessage,
+                color = Primary
+            )
+        }
         Spacer(Modifier.weight(1f))
 
         PetaskButton(onClick = {loginViewModel.login()}, text = stringResource(R.string.button_login), enabled = uiState.isLoginEnabled)
@@ -65,7 +76,16 @@ fun LoginScreen(
 
         Spacer(Modifier.weight(2f))
 
-        ClickableText(stringResource(R.string.register), onClick = {})
+        if(uiState.firebaseError != null){
+
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                text = uiState.firebaseError!!,
+                color = Color.Red
+            )
+        }
+
+        ClickableText(stringResource(R.string.register), onClick = {navigateToRegister()})
     }
 }
 

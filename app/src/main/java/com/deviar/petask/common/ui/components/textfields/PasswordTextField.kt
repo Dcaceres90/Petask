@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -27,7 +28,12 @@ import com.deviar.petask.R
 import com.deviar.petask.common.ui.theme.Primary
 
 @Composable
-fun PasswordTextField(value: String, onValueChange: (String) -> Unit) {
+fun PasswordTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label:String,
+    error: String? = null
+) {
 
     var passwordHidden by remember { mutableStateOf(true) }
 
@@ -37,7 +43,7 @@ fun PasswordTextField(value: String, onValueChange: (String) -> Unit) {
         modifier = Modifier
             .padding(bottom = 16.dp)
             .fillMaxWidth(),
-        label = { Text(stringResource(R.string.textfield_password)) },
+        label = { Text(label) },
         singleLine = true,
         shape = MaterialTheme.shapes.medium,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -57,6 +63,13 @@ fun PasswordTextField(value: String, onValueChange: (String) -> Unit) {
                 contentDescription = null,
                 modifier = Modifier.clickable { passwordHidden = !passwordHidden }
             )
-        }
+        },
+        isError = error != null
     )
+    if(error != null) {
+        Text(
+            text = error,
+            color = Color.Red
+        )
+    }
 }

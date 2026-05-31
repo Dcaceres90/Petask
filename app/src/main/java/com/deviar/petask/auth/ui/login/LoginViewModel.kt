@@ -17,14 +17,14 @@ class LoginViewModel: ViewModel() {
 
     fun onEmailChanged(email: String){
         _uiState.update { state ->
-            state.copy(email = email)
+            state.copy(email = email, firebaseError = null)
         }
         verifyLogin()
     }
 
     fun onPasswordChanged(password: String){
         _uiState.update { state ->
-            state.copy(password = password)
+            state.copy(password = password, firebaseError = null)
         }
         verifyLogin()
     }
@@ -43,19 +43,48 @@ class LoginViewModel: ViewModel() {
         repository.login(
             email = _uiState.value.email,
             password = _uiState.value.password
-        ) { success ->
+        ) { error ->
 
-            if (success) {
+            if (error == null) {
                 Log.i("Iara", "Login successful")
             } else {
-                Log.i("Iara", "Login failed")
+                _uiState.update { state ->
+                    state.copy(firebaseError = error)
+                }
             }
         }
+    }
+
+    fun resetPassword(){
+
+        if (!isEmailFormatValid(_uiState.value.email)) {
+            _uiState.update {
+                it.copy(recoveryMessage = "Please enter a valid email")
+            }
+        }else{
+            repository.resetPassword(
+                email = _uiState.value.email
+            ){success ->
+                _uiState.update { state ->
+                    state.copy(
+                        recoveryMessage =
+                            if (success)
+                                "Recovery email sent successfully"
+                            else
+                                "Failed to send recovery email"
+                    )
+                }
+
+            }
+        }
+
     }
 }
 
 data class LoginUiState(
     val email:String = "",
     val password:String = "",
-    val isLoginEnabled:Boolean = false
+    val isLoginEnabled:Boolean = false,
+    val firebaseError: String? = null,
+    val recoveryMessage: String? = null
 )

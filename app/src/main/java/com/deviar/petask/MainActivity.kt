@@ -12,6 +12,7 @@ import com.deviar.petask.common.ui.theme.Background
 import com.deviar.petask.common.ui.theme.PetaskTheme
 import com.deviar.petask.auth.ui.login.LoginScreen
 import com.deviar.petask.auth.ui.login.LoginViewModel
+import com.deviar.petask.common.ui.navigation.NavHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,8 +24,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Background
                 ) { innerPadding ->
-                    LoginScreen(
-                        modifier = Modifier.padding(innerPadding), loginViewModel = LoginViewModel()
+                    NavHost(
+                        modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
