@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Petask</string>
 
+    //GoogleClient Id
+    <string name="web_client_id">"317433845888-6hl73qhn5th5g7n3verk97nf6u018t66.apps.googleusercontent.com"</string>
+
     //Login/Register
     <string name="textfield_user">Email</string>
     <string name="textfield_password">Password</string>

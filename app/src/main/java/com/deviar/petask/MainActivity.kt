@@ -1,6 +1,7 @@
 package com.deviar.petask
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -10,9 +11,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.deviar.petask.common.ui.theme.Background
 import com.deviar.petask.common.ui.theme.PetaskTheme
-import com.deviar.petask.auth.ui.login.LoginScreen
-import com.deviar.petask.auth.ui.login.LoginViewModel
 import com.deviar.petask.common.ui.navigation.NavHost
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +27,10 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavHost(
                         modifier = Modifier.padding(innerPadding)
+                    )
+                    Log.i(
+                        "Iara",
+                        Firebase.auth.currentUser?.email ?: "NO USER"
                     )
                 }
             }

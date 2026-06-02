@@ -7,26 +7,65 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.deviar.petask.auth.ui.login.LoginScreen
-import com.deviar.petask.auth.ui.login.LoginViewModel
 import com.deviar.petask.auth.ui.register.RegisterScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.deviar.petask.pet.PetScreen
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
-fun NavHost(modifier: Modifier = Modifier){
+fun NavHost(modifier: Modifier = Modifier) {
     val navController: NavHostController = rememberNavController()
-    NavHost(navController = navController, startDestination = Login){
 
-        composable<Login>{
-            LoginScreen(modifier = modifier,
+    val startDestination =
+        if (Firebase.auth.currentUser != null)
+            Pet
+        else
+            Login
+
+    NavHost(navController = navController, startDestination = startDestination) {
+
+        composable<Login> {
+            LoginScreen(
+                modifier = modifier,
                 loginViewModel = viewModel(),
-                navigateToRegister = {navController.navigate(Register)}
+                navigateToRegister = { navController.navigate(Register) },
+                navigateToPet = {
+                    navController.navigate(Pet)
+                    {
+                        popUpTo(Login) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 
-        composable<Register>{
-            RegisterScreen(modifier = modifier,
-                registerViewModel = viewModel()
-                )
+        composable<Register> {
+            RegisterScreen(
+                modifier = modifier,
+                registerViewModel = viewModel(),
+                navigateToPet = {
+                    navController.navigate(Pet)
+                    {
+                        popUpTo(Login) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+
+        composable<Pet> {
+            PetScreen(
+                navigateToLogin = {
+                    navController.navigate(Login) {
+                        popUpTo(Pet) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
     }
 }

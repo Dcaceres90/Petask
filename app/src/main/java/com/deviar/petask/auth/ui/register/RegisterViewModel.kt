@@ -1,6 +1,5 @@
 package com.deviar.petask.auth.ui.register
 
-import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.deviar.petask.auth.data.AuthRepository
@@ -8,7 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlin.Boolean
-import kotlin.Result.Companion.success
 
 class RegisterViewModel : ViewModel() {
 
@@ -16,6 +14,7 @@ class RegisterViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState
+
 
     fun onEmailChanged(email: String) {
 
@@ -90,7 +89,9 @@ class RegisterViewModel : ViewModel() {
             password = _uiState.value.password
         ){error ->
             if(error == null){
-                Log.i("Iara", "Register successful")
+                _uiState.update { state ->
+                    state.copy(registerSuccess = true)
+                }
             } else {
                 _uiState.update { state ->
                     state.copy(firebaseError = error)
@@ -112,5 +113,7 @@ data class RegisterUiState(
     val emailError: String? = null,
     val passwordError: String? = null,
     val confirmPasswordError: String? = null,
-    val firebaseError: String? = null
+    val firebaseError: String? = null,
+
+    val registerSuccess: Boolean = false
 )

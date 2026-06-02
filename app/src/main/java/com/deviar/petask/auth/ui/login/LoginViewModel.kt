@@ -1,9 +1,10 @@
 package com.deviar.petask.auth.ui.login
 
-import android.util.Log
+import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.deviar.petask.auth.data.AuthRepository
+import com.deviar.petask.auth.data.GoogleAuthManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -46,7 +47,9 @@ class LoginViewModel: ViewModel() {
         ) { error ->
 
             if (error == null) {
-                Log.i("Iara", "Login successful")
+                _uiState.update { state ->
+                    state.copy(loginSuccess = true)
+                }
             } else {
                 _uiState.update { state ->
                     state.copy(firebaseError = error)
@@ -79,6 +82,23 @@ class LoginViewModel: ViewModel() {
         }
 
     }
+
+    suspend fun loginWithGoogle(context: Context) {
+
+        val googleAuthManager = GoogleAuthManager(context)
+
+        val success = googleAuthManager.signIn()
+
+        if (success) {
+            _uiState.update {
+                it.copy(loginSuccess = true)
+            }
+        } else {
+            _uiState.update {
+                it.copy(firebaseError = "Google login failed")
+            }
+        }
+    }
 }
 
 data class LoginUiState(
@@ -86,5 +106,6 @@ data class LoginUiState(
     val password:String = "",
     val isLoginEnabled:Boolean = false,
     val firebaseError: String? = null,
-    val recoveryMessage: String? = null
+    val recoveryMessage: String? = null,
+    val loginSuccess: Boolean = false
 )

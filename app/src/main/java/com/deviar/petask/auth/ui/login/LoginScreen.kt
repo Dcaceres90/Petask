@@ -19,8 +19,11 @@ import com.deviar.petask.common.ui.components.textfields.PetaskTextField
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -33,16 +36,26 @@ import com.deviar.petask.common.ui.theme.Black
 import com.deviar.petask.common.ui.theme.Primary
 import com.deviar.petask.common.ui.theme.Secondary
 
+import kotlinx.coroutines.launch
+
 
 @Composable
 fun LoginScreen(
     modifier: Modifier,
     loginViewModel: LoginViewModel,
-    navigateToRegister: () -> Unit
+    navigateToRegister: () -> Unit,
+    navigateToPet: () -> Unit
 ) {
 
     val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
     val recoveryMessage = uiState.recoveryMessage
+    LaunchedEffect(uiState.loginSuccess) {
+
+        if (uiState.loginSuccess) {
+            navigateToPet()
+        }
+    }
+
 
     Column(
         modifier = modifier
@@ -72,7 +85,7 @@ fun LoginScreen(
         PetaskButton(onClick = {loginViewModel.login()}, text = stringResource(R.string.button_login), enabled = uiState.isLoginEnabled)
         Spacer(Modifier.weight(1f))
 
-        LoginWithServicesContainer()
+        LoginWithServicesContainer(loginViewModel)
 
         Spacer(Modifier.weight(2f))
 
@@ -90,7 +103,11 @@ fun LoginScreen(
 }
 
 @Composable
-fun LoginWithServicesContainer() {
+fun LoginWithServicesContainer(loginViewModel: LoginViewModel) {
+
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier.height(200.dp),
         colors = CardDefaults.cardColors(containerColor = Secondary)
@@ -128,7 +145,11 @@ fun LoginWithServicesContainer() {
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
-                ) { }
+                ) {
+                    coroutineScope.launch {
+                        loginViewModel.loginWithGoogle(context)
+                    }
+                }
         )
     }
 }
