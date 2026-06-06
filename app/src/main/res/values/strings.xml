@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Petask</string>
+
+    //GoogleClient Id
+    <string name="web_client_id">"317433845888-6hl73qhn5th5g7n3verk97nf6u018t66.apps.googleusercontent.com"</string>
+
+    //Login/Register
+    <string name="textfield_user">Email</string>
+    <string name="textfield_password">Password</string>
+    <string name="forgot_password">forgot password?</string>
+    <string name="button_login">Login</string>
+    <string name="or_continue_with">Or continue with</string>
+    <string name="register">Create account</string>
+    <string name="title_create_your_account">Create your Petask Account!</string>
+    <string name="label_create_your_password">Create your password</string>
+    <string name="label_repeat_your_password">Confirm your password</string>
+    <string name="terms_and_Conditions">I accept the Terms and Condition</string>
+
 </resources>
