@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "317433845888",
+    "project_id": "petask-daviara",
+    "storage_bucket": "petask-daviara.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:317433845888:android:e5461c5c2aa2c9fa796e65",
+        "android_client_info": {
+          "package_name": "com.deviar.petask"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByaD0wiuJF3sBsJEMs-9QgZrLn5HbIASM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
