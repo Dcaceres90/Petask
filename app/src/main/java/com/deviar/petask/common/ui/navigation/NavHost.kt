@@ -58,6 +58,7 @@ fun NavHost(modifier: Modifier = Modifier) {
 
         composable<Pet> {
             PetScreen(
+                petViewModel = viewModel(),
                 navigateToLogin = {
                     navController.navigate(Login) {
                         popUpTo(Pet) {

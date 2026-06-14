@@ -82,7 +82,7 @@ fun LoginScreen(
         }
         Spacer(Modifier.weight(1f))
 
-        PetaskButton(onClick = {loginViewModel.login2()}, text = stringResource(R.string.button_login), enabled = uiState.isLoginEnabled)
+        PetaskButton(onClick = {loginViewModel.login()}, text = stringResource(R.string.button_login), enabled = uiState.isLoginEnabled)
         Spacer(Modifier.weight(1f))
 
         LoginWithServicesContainer(loginViewModel)

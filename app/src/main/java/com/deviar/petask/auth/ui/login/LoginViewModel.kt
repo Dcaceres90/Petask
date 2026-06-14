@@ -6,17 +6,16 @@ import androidx.lifecycle.ViewModel
 import com.deviar.petask.auth.data.AuthRepository
 import com.deviar.petask.auth.data.GoogleAuthManager
 import com.deviar.petask.auth.domain.LoginUseCase
+import com.deviar.petask.auth.domain.ResetUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val resetUseCase: ResetUseCase,
 ) : ViewModel() {
-
-    private val repository = AuthRepository()
-
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
 
@@ -45,27 +44,9 @@ class LoginViewModel @Inject constructor(
     fun isPasswordFormatValid(password: String):Boolean = password.length >= 6
 
     fun login() {
-        repository.login(
-            email = _uiState.value.email,
-            password = _uiState.value.password
-        ) { error ->
-
-            if (error == null) {
-                _uiState.update { state ->
-                    state.copy(loginSuccess = true)
-                }
-            } else {
-                _uiState.update { state ->
-                    state.copy(firebaseError = error)
-                }
-            }
-        }
-    }
-
-    fun login2() {
         loginUseCase(
             email = _uiState.value.email,
-            password = _uiState.value.password
+            password = _uiState.value.password,
         ) { error ->
 
             if (error == null) {
@@ -81,15 +62,13 @@ class LoginViewModel @Inject constructor(
     }
 
     fun resetPassword(){
-
         if (!isEmailFormatValid(_uiState.value.email)) {
             _uiState.update {
                 it.copy(recoveryMessage = "Please enter a valid email")
             }
         }else{
-            repository.resetPassword(
-                email = _uiState.value.email
-            ){success ->
+            resetUseCase(email = _uiState.value.email)
+            { success ->
                 _uiState.update { state ->
                     state.copy(
                         recoveryMessage =
@@ -99,7 +78,6 @@ class LoginViewModel @Inject constructor(
                                 "Failed to send recovery email"
                     )
                 }
-
             }
         }
 
