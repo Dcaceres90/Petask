@@ -3,15 +3,16 @@ package com.deviar.petask.auth.ui.login
 import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
-import com.deviar.petask.auth.data.AuthRepository
 import com.deviar.petask.auth.data.GoogleAuthManager
 import com.deviar.petask.auth.domain.LoginUseCase
 import com.deviar.petask.auth.domain.ResetUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+@HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val resetUseCase: ResetUseCase,
