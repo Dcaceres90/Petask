@@ -18,6 +18,7 @@ import com.deviar.petask.pet.PetScreen
 import com.deviar.petask.tasks.TasksScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun NavHost(
@@ -71,7 +72,7 @@ fun NavHost(
             composable<Login> {
                 LoginScreen(
                     modifier = modifier,
-                    loginViewModel = viewModel(),
+                    loginViewModel = hiltViewModel(),
                     navigateToRegister = {
                         navController.navigate(Register)
                     },
@@ -88,7 +89,7 @@ fun NavHost(
             composable<Register> {
                 RegisterScreen(
                     modifier = modifier,
-                    registerViewModel = viewModel(),
+                    registerViewModel = hiltViewModel(),
                     navigateToPet = {
                         navController.navigate(Pet) {
                             popUpTo(Login) {
@@ -101,6 +102,7 @@ fun NavHost(
 
             composable<Pet> {
                 PetScreen(
+                    petViewModel = hiltViewModel(),
                     navigateToLogin = {
                         navController.navigate(Login) {
                             popUpTo(0)

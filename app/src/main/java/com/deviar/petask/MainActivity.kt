@@ -17,7 +17,9 @@ import com.deviar.petask.common.ui.navigation.NavHost
 import com.deviar.petask.common.ui.navigation.PetaskNavigationBar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
