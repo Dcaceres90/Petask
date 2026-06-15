@@ -5,19 +5,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.deviar.petask.auth.ui.login.LoginScreen
 import com.deviar.petask.auth.ui.register.RegisterScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.deviar.petask.calendar.CalendarScreen
 import com.deviar.petask.pet.PetScreen
 import com.deviar.petask.tasks.TasksScreen
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable

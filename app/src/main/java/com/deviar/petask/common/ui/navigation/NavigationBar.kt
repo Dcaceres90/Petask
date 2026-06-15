@@ -38,7 +38,7 @@ fun PetaskNavigationBar(navController: NavHostController, modifier: Modifier = M
         NavItem("Calendar", Icons.Default.CalendarMonth, Calendar)
     )
 
-    var currentRoute = navController.currentBackStackEntryAsState().value?.destination
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination
 
 
     NavigationBar(
