@@ -1,4 +1,10 @@
 package com.deviar.petask
 
-class MainViewModel {
+import androidx.lifecycle.ViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+
+class MainViewModel: ViewModel() {
+
+    val isLogged = Firebase.auth.currentUser != null
 }
