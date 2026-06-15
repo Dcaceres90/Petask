@@ -14,7 +14,9 @@ import com.deviar.petask.common.ui.theme.PetaskTheme
 import com.deviar.petask.common.ui.navigation.NavHost
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

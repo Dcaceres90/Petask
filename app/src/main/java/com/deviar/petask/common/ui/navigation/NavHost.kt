@@ -8,10 +8,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.deviar.petask.auth.ui.login.LoginScreen
 import com.deviar.petask.auth.ui.register.RegisterScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.deviar.petask.pet.PetScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun NavHost(modifier: Modifier = Modifier) {
@@ -28,7 +28,7 @@ fun NavHost(modifier: Modifier = Modifier) {
         composable<Login> {
             LoginScreen(
                 modifier = modifier,
-                loginViewModel = viewModel(),
+                loginViewModel = hiltViewModel(),
                 navigateToRegister = { navController.navigate(Register) },
                 navigateToPet = {
                     navController.navigate(Pet)
@@ -44,7 +44,7 @@ fun NavHost(modifier: Modifier = Modifier) {
         composable<Register> {
             RegisterScreen(
                 modifier = modifier,
-                registerViewModel = viewModel(),
+                registerViewModel = hiltViewModel(),
                 navigateToPet = {
                     navController.navigate(Pet)
                     {
@@ -58,6 +58,7 @@ fun NavHost(modifier: Modifier = Modifier) {
 
         composable<Pet> {
             PetScreen(
+                petViewModel = hiltViewModel(),
                 navigateToLogin = {
                     navController.navigate(Login) {
                         popUpTo(Pet) {
