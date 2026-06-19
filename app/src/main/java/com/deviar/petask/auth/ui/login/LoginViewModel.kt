@@ -3,16 +3,20 @@ package com.deviar.petask.auth.ui.login
 import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
-import com.deviar.petask.auth.data.AuthRepository
 import com.deviar.petask.auth.data.GoogleAuthManager
+import com.deviar.petask.auth.domain.LoginUseCase
+import com.deviar.petask.auth.domain.ResetUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class LoginViewModel: ViewModel() {
-
-    private val repository = AuthRepository()
-
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase,
+    private val resetUseCase: ResetUseCase,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
 
@@ -41,9 +45,9 @@ class LoginViewModel: ViewModel() {
     fun isPasswordFormatValid(password: String):Boolean = password.length >= 6
 
     fun login() {
-        repository.login(
+        loginUseCase(
             email = _uiState.value.email,
-            password = _uiState.value.password
+            password = _uiState.value.password,
         ) { error ->
 
             if (error == null) {
@@ -59,15 +63,13 @@ class LoginViewModel: ViewModel() {
     }
 
     fun resetPassword(){
-
         if (!isEmailFormatValid(_uiState.value.email)) {
             _uiState.update {
                 it.copy(recoveryMessage = "Please enter a valid email")
             }
         }else{
-            repository.resetPassword(
-                email = _uiState.value.email
-            ){success ->
+            resetUseCase(email = _uiState.value.email)
+            { success ->
                 _uiState.update { state ->
                     state.copy(
                         recoveryMessage =
@@ -77,7 +79,6 @@ class LoginViewModel: ViewModel() {
                                 "Failed to send recovery email"
                     )
                 }
-
             }
         }
 

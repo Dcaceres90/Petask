@@ -2,15 +2,19 @@ package com.deviar.petask.auth.ui.register
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
-import com.deviar.petask.auth.data.AuthRepository
+import com.deviar.petask.auth.domain.RegisterUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 import kotlin.Boolean
 
-class RegisterViewModel : ViewModel() {
-
-    private val repository = AuthRepository()
+@HiltViewModel
+class RegisterViewModel
+    @Inject constructor(
+        private var registerUseCase: RegisterUseCase,
+    ): ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState
@@ -83,11 +87,11 @@ class RegisterViewModel : ViewModel() {
     fun isEmailFormatValid(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
     fun isPasswordFormatValid(password: String): Boolean = password.length >= 6
 
-    fun register(){
-        repository.register(
+    fun register() {
+        registerUseCase(
             email = _uiState.value.email,
             password = _uiState.value.password
-        ){error ->
+        ) { error ->
             if(error == null){
                 _uiState.update { state ->
                     state.copy(registerSuccess = true)

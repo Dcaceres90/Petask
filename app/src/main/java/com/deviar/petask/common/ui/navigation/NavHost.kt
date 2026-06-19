@@ -1,71 +1,119 @@
 package com.deviar.petask.common.ui.navigation
 
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.deviar.petask.auth.ui.login.LoginScreen
 import com.deviar.petask.auth.ui.register.RegisterScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.deviar.petask.calendar.CalendarScreen
 import com.deviar.petask.pet.PetScreen
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.deviar.petask.tasks.TasksScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun NavHost(modifier: Modifier = Modifier) {
-    val navController: NavHostController = rememberNavController()
+fun NavHost(
+    modifier: Modifier = Modifier,
+    isLogged: Boolean
+) {
+
+    val navController = rememberNavController()
 
     val startDestination =
-        if (Firebase.auth.currentUser != null)
+        if (isLogged)
             Pet
         else
             Login
 
-    NavHost(navController = navController, startDestination = startDestination) {
+    Scaffold(
 
-        composable<Login> {
-            LoginScreen(
-                modifier = modifier,
-                loginViewModel = viewModel(),
-                navigateToRegister = { navController.navigate(Register) },
-                navigateToPet = {
-                    navController.navigate(Pet)
-                    {
-                        popUpTo(Login) {
-                            inclusive = true
-                        }
-                    }
-                }
-            )
+        topBar = {
+            // después hacemos la top bar
+        },
+
+        bottomBar = {
+
+            val currentDestination =
+                navController.currentBackStackEntryAsState()
+                    .value?.destination
+
+            val showBottomBar =
+                currentDestination?.route in listOf(
+                    Pet::class.qualifiedName,
+                    Tasks::class.qualifiedName,
+                    Calendar::class.qualifiedName
+                )
+
+            if (showBottomBar) {
+                PetaskNavigationBar(
+                    navController = navController,
+                    modifier = Modifier.navigationBarsPadding()
+                )
+            }
         }
 
-        composable<Register> {
-            RegisterScreen(
-                modifier = modifier,
-                registerViewModel = viewModel(),
-                navigateToPet = {
-                    navController.navigate(Pet)
-                    {
-                        popUpTo(Login) {
-                            inclusive = true
-                        }
-                    }
-                }
-            )
-        }
+    ) { innerPadding ->
 
-        composable<Pet> {
-            PetScreen(
-                navigateToLogin = {
-                    navController.navigate(Login) {
-                        popUpTo(Pet) {
-                            inclusive = true
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = modifier.padding(innerPadding)
+        ) {
+
+            composable<Login> {
+                LoginScreen(
+                    modifier = modifier,
+                    loginViewModel = hiltViewModel(),
+                    navigateToRegister = {
+                        navController.navigate(Register)
+                    },
+                    navigateToPet = {
+                        navController.navigate(Pet) {
+                            popUpTo(Login) {
+                                inclusive = true
+                            }
                         }
                     }
-                }
-            )
+                )
+            }
+
+            composable<Register> {
+                RegisterScreen(
+                    modifier = modifier,
+                    registerViewModel = hiltViewModel(),
+                    navigateToPet = {
+                        navController.navigate(Pet) {
+                            popUpTo(Login) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+
+            composable<Pet> {
+                PetScreen(
+                    petViewModel = hiltViewModel(),
+                    navigateToLogin = {
+                        navController.navigate(Login) {
+                            popUpTo(0)
+                        }
+                    }
+                )
+            }
+
+            composable<Tasks> {
+                TasksScreen()
+            }
+
+            composable<Calendar> {
+                CalendarScreen()
+            }
         }
     }
 }

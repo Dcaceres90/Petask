@@ -5,16 +5,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.deviar.petask.auth.data.AuthRepository
+import com.deviar.petask.auth.ui.register.RegisterViewModel
 
 @Composable
 fun PetScreen(
-    navigateToLogin: () -> Unit
+    petViewModel: PetViewModel,
+    navigateToLogin: () -> Unit,
 ) {
-    val repository = AuthRepository()
     Column {
         Text("Bienvenido amiguito")
         Button(onClick = {
-            repository.singOut()
+            petViewModel.singOut()
             navigateToLogin()
         }) { Text("Log Out") }
     }
