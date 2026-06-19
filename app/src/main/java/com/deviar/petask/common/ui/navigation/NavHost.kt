@@ -1,5 +1,7 @@
 package com.deviar.petask.common.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -15,7 +17,7 @@ import com.deviar.petask.calendar.CalendarScreen
 import com.deviar.petask.pet.PetScreen
 import com.deviar.petask.tasks.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavHost(
     modifier: Modifier = Modifier,
@@ -108,7 +110,9 @@ fun NavHost(
             }
 
             composable<Tasks> {
-                TasksScreen()
+                TasksScreen(
+                    viewModel = hiltViewModel(),
+                )
             }
 
             composable<Calendar> {
