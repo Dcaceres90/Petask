@@ -61,8 +61,7 @@ fun NavHost(
 
         NavHost(
             navController = navController,
-            startDestination = startDestination,
-            modifier = modifier.padding(innerPadding)
+            startDestination = startDestination
         ) {
 
             composable<Login> {
@@ -108,7 +107,9 @@ fun NavHost(
             }
 
             composable<Tasks> {
-                TasksScreen()
+                TasksScreen(
+                    //modifier = Modifier.padding(innerPadding)
+                )
             }
 
             composable<Calendar> {
