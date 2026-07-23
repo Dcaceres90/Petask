@@ -14,14 +14,26 @@ import com.deviar.petask.calendar.CalendarScreen
 import com.deviar.petask.pet.PetScreen
 import com.deviar.petask.tasks.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.deviar.petask.MainViewModel
 
 @Composable
 fun NavHost(
     modifier: Modifier = Modifier,
-    isLogged: Boolean
+    isLogged: Boolean,
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     val navController = rememberNavController()
+    val currentDestination =
+        navController.currentBackStackEntryAsState()
+            .value?.destination
+
+    val showBar =
+        currentDestination?.route in listOf(
+            Pet::class.qualifiedName,
+            Tasks::class.qualifiedName,
+            Calendar::class.qualifiedName
+        )
 
     val startDestination =
         if (isLogged)
@@ -30,25 +42,17 @@ fun NavHost(
             Login
 
     Scaffold(
-
         topBar = {
-            // después hacemos la top bar
+            if (showBar) {
+                PetaskTopAppBar(
+                    navigateToLogin = { navController.navigate(Login) { popUpTo(0) }},
+                    onLogoutClick = { mainViewModel.singOut() }
+                )
+            }
         },
 
         bottomBar = {
-
-            val currentDestination =
-                navController.currentBackStackEntryAsState()
-                    .value?.destination
-
-            val showBottomBar =
-                currentDestination?.route in listOf(
-                    Pet::class.qualifiedName,
-                    Tasks::class.qualifiedName,
-                    Calendar::class.qualifiedName
-                )
-
-            if (showBottomBar) {
+            if (showBar) {
                 PetaskNavigationBar(
                     navController = navController,
                     modifier = Modifier.navigationBarsPadding()
@@ -96,12 +100,7 @@ fun NavHost(
 
             composable<Pet> {
                 PetScreen(
-                    petViewModel = hiltViewModel(),
-                    navigateToLogin = {
-                        navController.navigate(Login) {
-                            popUpTo(0)
-                        }
-                    }
+                    petViewModel = hiltViewModel()
                 )
             }
 
