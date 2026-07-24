@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
@@ -37,8 +38,7 @@ import com.deviar.petask.pet.data.PetState
 
 @Composable
 fun PetScreen(
-    petViewModel: PetViewModel,
-    navigateToLogin: () -> Unit,
+    petViewModel: PetViewModel
 ) {
 
     val pet = petViewModel.pet
@@ -60,11 +60,6 @@ fun PetScreen(
                 .padding(horizontal = 16.dp)
         ) {
 
-            Button(onClick = {
-                petViewModel.singOut()
-                navigateToLogin()
-            }) { Text("Log Out") }
-
             Spacer(modifier = Modifier.weight(1f))
 
             Image(
@@ -85,17 +80,19 @@ fun PetScreen(
 
 
 @Composable
-fun PetDetails(pet: PetModel){
+fun PetDetails(pet: PetModel) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Secondary.copy(alpha = 0.6f)),
         border = BorderStroke(
             1.dp,
-            Color.White.copy(alpha = 0.3f))
+            Color.White.copy(alpha = 0.3f)
+        )
 
     ) {
-        Column(modifier = Modifier
-            .padding(all = 8.dp),
+        Column(
+            modifier = Modifier
+                .padding(all = 8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -120,18 +117,20 @@ fun PetDetails(pet: PetModel){
                         contentColor = Color.Black
                     ),
                     shape = MaterialTheme.shapes.medium
-                ){ Text("Feed")}
+                ) { Text("Feed") }
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Box(
                     modifier = Modifier.weight(2f),
                     contentAlignment = Alignment.Center
-                ){
+                ) {
                     LinearProgressIndicator(
                         progress = { pet.hungerLevel / 6f },
                         color = Primary,
-                        modifier = Modifier.height(35.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .height(35.dp)
+                            .fillMaxWidth(),
                         gapSize = (-30).dp,
                         drawStopIndicator = {}
                     )
