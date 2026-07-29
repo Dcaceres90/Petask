@@ -77,4 +77,7 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(libs.hilt.navigation.compose)
+
+    implementation(libs.coil.compose)
+
 }

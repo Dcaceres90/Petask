@@ -1,7 +1,8 @@
-package com.deviar.petask.pet
+package com.deviar.petask.pet.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -33,8 +35,9 @@ import androidx.compose.ui.unit.sp
 import com.deviar.petask.R
 import com.deviar.petask.common.ui.theme.Primary
 import com.deviar.petask.common.ui.theme.Secondary
-import com.deviar.petask.pet.data.PetModel
-import com.deviar.petask.pet.data.PetState
+import com.deviar.petask.pet.ui.PetViewModel
+import com.deviar.petask.pet.domain.PetModel
+import com.deviar.petask.pet.domain.PetState
 
 @Composable
 fun PetScreen(
@@ -43,8 +46,11 @@ fun PetScreen(
 
     val pet = petViewModel.pet
     val imageRes = when (pet.state) {
-        PetState.HAPPY -> R.drawable.img_pet_happy
-        PetState.SAD -> R.drawable.img_pet_sad
+        PetState.HAPPY -> R.drawable.imga
+        PetState.SAD -> R.drawable.img_pet_siamese_sad
+        PetState.ANGRY -> R.drawable.img_pet_siamese_angry
+        PetState.CONFUSED -> R.drawable.img_pet_siamese_confused
+
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -60,16 +66,21 @@ fun PetScreen(
                 .padding(horizontal = 16.dp)
         ) {
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(2f))
 
-            Image(
-                painter = painterResource(imageRes),
-                contentDescription = pet.name,
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(450.dp)
-                    .padding(vertical = 50.dp),
-            )
+                    .height(250.dp)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(imageRes),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
             PetDetails(pet)
             Spacer(modifier = Modifier.weight(1f))
 
@@ -77,7 +88,6 @@ fun PetScreen(
         }
     }
 }
-
 
 @Composable
 fun PetDetails(pet: PetModel) {

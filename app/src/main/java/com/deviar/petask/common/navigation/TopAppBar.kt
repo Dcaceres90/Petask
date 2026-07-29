@@ -1,4 +1,4 @@
-package com.deviar.petask.common.ui.navigation
+package com.deviar.petask.common.navigation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,6 +40,7 @@ import com.deviar.petask.common.ui.theme.GoldCoin
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetaskTopAppBar(
+    navigateToProfile: () -> Unit,
     navigateToLogin: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
@@ -47,7 +48,12 @@ fun PetaskTopAppBar(
         title = { Text("Petask") },
         actions = {
             CoinConteiner(100)
-            DropdownMenu(painterResource(R.drawable.ic_task), navigateToLogin, onLogoutClick)
+            DropdownMenu(
+                navigateToProfile = navigateToProfile,
+                navigateToLogin = navigateToLogin,
+                userPfp = painterResource(R.drawable.ic_task),
+                onLogoutClick
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent
@@ -88,7 +94,12 @@ fun CoinConteiner(coinAmount: Int) {
 }
 
 @Composable
-fun DropdownMenu(userPfp: Painter, navigateToLogin: () -> Unit, onLogoutClick: () -> Unit) {
+fun DropdownMenu(
+    navigateToProfile: () -> Unit,
+    navigateToLogin: () -> Unit,
+    userPfp: Painter,
+    onLogoutClick: () -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     Box(Modifier.padding(horizontal = 12.dp)) {
         Image(
@@ -112,7 +123,10 @@ fun DropdownMenu(userPfp: Painter, navigateToLogin: () -> Unit, onLogoutClick: (
         ) {
             DropdownMenuItem(
                 text = { Text("Profile", color = GoldCoin) },
-                onClick = { }
+                onClick = {
+                    expanded = false
+                    navigateToProfile()
+                }
             )
 
             DropdownMenuItem(
@@ -123,6 +137,7 @@ fun DropdownMenu(userPfp: Painter, navigateToLogin: () -> Unit, onLogoutClick: (
             DropdownMenuItem(
                 text = { Text("Log Out", color = Color.Red) },
                 onClick = {
+                    expanded = false
                     onLogoutClick()
                     navigateToLogin()
                 }
