@@ -51,7 +51,7 @@ fun PetaskTopAppBar(
             DropdownMenu(
                 navigateToProfile = navigateToProfile,
                 navigateToLogin = navigateToLogin,
-                userPfp = painterResource(R.drawable.ic_task),
+                userPfp = painterResource(R.drawable.ic_user_mage),
                 onLogoutClick
             )
         },

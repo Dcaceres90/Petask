@@ -57,12 +57,11 @@ import com.deviar.petask.common.utils.createImageUri
 @Composable
 fun ProfileScreen(
     modifier: Modifier,
-    profileViewModel: ProfileViewModel,
-    userPfp: Painter
+    profileViewModel: ProfileViewModel
 ) {
     val context = LocalContext.current
+    val state = profileViewModel.state
 
-    var name by remember { mutableStateOf("Pepe") }
     var isEditing by remember { mutableStateOf(false) }
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -72,13 +71,8 @@ fun ProfileScreen(
     ) { uri ->
 
         if (uri != null) {
-            profileViewModel.onProfileImageSelected(uri)
+            profileViewModel.onChangeProfileImage(uri)
         }
-    }
-    val profileImageUri by profileViewModel.profileImageUri.collectAsState()
-
-    LaunchedEffect(profileImageUri) {
-        Log.d("PROFILE", "UI recibió: $profileImageUri")
     }
 
     var photoUri by remember {
@@ -90,12 +84,9 @@ fun ProfileScreen(
             contract = ActivityResultContracts.TakePicture()
         ) { success ->
 
-            Log.d("PROFILE", "success = $success")
-            Log.d("PROFILE", "uri = $photoUri")
-
             if (success) {
                 photoUri?.let {
-                    profileViewModel.onProfileImageSelected(it)
+                    profileViewModel.onChangeProfileImage(it)
                 }
             }
         }
@@ -122,9 +113,9 @@ fun ProfileScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (profileImageUri != null) {
+            if (state.imageUri != null) {
                 AsyncImage(
-                    model = profileImageUri,
+                    model = state.imageUri,
                     contentDescription = null,
                     modifier = Modifier
                         .size(100.dp)
@@ -136,7 +127,7 @@ fun ProfileScreen(
                 )
             } else {
                 Image(
-                    painter = userPfp,
+                    painter = painterResource(R.drawable.ic_user_mage),
                     contentDescription = null,
                     modifier = Modifier
                         .size(100.dp)
@@ -172,8 +163,8 @@ fun ProfileScreen(
                 ) {
                     if (isEditing) {
                         TextField(
-                            value = name,
-                            onValueChange = { name = it },
+                            value = state.userName,
+                            onValueChange = { profileViewModel.onUserNameChange(it) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(
                                 capitalization = KeyboardCapitalization.Words,
@@ -182,11 +173,12 @@ fun ProfileScreen(
                             keyboardActions = KeyboardActions(
                                 onDone = {
                                     isEditing = false
+                                    profileViewModel.onUserNameEditDone()
                                 }
                             )
                         )
                     } else {
-                        Text(name)
+                        Text(state.userName)
                     }
                 }
                 Icon(

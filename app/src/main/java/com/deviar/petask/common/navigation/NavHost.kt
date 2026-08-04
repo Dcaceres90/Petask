@@ -128,8 +128,7 @@ fun NavHost(
             composable<Profile> {
                 ProfileScreen(
                     modifier = Modifier.padding(innerPadding),
-                    profileViewModel = hiltViewModel(),
-                    userPfp = painterResource(R.drawable.ic_user_mage)
+                    profileViewModel = hiltViewModel()
                 )
             }
         }
