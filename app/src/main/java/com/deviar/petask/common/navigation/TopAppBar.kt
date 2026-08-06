@@ -32,18 +32,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.deviar.petask.R
+import com.deviar.petask.common.ui.components.UserImage
 import com.deviar.petask.common.ui.theme.Brown
 import com.deviar.petask.common.ui.theme.Creamy_light
 import com.deviar.petask.common.ui.theme.GoldCoin
+import com.deviar.petask.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetaskTopAppBar(
+    profileViewModel: ProfileViewModel,
     navigateToProfile: () -> Unit,
     navigateToLogin: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
+    val state = profileViewModel.state  // Observamos el mismo estado
+
     TopAppBar(
         title = { Text("Petask") },
         actions = {
@@ -51,7 +57,7 @@ fun PetaskTopAppBar(
             DropdownMenu(
                 navigateToProfile = navigateToProfile,
                 navigateToLogin = navigateToLogin,
-                userPfp = painterResource(R.drawable.ic_user_mage),
+                userImageUri = state.imageUri,
                 onLogoutClick
             )
         },
@@ -97,20 +103,15 @@ fun CoinConteiner(coinAmount: Int) {
 fun DropdownMenu(
     navigateToProfile: () -> Unit,
     navigateToLogin: () -> Unit,
-    userPfp: Painter,
+    userImageUri: String?,
     onLogoutClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box(Modifier.padding(horizontal = 12.dp)) {
-        Image(
-            painter = userPfp,
-            contentDescription = null,
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .clickable {
-                    expanded = true
-                }
+        UserImage(
+            imageUri = userImageUri,
+            size = 48.dp,
+            onClick = { expanded = true }
         )
 
         DropdownMenu(

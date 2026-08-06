@@ -2,7 +2,6 @@ package com.deviar.petask.profile
 
 import android.net.Uri
 import android.Manifest
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -20,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowCircleLeft
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,8 +28,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +47,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.deviar.petask.R
+import com.deviar.petask.common.ui.components.UserImage
 import com.deviar.petask.common.utils.createImageUri
 
 
@@ -113,30 +110,37 @@ fun ProfileScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (state.imageUri != null) {
-                AsyncImage(
-                    model = state.imageUri,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            showBottomSheet = true
-                        },
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Image(
-                    painter = painterResource(R.drawable.ic_user_mage),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            showBottomSheet = true
-                        }
-                )
-            }
+            UserImage(
+                imageUri = state.imageUri,
+                size = 100.dp,
+                onClick = {
+                    showBottomSheet = true
+                }
+            )
+//            if (state.imageUri != null) {
+//                AsyncImage(
+//                    model = state.imageUri,
+//                    contentDescription = null,
+//                    modifier = Modifier
+//                        .size(100.dp)
+//                        .clip(CircleShape)
+//                        .clickable {
+//                            showBottomSheet = true
+//                        },
+//                    contentScale = ContentScale.Crop
+//                )
+//            } else {
+//                Image(
+//                    painter = painterResource(R.drawable.ic_user_mage),
+//                    contentDescription = null,
+//                    modifier = Modifier
+//                        .size(100.dp)
+//                        .clip(CircleShape)
+//                        .clickable {
+//                            showBottomSheet = true
+//                        }
+//                )
+//            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

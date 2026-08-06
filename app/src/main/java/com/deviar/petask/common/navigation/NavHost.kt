@@ -22,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
 import com.deviar.petask.R
 import com.deviar.petask.profile.ProfileScreen
+import com.deviar.petask.profile.ProfileViewModel
 import kotlinx.coroutines.delay
 
 
@@ -33,6 +34,9 @@ fun NavHost(
 ) {
 
     val navController = rememberNavController()
+
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+
     val currentDestination =
         navController.currentBackStackEntryAsState()
             .value?.destination
@@ -55,6 +59,7 @@ fun NavHost(
         topBar = {
             if (showBar) {
                 PetaskTopAppBar(
+                    profileViewModel = profileViewModel,
                     navigateToProfile = { navController.navigate(Profile) },
                     navigateToLogin = { navController.navigate(Login) { popUpTo(0) } },
                     onLogoutClick = { mainViewModel.singOut() }
@@ -128,7 +133,7 @@ fun NavHost(
             composable<Profile> {
                 ProfileScreen(
                     modifier = Modifier.padding(innerPadding),
-                    profileViewModel = hiltViewModel()
+                    profileViewModel = profileViewModel
                 )
             }
         }
