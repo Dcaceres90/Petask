@@ -15,7 +15,8 @@ import com.deviar.petask.auth.ui.register.RegisterScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.deviar.petask.calendar.CalendarScreen
 import com.deviar.petask.pet.PetScreen
-import com.deviar.petask.tasks.TasksScreen
+import com.deviar.petask.pet.PetViewModel
+import com.deviar.petask.tasks.ui.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -100,7 +101,7 @@ fun NavHost(
 
             composable<Pet> {
                 PetScreen(
-                    petViewModel = hiltViewModel(),
+                    petViewModel = hiltViewModel<PetViewModel>(),
                     navigateToLogin = {
                         navController.navigate(Login) {
                             popUpTo(0)

@@ -1,10 +1,10 @@
-package com.deviar.petask.tasks
+package com.deviar.petask.tasks.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,8 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.deviar.petask.common.ui.components.listas.MiListaHorizontal
 import com.deviar.petask.common.ui.theme.PetaskTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.vector.ImageVector
 import kotlin.String
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -71,23 +79,18 @@ fun ListaFechas(
     onClickDate:(String) -> Unit = {}
 ) {
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Fecha seleccionada: $selectedDate")
 
         Spacer(modifier = Modifier.height(20.dp))
-
         // Mostrar los botones para cada fecha
-        dates.forEach { date ->
-            Button(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                onClick = {
-                    onClickDate(date)
-                }
-            ) {
-                Text(text = date)
-            }
+        Row() {
+            MiListaHorizontal(
+                items = dates,
+                onClickItem = onClickDate
+            )
         }
     }
 }
@@ -99,7 +102,7 @@ fun ListaTask(
 ) {
     Column {
         Button(onClick = { /* Mostrar DatePickerDialog aquí */ }) {
-            Text("Seleccionar Fecha: ${selectedDate}")
+            Text("Seleccionar Fecha: $selectedDate")
         }
 
         LazyColumn {
@@ -108,6 +111,21 @@ fun ListaTask(
             }
         }
 
+    }
+}
+
+@Composable
+fun IconBottomCustom(
+    onClickArrow: () -> Unit,
+    imageVector: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
+) {
+    IconButton(
+        onClick = onClickArrow,
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = "Regresar"
+        )
     }
 }
 

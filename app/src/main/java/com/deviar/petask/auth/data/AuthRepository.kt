@@ -56,7 +56,7 @@ class AuthRepository {
             }
     }
 
-    fun singOut(){
+    fun signOut() {
         auth.signOut()
     }
 }
