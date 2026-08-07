@@ -28,7 +28,6 @@ import com.deviar.petask.common.ui.model.NavItem
 import com.deviar.petask.common.ui.theme.Primary
 import com.deviar.petask.common.ui.theme.Secondary
 
-
 @Composable
 fun PetaskNavigationBar(navController: NavHostController, modifier: Modifier = Modifier) {
 
@@ -39,7 +38,6 @@ fun PetaskNavigationBar(navController: NavHostController, modifier: Modifier = M
     )
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination
-
 
     NavigationBar(
         containerColor = Primary,
@@ -52,9 +50,10 @@ fun PetaskNavigationBar(navController: NavHostController, modifier: Modifier = M
             NavigationBarItem(
                 selected = currentRoute?.route == item.route::class.qualifiedName,
                 onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo("pet") //
-                        launchSingleTop = true
+                    if (currentRoute?.route != item.route::class.qualifiedName) {
+                        navController.navigate(item.route) {
+                            launchSingleTop = true
+                        }
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
@@ -78,6 +77,5 @@ fun PetaskNavigationBar(navController: NavHostController, modifier: Modifier = M
                 label = { Text(item.name, color = Secondary, fontWeight = FontWeight.ExtraBold) }
             )
         }
-
     }
 }

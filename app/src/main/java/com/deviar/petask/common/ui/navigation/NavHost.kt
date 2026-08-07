@@ -3,7 +3,6 @@ package com.deviar.petask.common.ui.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,14 +17,27 @@ import com.deviar.petask.pet.PetScreen
 import com.deviar.petask.pet.PetViewModel
 import com.deviar.petask.tasks.ui.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.deviar.petask.MainViewModel
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavHost(
     modifier: Modifier = Modifier,
-    isLogged: Boolean
+    isLogged: Boolean,
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     val navController = rememberNavController()
+    val currentDestination =
+        navController.currentBackStackEntryAsState()
+            .value?.destination
+
+    val showBar =
+        currentDestination?.route in listOf(
+            Pet::class.qualifiedName,
+            Tasks::class.qualifiedName,
+            Calendar::class.qualifiedName
+        )
 
     val startDestination =
         if (isLogged)
@@ -34,25 +46,17 @@ fun NavHost(
             Login
 
     Scaffold(
-
         topBar = {
-            // después hacemos la top bar
+            if (showBar) {
+                PetaskTopAppBar(
+                    navigateToLogin = { navController.navigate(Login) { popUpTo(0) }},
+                    onLogoutClick = { mainViewModel.singOut() }
+                )
+            }
         },
 
         bottomBar = {
-
-            val currentDestination =
-                navController.currentBackStackEntryAsState()
-                    .value?.destination
-
-            val showBottomBar =
-                currentDestination?.route in listOf(
-                    Pet::class.qualifiedName,
-                    Tasks::class.qualifiedName,
-                    Calendar::class.qualifiedName
-                )
-
-            if (showBottomBar) {
+            if (showBar) {
                 PetaskNavigationBar(
                     navController = navController,
                     modifier = Modifier.navigationBarsPadding()
@@ -64,8 +68,7 @@ fun NavHost(
 
         NavHost(
             navController = navController,
-            startDestination = startDestination,
-            modifier = modifier.padding(innerPadding)
+            startDestination = startDestination
         ) {
 
             composable<Login> {
