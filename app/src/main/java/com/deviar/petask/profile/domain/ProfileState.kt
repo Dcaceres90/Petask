@@ -1,6 +1,6 @@
 package com.deviar.petask.profile.domain
 
-data class UserState (
+data class ProfileState (
     val userName: String = "User",
     val imageUri: String? = null,
 )

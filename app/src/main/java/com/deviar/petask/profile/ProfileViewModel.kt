@@ -8,8 +8,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
-import com.deviar.petask.common.database.domain.usecase.UpdateUserUseCase
-import com.deviar.petask.profile.domain.UserState
+import com.deviar.petask.common.database.domain.usecase.UpdateProfileImageUseCase
+import com.deviar.petask.common.database.domain.usecase.UpdateUsernameUseCase
+import com.deviar.petask.profile.domain.ProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -18,11 +19,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
-    private val updateUserUseCase: UpdateUserUseCase,
+    private val updateUsernameUseCase: UpdateUsernameUseCase,
+    private val updateProfileImageUseCase: UpdateProfileImageUseCase,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    var state by mutableStateOf(UserState())
+    var state by mutableStateOf(ProfileState())
 
     init {
         loadUser()
@@ -30,12 +32,28 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadUser() {
         viewModelScope.launch {
-            val user = getUserUseCase()
-            if (user != null) {
+            getUserUseCase().collect { user ->
+                if (user != null) {
+                    state = state.copy(
+                        userName = user.userName,
+                        imageUri = user.imageUri
+                    )
+                }
+            }
+        }
+    }
+
+
+
+    fun onChangeProfileImage(uri: Uri){
+        viewModelScope.launch {
+            val permanentUri = saveImageToInternalStorage(uri)
+
+            if (permanentUri != null) {
                 state = state.copy(
-                    userName = user.userName,
-                    imageUri = user.imageUri
+                    imageUri = permanentUri.toString()
                 )
+                updateProfileImageUseCase(permanentUri.toString())
             }
         }
     }
@@ -55,16 +73,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun onChangeProfileImage(uri: Uri){
-        viewModelScope.launch {
-            val permanentUri = saveImageToInternalStorage(uri)
-            if (permanentUri != null) {
-                state = state.copy(imageUri = permanentUri.toString())
-                saveUser()
-            }
-        }
-    }
-
     fun onUserNameChange(userName: String){
         state = state.copy(
            userName = userName
@@ -72,16 +80,10 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onUserNameEditDone() {
-        saveUser()
-    }
-
-    private fun saveUser() {
         viewModelScope.launch {
-            updateUserUseCase(
-                userName = state.userName,
-                imageUri = state.imageUri
-            )
+            updateUsernameUseCase(state.userName)
         }
     }
+
 
 }

@@ -24,7 +24,9 @@ object DataBaseModule {
             context,
             PetaskDataBase::class.java,
             "petask_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

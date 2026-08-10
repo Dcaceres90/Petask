@@ -25,19 +25,14 @@ fun UserImage(
     imageUri: String?,
     modifier: Modifier = Modifier,
     size: Dp = 100.dp,
-    onClick: (() -> Unit)? = null
+    onClick: () -> Unit
 ) {
-    val clickModifier = if (onClick != null) {
-        Modifier.clickable { onClick() }
-    } else {
-        Modifier
-    }
 
     Box(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
-            .then(clickModifier),
+            .clickable{ onClick() },
         contentAlignment = Alignment.Center
     ) {
         if (!imageUri.isNullOrEmpty()) {

@@ -1,14 +1,11 @@
 package com.deviar.petask.common.navigation
 
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,10 +17,8 @@ import com.deviar.petask.pet.ui.PetScreen
 import com.deviar.petask.tasks.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
-import com.deviar.petask.R
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -59,10 +54,12 @@ fun NavHost(
         topBar = {
             if (showBar) {
                 PetaskTopAppBar(
-                    profileViewModel = profileViewModel,
+                    coins = mainViewModel.state.coins,
+                    userImageUri = profileViewModel.state.imageUri,
                     navigateToProfile = { navController.navigate(Profile) },
                     navigateToLogin = { navController.navigate(Login) { popUpTo(0) } },
-                    onLogoutClick = { mainViewModel.singOut() }
+                    onLogoutClick = { mainViewModel.singOut() },
+                    onAddCoins = {mainViewModel.earnCoins(-10)}
                 )
             }
         },

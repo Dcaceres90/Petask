@@ -46,7 +46,7 @@ fun PetScreen(
 
     val pet = petViewModel.pet
     val imageRes = when (pet.state) {
-        PetState.HAPPY -> R.drawable.imga
+        PetState.HAPPY -> R.drawable.img_pet_orange_happy
         PetState.SAD -> R.drawable.img_pet_siamese_sad
         PetState.ANGRY -> R.drawable.img_pet_siamese_angry
         PetState.CONFUSED -> R.drawable.img_pet_siamese_confused

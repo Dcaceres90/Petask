@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -43,21 +44,22 @@ import com.deviar.petask.profile.ProfileViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetaskTopAppBar(
-    profileViewModel: ProfileViewModel,
+    coins: Int,
+    userImageUri: String?,
     navigateToProfile: () -> Unit,
     navigateToLogin: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onAddCoins : () -> Unit,
 ) {
-    val state = profileViewModel.state  // Observamos el mismo estado
 
     TopAppBar(
-        title = { Text("Petask") },
+        title = { Text("Petask", Modifier.clickable{ onAddCoins() }) },
         actions = {
-            CoinConteiner(100)
+            CoinConteiner(coins)
             DropdownMenu(
                 navigateToProfile = navigateToProfile,
                 navigateToLogin = navigateToLogin,
-                userImageUri = state.imageUri,
+                userImageUri = userImageUri,
                 onLogoutClick
             )
         },
