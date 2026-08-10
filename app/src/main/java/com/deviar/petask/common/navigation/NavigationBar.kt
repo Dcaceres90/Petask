@@ -1,4 +1,4 @@
-package com.deviar.petask.common.ui.navigation
+package com.deviar.petask.common.navigation
 
 
 import androidx.compose.foundation.border
@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.deviar.petask.common.ui.model.NavItem
+import com.deviar.petask.common.navigation.model.NavItem
 import com.deviar.petask.common.ui.theme.Primary
 import com.deviar.petask.common.ui.theme.Secondary
 

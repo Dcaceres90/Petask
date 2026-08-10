@@ -1,8 +1,8 @@
-package com.deviar.petask.pet
+package com.deviar.petask.pet.ui
 
 import androidx.lifecycle.ViewModel
-import com.deviar.petask.pet.data.PetModel
-import com.deviar.petask.pet.data.PetState
+import com.deviar.petask.pet.domain.PetModel
+import com.deviar.petask.pet.domain.PetState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -11,7 +11,7 @@ class PetViewModel @Inject constructor() : ViewModel()  {
 
     val pet = PetModel(
         name = "Luna",
-        hungerLevel = 3,
+        hungerLevel = 1,
         state = PetState.HAPPY
     )
 }

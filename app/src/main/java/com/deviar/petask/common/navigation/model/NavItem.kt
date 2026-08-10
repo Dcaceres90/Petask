@@ -1,4 +1,4 @@
-package com.deviar.petask.common.ui.model
+package com.deviar.petask.common.navigation.model
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

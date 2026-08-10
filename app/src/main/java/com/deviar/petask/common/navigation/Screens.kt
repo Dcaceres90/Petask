@@ -1,4 +1,4 @@
-package com.deviar.petask.common.ui.navigation
+package com.deviar.petask.common.navigation
 
 import kotlinx.serialization.Serializable
 
@@ -12,3 +12,5 @@ import kotlinx.serialization.Serializable
 @Serializable object Tasks
 
 @Serializable object Calendar
+
+@Serializable object Profile
