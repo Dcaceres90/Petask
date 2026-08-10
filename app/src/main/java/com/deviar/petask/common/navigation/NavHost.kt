@@ -17,11 +17,10 @@ import com.deviar.petask.auth.ui.register.RegisterScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.deviar.petask.calendar.CalendarScreen
 import com.deviar.petask.pet.ui.PetScreen
-import com.deviar.petask.tasks.TasksScreen
 import com.deviar.petask.tasks.ui.TasksScreen
-import com.deviar.petask.pet.PetViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
+import com.deviar.petask.pet.ui.PetViewModel
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
 
@@ -79,7 +78,7 @@ fun NavHost(
                 )
             }
         },
-    ) { _ ->
+    ) { innerPadding ->
 
         NavHost(
             navController = navController,
