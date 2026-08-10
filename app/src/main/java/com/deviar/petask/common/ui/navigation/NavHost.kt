@@ -1,5 +1,6 @@
 package com.deviar.petask.common.ui.navigation
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -20,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NavHost(
     modifier: Modifier = Modifier,
@@ -62,9 +64,8 @@ fun NavHost(
                     modifier = Modifier.navigationBarsPadding()
                 )
             }
-        }
-
-    ) { innerPadding ->
+        },
+    ) { nnerPadding ->
 
         NavHost(
             navController = navController,
@@ -105,11 +106,6 @@ fun NavHost(
             composable<Pet> {
                 PetScreen(
                     petViewModel = hiltViewModel<PetViewModel>(),
-                    navigateToLogin = {
-                        navController.navigate(Login) {
-                            popUpTo(0)
-                        }
-                    }
                 )
             }
 
