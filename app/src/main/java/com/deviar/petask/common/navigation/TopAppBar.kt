@@ -1,4 +1,4 @@
-package com.deviar.petask.common.ui.navigation
+package com.deviar.petask.common.navigation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,28 +26,42 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.deviar.petask.R
+import com.deviar.petask.common.ui.components.UserImage
 import com.deviar.petask.common.ui.theme.Brown
 import com.deviar.petask.common.ui.theme.Creamy_light
 import com.deviar.petask.common.ui.theme.GoldCoin
+import com.deviar.petask.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetaskTopAppBar(
+    coins: Int,
+    userImageUri: String?,
+    navigateToProfile: () -> Unit,
     navigateToLogin: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onAddCoins : () -> Unit,
 ) {
+
     TopAppBar(
-        title = { Text("Petask") },
+        title = { Text("Petask", Modifier.clickable{ onAddCoins() }) },
         actions = {
-            CoinConteiner(100)
-            DropdownMenu(painterResource(R.drawable.ic_task), navigateToLogin, onLogoutClick)
+            CoinConteiner(coins)
+            DropdownMenu(
+                navigateToProfile = navigateToProfile,
+                navigateToLogin = navigateToLogin,
+                userImageUri = userImageUri,
+                onLogoutClick
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent
@@ -88,18 +102,18 @@ fun CoinConteiner(coinAmount: Int) {
 }
 
 @Composable
-fun DropdownMenu(userPfp: Painter, navigateToLogin: () -> Unit, onLogoutClick: () -> Unit) {
+fun DropdownMenu(
+    navigateToProfile: () -> Unit,
+    navigateToLogin: () -> Unit,
+    userImageUri: String?,
+    onLogoutClick: () -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     Box(Modifier.padding(horizontal = 12.dp)) {
-        Image(
-            painter = userPfp,
-            contentDescription = null,
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .clickable {
-                    expanded = true
-                }
+        UserImage(
+            imageUri = userImageUri,
+            size = 48.dp,
+            onClick = { expanded = true }
         )
 
         DropdownMenu(
@@ -112,7 +126,10 @@ fun DropdownMenu(userPfp: Painter, navigateToLogin: () -> Unit, onLogoutClick: (
         ) {
             DropdownMenuItem(
                 text = { Text("Profile", color = GoldCoin) },
-                onClick = { }
+                onClick = {
+                    expanded = false
+                    navigateToProfile()
+                }
             )
 
             DropdownMenuItem(
@@ -123,6 +140,7 @@ fun DropdownMenu(userPfp: Painter, navigateToLogin: () -> Unit, onLogoutClick: (
             DropdownMenuItem(
                 text = { Text("Log Out", color = Color.Red) },
                 onClick = {
+                    expanded = false
                     onLogoutClick()
                     navigateToLogin()
                 }

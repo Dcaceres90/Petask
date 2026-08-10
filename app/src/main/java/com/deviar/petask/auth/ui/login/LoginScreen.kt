@@ -98,7 +98,11 @@ fun LoginScreen(
             )
         }
 
-        ClickableText(stringResource(R.string.register), onClick = {navigateToRegister()})
+        ClickableText(
+            text = stringResource(R.string.register),
+            modifier = Modifier.padding(bottom = 40.dp),
+            onClick = { navigateToRegister() }
+        )
     }
 }
 

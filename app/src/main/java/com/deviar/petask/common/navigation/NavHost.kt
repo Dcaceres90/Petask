@@ -1,6 +1,8 @@
-package com.deviar.petask.common.ui.navigation
+package com.deviar.petask.common.navigation
+
 
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,10 +13,13 @@ import com.deviar.petask.auth.ui.login.LoginScreen
 import com.deviar.petask.auth.ui.register.RegisterScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.deviar.petask.calendar.CalendarScreen
-import com.deviar.petask.pet.PetScreen
+import com.deviar.petask.pet.ui.PetScreen
 import com.deviar.petask.tasks.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
+import com.deviar.petask.profile.ProfileScreen
+import com.deviar.petask.profile.ProfileViewModel
+
 
 @Composable
 fun NavHost(
@@ -24,6 +29,9 @@ fun NavHost(
 ) {
 
     val navController = rememberNavController()
+
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+
     val currentDestination =
         navController.currentBackStackEntryAsState()
             .value?.destination
@@ -32,7 +40,8 @@ fun NavHost(
         currentDestination?.route in listOf(
             Pet::class.qualifiedName,
             Tasks::class.qualifiedName,
-            Calendar::class.qualifiedName
+            Calendar::class.qualifiedName,
+            Profile::class.qualifiedName
         )
 
     val startDestination =
@@ -45,8 +54,12 @@ fun NavHost(
         topBar = {
             if (showBar) {
                 PetaskTopAppBar(
-                    navigateToLogin = { navController.navigate(Login) { popUpTo(0) }},
-                    onLogoutClick = { mainViewModel.singOut() }
+                    coins = mainViewModel.state.coins,
+                    userImageUri = profileViewModel.state.imageUri,
+                    navigateToProfile = { navController.navigate(Profile) },
+                    navigateToLogin = { navController.navigate(Login) { popUpTo(0) } },
+                    onLogoutClick = { mainViewModel.singOut() },
+                    onAddCoins = {mainViewModel.earnCoins(-10)}
                 )
             }
         },
@@ -106,12 +119,19 @@ fun NavHost(
 
             composable<Tasks> {
                 TasksScreen(
-                    //modifier = Modifier.padding(innerPadding)
+
                 )
             }
 
             composable<Calendar> {
                 CalendarScreen()
+            }
+
+            composable<Profile> {
+                ProfileScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    profileViewModel = profileViewModel
+                )
             }
         }
     }
