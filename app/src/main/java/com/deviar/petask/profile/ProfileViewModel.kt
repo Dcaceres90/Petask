@@ -58,7 +58,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveImageToInternalStorage(uri: Uri): Uri? {
+    private fun saveImageToInternalStorage(uri: Uri): Uri? {
         return try {
             val inputStream = context.contentResolver.openInputStream(uri) ?: return null
             val fileName = "profile_${System.currentTimeMillis()}.jpg"  // nombre único

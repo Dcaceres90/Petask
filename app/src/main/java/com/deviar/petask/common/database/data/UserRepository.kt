@@ -14,6 +14,10 @@ class UserRepository @Inject constructor(
         return auth.currentUser?.uid
     }
 
+    suspend fun saveUser(user: UserModel) {
+        userDao.insertUser(user)
+    }
+
     suspend fun getUserById(userId: String): Flow<UserModel?> {
         return userDao.getUserById(userId)
     }
