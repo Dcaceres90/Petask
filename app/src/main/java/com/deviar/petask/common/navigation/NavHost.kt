@@ -21,6 +21,7 @@ import com.deviar.petask.tasks.ui.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
 import com.deviar.petask.pet.ui.PetViewModel
+import com.deviar.petask.onboarding.ui.OnboardingScreen
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
 
@@ -31,6 +32,7 @@ import com.deviar.petask.profile.ProfileViewModel
 fun NavHost(
     modifier: Modifier = Modifier,
     isLogged: Boolean,
+    hasCompletedOnboarding : Boolean,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
@@ -51,10 +53,13 @@ fun NavHost(
         )
 
     val startDestination =
-        if (isLogged)
-            Pet
-        else
+        if (!isLogged) {
             Login
+        } else if (!hasCompletedOnboarding) {
+            Onboarding
+        } else {
+            Pet
+        }
 
     Scaffold(
         topBar = {
@@ -106,12 +111,21 @@ fun NavHost(
                 RegisterScreen(
                     modifier = modifier,
                     registerViewModel = hiltViewModel(),
-                    navigateToPet = {
-                        navController.navigate(Pet) {
+                    navigateToOnboarding = {
+                        navController.navigate(Onboarding) {
                             popUpTo(Login) {
                                 inclusive = true
                             }
                         }
+                    }
+                )
+            }
+
+            composable <Onboarding>{
+                OnboardingScreen(
+                    onboardingViewModel = hiltViewModel(),
+                    navigateToPet = {
+                        navController.navigate(Pet)
                     }
                 )
             }
@@ -130,6 +144,7 @@ fun NavHost(
 
             composable<Calendar> {
                 CalendarScreen()
+
             }
 
             composable<Profile> {

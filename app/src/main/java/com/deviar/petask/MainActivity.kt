@@ -21,14 +21,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            NavHost(
-                isLogged =
-                    mainViewModel.isLogged
-            )
-            Log.i(
-                "Iara",
-                Firebase.auth.currentUser?.email ?: "NO USER"
-            )
+            if (!mainViewModel.state.isLoading) {
+                NavHost(
+                    isLogged = mainViewModel.isLogged,
+                    hasCompletedOnboarding = mainViewModel.state.hasCompletedOnboarding
+                )
+                Log.i(
+                    "Iara",
+                    Firebase.auth.currentUser?.email ?: "NO USER"
+                )
+            }
+
         }
     }
 }
