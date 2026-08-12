@@ -10,7 +10,9 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class TaskViewModel @Inject constructor(): ViewModel() {
+class TaskViewModel @Inject constructor(
+
+): ViewModel() {
     // Obtener la fecha de hoy
     fun getCurrentDate(): String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
