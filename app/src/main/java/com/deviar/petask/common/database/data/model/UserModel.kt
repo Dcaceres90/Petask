@@ -10,6 +10,5 @@ data class UserModel (
     val userName: String = "User",
     val imageUri: String? = null,
     val coins: Int = 0,
-    //val selectedPet: PetModel
 )
 

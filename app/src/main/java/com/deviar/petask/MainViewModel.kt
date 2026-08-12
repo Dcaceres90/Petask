@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deviar.petask.auth.domain.SingOutUseCase
+import com.deviar.petask.common.database.domain.usecase.GetPetUseCase
 import com.deviar.petask.common.database.domain.usecase.UpdateCoinsUseCase
 import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
 import com.google.firebase.Firebase
@@ -18,10 +19,12 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val singOutUseCase: SingOutUseCase,
     private val updateCoinsUseCase: UpdateCoinsUseCase,
-    private val getUserUseCase: GetUserUseCase
+    private val getUserUseCase: GetUserUseCase,
+    private val getPetUseCase: GetPetUseCase
 ): ViewModel() {
 
     val isLogged = Firebase.auth.currentUser != null
+
 
     var state by mutableStateOf(MainState())
 
@@ -35,22 +38,16 @@ class MainViewModel @Inject constructor(
 
             getUserUseCase().collect { user ->
 
+                val pet = getPetUseCase()
+
                 state = state.copy(
-                    coins = user?.coins ?: 0
+                    coins = user?.coins ?: 0,
+                    hasCompletedOnboarding = pet != null,
+                    isLoading = false
                 )
             }
         }
     }
-
-    /*private fun loadCoins() {
-        viewModelScope.launch {
-            val user = getUserUseCase() ?: return@launch
-
-            state = state.copy(
-                coins = user.coins
-            )
-        }
-    }*/
 
     fun earnCoins(amount: Int) {
         viewModelScope.launch {
@@ -70,5 +67,7 @@ class MainViewModel @Inject constructor(
 }
 
 data class MainState(
-    val coins: Int = 0
+    val coins: Int = 0,
+    val hasCompletedOnboarding: Boolean = false,
+    val isLoading: Boolean = true
 )

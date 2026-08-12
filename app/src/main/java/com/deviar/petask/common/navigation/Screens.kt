@@ -14,3 +14,5 @@ import kotlinx.serialization.Serializable
 @Serializable object Calendar
 
 @Serializable object Profile
+
+@Serializable object Onboarding

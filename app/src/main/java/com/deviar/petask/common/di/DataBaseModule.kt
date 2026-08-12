@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.deviar.petask.common.database.data.PetaskDataBase
 import com.deviar.petask.common.database.data.UserRepository
+import com.deviar.petask.common.database.domain.dao.PetDao
 import com.deviar.petask.common.database.domain.dao.UserDao
 import dagger.Module
 import dagger.Provides
@@ -32,6 +33,11 @@ object DataBaseModule {
     @Provides
     fun provideUserDao(database: PetaskDataBase): UserDao {
         return database.userDao
+    }
+
+    @Provides
+    fun providePetDao(database: PetaskDataBase): PetDao {
+        return database.petDao
     }
 
 }

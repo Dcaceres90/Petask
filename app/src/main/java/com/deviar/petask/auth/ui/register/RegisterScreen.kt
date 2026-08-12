@@ -31,13 +31,13 @@ import com.deviar.petask.common.ui.theme.Primary
 fun RegisterScreen(
     modifier: Modifier,
     registerViewModel: RegisterViewModel,
-    navigateToPet: () -> Unit
+    navigateToOnboarding: () -> Unit
 ) {
     val uiState by registerViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(uiState.registerSuccess) {
 
         if (uiState.registerSuccess) {
-            navigateToPet()
+            navigateToOnboarding()
         }
     }
 
