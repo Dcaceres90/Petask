@@ -25,12 +25,11 @@ import com.deviar.petask.common.ui.components.listas.MiListaHorizontal
 import com.deviar.petask.common.ui.theme.PetaskTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.deviar.petask.common.ui.components.button.ButtonFloating
 import kotlin.String
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -41,14 +40,26 @@ fun TasksScreen(
     var selectedDate by remember { mutableStateOf(viewModel.getCurrentDate()) }
     val dates = viewModel.getUpcomingDates()
     val itemList = remember { mutableStateListOf<String>() }
-    TaskStructureScreen(
-        selectedDate = selectedDate,
-        dates = dates,
-        itemList = itemList,
-        onClickDate = { date ->
-            selectedDate = date
+    Scaffold(
+        floatingActionButton = {
+            ButtonFloating(
+                onClickFloating = {}
+            )
         }
-    )
+    ) { paddingValues ->
+        // contenido de la pantalla
+        Column(modifier = Modifier.padding(paddingValues)) {
+            TaskStructureScreen(
+                selectedDate = selectedDate,
+                dates = dates,
+                itemList = itemList,
+                onClickDate = { date ->
+                    selectedDate = date
+                }
+            )
+        }
+    }
+
 }
 
 @Composable

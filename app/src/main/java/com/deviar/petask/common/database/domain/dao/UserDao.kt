@@ -24,7 +24,4 @@ interface UserDao {
 
     @Query("UPDATE UserModel SET coins = coins + :amount WHERE id = :userId")
     suspend fun updateCoins(userId: String, amount: Int)
-
-
-
 }

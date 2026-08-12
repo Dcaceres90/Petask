@@ -3,13 +3,12 @@ package com.deviar.petask.common.di
 import android.content.Context
 import androidx.room.Room
 import com.deviar.petask.common.database.data.PetaskDataBase
-import com.deviar.petask.common.database.data.UserRepository
 import com.deviar.petask.common.database.domain.dao.PetDao
+import com.deviar.petask.common.database.domain.dao.TaskDao
 import com.deviar.petask.common.database.domain.dao.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.internal.Contexts
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -40,4 +39,8 @@ object DataBaseModule {
         return database.petDao
     }
 
+    @Provides
+    fun provideTaskDao(database: PetaskDataBase): TaskDao {
+        return database.taskDao
+    }
 }
