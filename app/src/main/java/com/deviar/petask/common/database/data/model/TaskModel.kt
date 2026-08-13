@@ -11,5 +11,6 @@ data class TaskModel(
     val idUser: String,
     val text: String,
     val isComplete: Boolean,
+    val coinValue: Int,
     val toDoDate: Date,
 )

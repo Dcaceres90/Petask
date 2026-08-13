@@ -2,14 +2,18 @@ package com.deviar.petask.tasks.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,11 +29,20 @@ import com.deviar.petask.common.ui.components.listas.MiListaHorizontal
 import com.deviar.petask.common.ui.theme.PetaskTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.deviar.petask.common.ui.components.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
+import com.deviar.petask.common.ui.theme.Background
+import com.deviar.petask.common.ui.theme.Purple80
+import com.deviar.petask.common.ui.theme.PurpleGrey80
+import com.deviar.petask.common.ui.theme.Secondary
 import kotlin.String
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -38,25 +51,50 @@ fun TasksScreen(
     viewModel: TaskViewModel,
 ) {
     var selectedDate by remember { mutableStateOf(viewModel.getCurrentDate()) }
+    var showDialog by remember { mutableStateOf(false) }
     val dates = viewModel.getUpcomingDates()
     val itemList = remember { mutableStateListOf<String>() }
-    Scaffold(
-        floatingActionButton = {
-            ButtonFloating(
-                onClickFloating = {}
-            )
-        }
-    ) { paddingValues ->
-        // contenido de la pantalla
-        Column(modifier = Modifier.padding(paddingValues)) {
-            TaskStructureScreen(
-                selectedDate = selectedDate,
-                dates = dates,
-                itemList = itemList,
-                onClickDate = { date ->
-                    selectedDate = date
+    Box(
+        modifier = Modifier.padding(
+            start = 20.dp,
+            top = 60.dp,
+        )
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            floatingActionButton = {
+                ButtonFloating(
+                    modifier = Modifier.padding(
+                        end = 20.dp,
+                        bottom = 60.dp,
+                    ),
+                    onClickFloating = {
+                        showDialog = !showDialog
+                    }
+                )
+            },
+        ) { paddingValues ->
+            // contenido de la pantalla
+            Column(modifier = Modifier.padding(paddingValues)) {
+                if (showDialog) {
+                    FormAlertDialog(
+                        onDismiss = { showDialog = false },
+                        onConfirm = { nombre, correo -> {
+                            showDialog = false
+                            itemList.add(nombre)
+                        }
+                        }
+                    )
                 }
-            )
+                TaskStructureScreen(
+                    selectedDate = selectedDate,
+                    dates = dates,
+                    itemList = itemList,
+                    onClickDate = { date ->
+                        selectedDate = date
+                    }
+                )
+            }
         }
     }
 
@@ -75,7 +113,7 @@ fun TaskStructureScreen(
             dates = dates,
             onClickDate = onClickDate
         )
-
+        Spacer(modifier = Modifier.height(20.dp))
         ListaTask(
             selectedDate = selectedDate,
             itemList = itemList,
@@ -111,10 +149,20 @@ fun ListaTask(
     selectedDate: String,
     itemList: List<String>,
 ) {
-    Column {
-        Button(onClick = { /* Mostrar DatePickerDialog aquí */ }) {
-            Text("Seleccionar Fecha: $selectedDate")
-        }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        FilledIconottomCustom(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = Color.White,
+                ),
+            onClickArrow = {
+                /* Mostrar DatePickerDialog aquí */
+            },
+            selectedDate = selectedDate
+        )
 
         LazyColumn {
             items(itemList) { item ->
@@ -126,17 +174,31 @@ fun ListaTask(
 }
 
 @Composable
-fun IconBottomCustom(
+fun  FilledIconottomCustom(
+    modifier: Modifier = Modifier,
     onClickArrow: () -> Unit,
-    imageVector: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
+    selectedDate: String,
+    imageVector: ImageVector = Icons.Filled.Delete,
+    colorContent: Color = Color.White,
 ) {
-    IconButton(
+    FilledIconButton(
+        modifier = modifier,
         onClick = onClickArrow,
+        shape = RoundedCornerShape(12.dp)
     ) {
-        Icon(
-            imageVector = imageVector,
-            contentDescription = "Regresar"
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                "Seleccionar Fecha: $selectedDate",
+                color = colorContent,
+            )
+            Icon(
+                imageVector = imageVector,
+                contentDescription = "Regresar",
+                tint = colorContent,
+            )
+        }
     }
 }
 
