@@ -6,9 +6,13 @@ import androidx.lifecycle.ViewModel
 import com.deviar.petask.auth.data.GoogleAuthManager
 import com.deviar.petask.auth.domain.LoginUseCase
 import com.deviar.petask.auth.domain.ResetUseCase
+import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -16,6 +20,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val resetUseCase: ResetUseCase,
+    private val getUserUseCase: GetUserUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -91,10 +96,18 @@ class LoginViewModel @Inject constructor(
         val success = googleAuthManager.signIn()
 
         if (success) {
+
+            val user = getUserUseCase().first()
+
             _uiState.update {
-                it.copy(loginSuccess = true)
+                it.copy(
+                    loginSuccess = true,
+                    isNewUser = user == null
+                )
             }
+
         } else {
+
             _uiState.update {
                 it.copy(firebaseError = "Google login failed")
             }
@@ -108,5 +121,6 @@ data class LoginUiState(
     val isLoginEnabled:Boolean = false,
     val firebaseError: String? = null,
     val recoveryMessage: String? = null,
-    val loginSuccess: Boolean = false
+    val loginSuccess: Boolean = false,
+    val isNewUser: Boolean = false
 )

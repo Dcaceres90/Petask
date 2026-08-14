@@ -28,6 +28,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +59,10 @@ fun ProfileScreen(
 ) {
     val context = LocalContext.current
     val state = profileViewModel.state
+
+    LaunchedEffect(Unit) {
+        profileViewModel.loadUser()
+    }
 
     var isEditing by remember { mutableStateOf(false) }
 

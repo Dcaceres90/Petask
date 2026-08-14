@@ -64,7 +64,7 @@ fun NavHost(
                     navigateToProfile = { navController.navigate(Profile) },
                     navigateToLogin = { navController.navigate(Login) { popUpTo(0) } },
                     onLogoutClick = { mainViewModel.singOut() },
-                    onAddCoins = {mainViewModel.earnCoins(-10)}
+                    onAddCoins = {mainViewModel.earnCoins(200)}
                 )
             }
         },
@@ -92,7 +92,14 @@ fun NavHost(
                     navigateToRegister = {
                         navController.navigate(Register)
                     },
-                    navigateToPet = {
+                    navigateToOnboarding = {
+                        navController.navigate(Onboarding) {
+                            popUpTo(Login) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                            navigateToPet = {
                         navController.navigate(Pet) {
                             popUpTo(Login) {
                                 inclusive = true

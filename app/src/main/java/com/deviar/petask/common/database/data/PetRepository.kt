@@ -3,6 +3,8 @@ package com.deviar.petask.common.database.data
 import com.deviar.petask.common.database.data.model.PetModel
 import com.deviar.petask.common.database.domain.dao.PetDao
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 class PetRepository @Inject constructor(
@@ -18,9 +20,28 @@ class PetRepository @Inject constructor(
         petDao.insertPet(pet)
     }
 
-    suspend fun getPet(): PetModel? {
-        val userId = getCurrentUserId() ?: return null
-        return petDao.getPetByUserId(userId)
+    suspend fun getPet(): Flow<PetModel?> {
+        val userId = getCurrentUserId()
+        return if (userId != null) {
+            petDao.getPetByUserId(userId)
+        } else {
+            flowOf(null)
+        }
+    }
+
+    suspend fun increaseHunger() {
+        val userId = getCurrentUserId() ?: return
+        return petDao.increaseHunger(userId)
+    }
+
+    suspend fun updateHunger(hunger: Int, lastHungerUpdate: Long) {
+        val userId = getCurrentUserId() ?: return
+
+        petDao.decreaseHunger(
+            userId = userId,
+            hunger = hunger,
+            lastHungerUpdate = lastHungerUpdate
+        )
     }
 
 }

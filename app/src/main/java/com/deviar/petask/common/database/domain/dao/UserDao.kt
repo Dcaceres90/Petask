@@ -22,9 +22,7 @@ interface UserDao {
     @Query("UPDATE UserModel SET imageUri = :imageUri WHERE id = :userId")
     suspend fun updateProfileImage(userId: String, imageUri: String?)
 
-    @Query("UPDATE UserModel SET coins = coins + :amount WHERE id = :userId")
+    @Query("UPDATE UserModel SET coins = coins + :amount WHERE id = :userId ")
     suspend fun updateCoins(userId: String, amount: Int)
-
-
 
 }
