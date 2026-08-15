@@ -234,6 +234,8 @@ fun PetDetails(pet: PetUiState, petViewModel: PetViewModel) {
 
             }
 
+            Text("Level = ${petViewModel.calculateLevel(pet.exp)}")
+
         }
     }
 }

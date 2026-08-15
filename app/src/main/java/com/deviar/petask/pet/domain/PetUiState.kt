@@ -9,6 +9,7 @@ data class PetUiState(
     val petLevel: Int = 1,
     val state: PetState = PetState.HAPPY,
     val coins: Int = 0,
+    val exp: Int = 0,
     val feedError: String? = null,
     val isLoading: Boolean = true
 )

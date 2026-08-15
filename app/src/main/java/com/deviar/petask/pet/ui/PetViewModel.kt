@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.deviar.petask.common.database.domain.usecase.GetPetUseCase
 import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
 import com.deviar.petask.common.database.domain.usecase.UpdateCoinsUseCase
+import com.deviar.petask.common.database.domain.usecase.UpdateExpUseCase
 import com.deviar.petask.pet.domain.PetState
 import com.deviar.petask.pet.domain.PetUiState
 import com.deviar.petask.pet.domain.usecase.DecreaseHungerUseCase
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.sqrt
 
 @HiltViewModel
 class PetViewModel @Inject constructor(
@@ -24,7 +26,8 @@ class PetViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val updateCoinsUseCase: UpdateCoinsUseCase,
     private val feedPetUseCase: FeedPetUseCase,
-    private val decreaseHungerUseCase: DecreaseHungerUseCase
+    private val decreaseHungerUseCase: DecreaseHungerUseCase,
+    private val updateExpUseCase: UpdateExpUseCase
 ) : ViewModel()  {
 
     val _uiState = MutableStateFlow(PetUiState())
@@ -51,6 +54,7 @@ class PetViewModel @Inject constructor(
                         petLevel = pet.level,
                         state = calculatePetState(pet.hunger),
                         coins = user?.coins ?: 0,
+                        exp = pet.exp,
                         isLoading = false,
                     )
                 }
@@ -100,6 +104,7 @@ class PetViewModel @Inject constructor(
 
             feedPetUseCase()
             updateCoinsUseCase(-100)
+            updateExpUseCase(5)
 
             _uiState.update {
                 it.copy(feedError = null)
@@ -107,6 +112,16 @@ class PetViewModel @Inject constructor(
 
         }
 
+    }
+
+    fun calculateLevel(exp: Int): Int {
+        var level = 1
+
+        while (exp >= 10 * level * level && level < 100) {
+            level++
+        }
+
+        return level
     }
 
 

@@ -33,4 +33,7 @@ interface PetDao {
         hunger: Int,
         lastHungerUpdate: Long
     )
+
+    @Query("UPDATE PetModel SET exp = exp + :amount WHERE userId = :userId ")
+    suspend fun updateExp(userId: String, amount: Int)
 }

@@ -44,4 +44,9 @@ class PetRepository @Inject constructor(
         )
     }
 
+    suspend fun updateExp(amount: Int){
+        val userId = getCurrentUserId() ?: return
+        petDao.updateExp(userId, amount)
+    }
+
 }

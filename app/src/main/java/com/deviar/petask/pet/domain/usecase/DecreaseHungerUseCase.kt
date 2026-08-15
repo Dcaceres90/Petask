@@ -12,9 +12,9 @@ class DecreaseHungerUseCase @Inject constructor(
         val timePassed = currentTime - pet.lastHungerUpdate
 
         val twelveHours = 12 * 60 * 60 * 1000L
-        //val fiveMinutes = 5 * 60 * 1000L
+        val fiveMinutes = 5 * 60 * 1000L
 
-        val hungerLost = (timePassed / twelveHours).toInt()
+        val hungerLost = (timePassed / fiveMinutes).toInt()
 
         if (hungerLost <= 0) {
             return pet

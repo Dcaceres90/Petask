@@ -11,6 +11,7 @@ data class PetModel (
     val petName: String,
     val hunger: Int = 5,
     val level: Int = 1,
+    val exp: Int = 0,
     val lastHungerUpdate: Long = System.currentTimeMillis()
 )
 
