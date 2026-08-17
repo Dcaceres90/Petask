@@ -28,21 +28,14 @@ import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.ui.components.listas.MiListaHorizontal
 import com.deviar.petask.common.ui.theme.PetaskTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.deviar.petask.common.ui.components.FormAlertDialog
+import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
-import com.deviar.petask.common.ui.theme.Background
-import com.deviar.petask.common.ui.theme.Purple80
-import com.deviar.petask.common.ui.theme.PurpleGrey80
-import com.deviar.petask.common.ui.theme.Secondary
 import kotlin.String
 
 @RequiresApi(Build.VERSION_CODES.O)
