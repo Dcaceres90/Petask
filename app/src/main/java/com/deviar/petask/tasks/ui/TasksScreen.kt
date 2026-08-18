@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.deviar.petask.common.ui.components.listas.MiListaHorizontal
+import com.deviar.petask.common.ui.components.listas.ListHorizontalCustom
 import com.deviar.petask.common.ui.theme.PetaskTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -129,7 +129,7 @@ fun ListaFechas(
         Spacer(modifier = Modifier.height(20.dp))
         // Mostrar los botones para cada fecha
         Row() {
-            MiListaHorizontal(
+            ListHorizontalCustom(
                 items = dates,
                 onClickItem = onClickDate
             )

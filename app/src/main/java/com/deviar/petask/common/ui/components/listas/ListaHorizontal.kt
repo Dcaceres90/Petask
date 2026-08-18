@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.ui.components.item.ItemCard
 
 @Composable
-fun MiListaHorizontal(
+fun ListHorizontalCustom(
     items: List<String>,
     onClickItem: (String) -> Unit,
 ) {
@@ -32,8 +32,8 @@ fun MiListaHorizontal(
 
 @Preview(showBackground = true)
 @Composable
-fun MiListaHorizontalPreview() {
-    MiListaHorizontal(
+fun ListHorizontalCustomPreview() {
+    ListHorizontalCustom(
         items = listOf("Item 1", "Item 2", "Item 3", "Item 4"),
         onClickItem = {},
     )

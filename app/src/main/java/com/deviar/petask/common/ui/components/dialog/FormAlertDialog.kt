@@ -1,5 +1,8 @@
 package com.deviar.petask.common.ui.components.dialog
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +13,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,6 +77,11 @@ fun DialogView(
     emailInput: String = "",
     onValueChangedDate: (String) -> Unit,
 ) {
+    var dateSelected by remember { mutableLongStateOf(0L) }
+    var textDateTask by remember { mutableStateOf("Fecha de la tarea") }
+    val interactionSource = remember { MutableInteractionSource() }
+    val showDatePickerDialog by interactionSource.collectIsPressedAsState()
+
     // Contenedor vertical para organizar los campos de texto
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -83,19 +93,22 @@ fun DialogView(
         OutlinedTextField(
             value = nameInput,
             onValueChange = onValueChangedText,
-            label = { Text("Nombre completo") },
+            label = { Text("Descripción de la tarea") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-        Row() {
-            //Spinner with onclick and alert dialog
-            val listado = DificultLevel.entries.map { it.name }
-            SpinnerCustom(
-                listado = listado
-            )
+        //Spinner with onclick and alert dialog
+        val listado = DificultLevel.entries.map { it.name }
+        SpinnerCustom(
+            listado = listado
+        )
+
+        if (showDatePickerDialog) {
             DatePickerDialogCustom(
                 onDateSelected = {
                     // Handle the selected date
+                    dateSelected = it ?: 0L
+                    textDateTask = dateSelected.toString()
                 },
                 onDismiss = {
                     // Handle the dismiss event
@@ -107,9 +120,10 @@ fun DialogView(
         OutlinedTextField(
             value = emailInput,
             onValueChange = onValueChangedDate,
-            label = { Text("Correo electrónico") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            label = { Text(textDateTask) },
+            readOnly = true,
+            interactionSource = interactionSource,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
