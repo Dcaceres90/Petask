@@ -3,6 +3,7 @@ package com.deviar.petask.auth.ui.login
 import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.deviar.petask.auth.data.GoogleAuthManager
 import com.deviar.petask.auth.domain.LoginUseCase
 import com.deviar.petask.auth.domain.ResetUseCase
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,16 +52,28 @@ class LoginViewModel @Inject constructor(
     fun isPasswordFormatValid(password: String):Boolean = password.length >= 6
 
     fun login() {
+
         loginUseCase(
             email = _uiState.value.email,
             password = _uiState.value.password,
         ) { error ->
 
             if (error == null) {
-                _uiState.update { state ->
-                    state.copy(loginSuccess = true)
+
+                viewModelScope.launch {
+
+                    val user = getUserUseCase().first()
+
+                    _uiState.update { state ->
+                        state.copy(
+                            loginSuccess = true,
+                            isNewUser = user == null
+                        )
+                    }
                 }
+
             } else {
+
                 _uiState.update { state ->
                     state.copy(firebaseError = error)
                 }

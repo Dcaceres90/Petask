@@ -49,4 +49,9 @@ class PetRepository @Inject constructor(
         petDao.updateExp(userId, amount)
     }
 
+    suspend fun deletePet() {
+        val userId = getCurrentUserId() ?: return
+        petDao.deletePet(userId)
+    }
+
 }

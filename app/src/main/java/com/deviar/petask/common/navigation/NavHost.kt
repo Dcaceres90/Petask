@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,6 +18,7 @@ import com.deviar.petask.pet.ui.PetScreen
 import com.deviar.petask.tasks.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
+import com.deviar.petask.createpet.CreatePetScreen
 import com.deviar.petask.onboarding.ui.OnboardingScreen
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
@@ -26,13 +28,15 @@ import com.deviar.petask.profile.ProfileViewModel
 fun NavHost(
     modifier: Modifier = Modifier,
     isLogged: Boolean,
-    hasCompletedOnboarding : Boolean,
+    hasUserModel: Boolean,
+    hasPetModel: Boolean,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     val navController = rememberNavController()
 
     val profileViewModel: ProfileViewModel = hiltViewModel()
+
 
     val currentDestination =
         navController.currentBackStackEntryAsState()
@@ -49,8 +53,10 @@ fun NavHost(
     val startDestination =
         if (!isLogged) {
             Login
-        } else if (!hasCompletedOnboarding) {
+        } else if (!hasUserModel) {
             Onboarding
+        } else if (!hasPetModel) {
+            CreatePet
         } else {
             Pet
         }
@@ -153,6 +159,19 @@ fun NavHost(
                 ProfileScreen(
                     modifier = Modifier.padding(innerPadding),
                     profileViewModel = profileViewModel
+                )
+            }
+
+            composable<CreatePet> {
+                CreatePetScreen(
+                    createPetViewModel = hiltViewModel(),
+                    navigateToPet = {
+                        navController.navigate(Pet) {
+                            popUpTo(CreatePet) {
+                                inclusive = true
+                            }
+                        }
+                    }
                 )
             }
         }

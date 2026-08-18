@@ -21,7 +21,8 @@ class MainActivity : ComponentActivity() {
             if (!mainViewModel.state.isLoading) {
                 NavHost(
                     isLogged = mainViewModel.isLogged,
-                    hasCompletedOnboarding = mainViewModel.state.hasCompletedOnboarding
+                    hasUserModel = mainViewModel.state.hasUserModel,
+                    hasPetModel = mainViewModel.state.hasPetModel
                 )
                 Log.i(
                     "Iara",

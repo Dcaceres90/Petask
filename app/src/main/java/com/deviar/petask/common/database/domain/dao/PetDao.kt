@@ -36,4 +36,7 @@ interface PetDao {
 
     @Query("UPDATE PetModel SET exp = exp + :amount WHERE userId = :userId ")
     suspend fun updateExp(userId: String, amount: Int)
+
+    @Query("DELETE FROM PetModel WHERE userId = :userId")
+    suspend fun deletePet(userId: String)
 }

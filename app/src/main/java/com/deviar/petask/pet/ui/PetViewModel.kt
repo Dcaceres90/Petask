@@ -3,6 +3,7 @@ package com.deviar.petask.pet.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.deviar.petask.common.database.domain.usecase.DeletePetUseCase
 import com.deviar.petask.common.database.domain.usecase.GetPetUseCase
 import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
 import com.deviar.petask.common.database.domain.usecase.UpdateCoinsUseCase
@@ -27,7 +28,8 @@ class PetViewModel @Inject constructor(
     private val updateCoinsUseCase: UpdateCoinsUseCase,
     private val feedPetUseCase: FeedPetUseCase,
     private val decreaseHungerUseCase: DecreaseHungerUseCase,
-    private val updateExpUseCase: UpdateExpUseCase
+    private val updateExpUseCase: UpdateExpUseCase,
+    private val deletePetUseCase: DeletePetUseCase
 ) : ViewModel()  {
 
     val _uiState = MutableStateFlow(PetUiState())
@@ -64,10 +66,13 @@ class PetViewModel @Inject constructor(
 
     fun refreshPet(){
         viewModelScope.launch {
-            val pet = getPetUseCase().first()
-                ?: return@launch
+            val pet = getPetUseCase().first() ?: return@launch
 
-            decreaseHungerUseCase(pet)
+            val updatedPet = decreaseHungerUseCase(pet)
+
+            if (updatedPet.hunger <= 0) {
+                deletePetUseCase()
+            }
         }
     }
 
@@ -123,6 +128,5 @@ class PetViewModel @Inject constructor(
 
         return level
     }
-
 
 }
