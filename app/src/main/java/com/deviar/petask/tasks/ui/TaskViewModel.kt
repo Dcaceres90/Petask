@@ -6,6 +6,7 @@ import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.database.domain.usecase.task.GetTaskByDateUseCase
 import com.deviar.petask.common.database.domain.usecase.task.InsertTaskUseCase
 import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
+import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.NewTaskFormState
 import com.deviar.petask.tasks.domain.TasksState
 import com.deviar.petask.tasks.util.TaskConstans
@@ -60,6 +61,22 @@ class TaskViewModel @Inject constructor(
         _newTaskFormState.update { estadoActual ->
             estadoActual.copy(
                 dateToDo = selectedDate
+            )
+        }
+    }
+
+    fun updateTitleNewTaskFormScreen(title: String) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                title = title
+            )
+        }
+    }
+
+    fun updateLevelDificultNewTaskFormScreen(levelDificult: LevelDificult) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                levelDificult = levelDificult,
             )
         }
     }

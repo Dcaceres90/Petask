@@ -78,21 +78,27 @@ fun TasksScreen(
             Column(modifier = Modifier.padding(paddingValues)) {
                 if (showDialog) {
                     FormAlertDialog(
-                        selectedDate = newTaskFormState.dateToDo ?: "Fecha de la tarea",
+                        newTaskFormState = newTaskFormState,
                         selectedDateLong = Date().time,
                         onDismiss = {
                                 showDialog = false
                             },
-                        onConfirm = { nombre, correo -> {
-                                showDialog = false
-                                itemList.add(nombre)
-                            }
-                        },
                         onDateSelected = {
                             // Handle the selected date
                             viewModel.updateNewTaskFormScreenDateToDo(
                                 selectedDate = it?.toString() ?: viewModel.getDateSelectedFormat(),
                             )
+                        },
+                        onValueChangedText = {
+                            viewModel.updateTitleNewTaskFormScreen(title = it)
+                        },
+                        onClickConfirm = {
+                            // Enviamos los datos capturados a la función superior
+                            showDialog = false
+                            // itemList.add(nombre)
+                        },
+                        onValueChangedDate = {
+
                         },
                     )
                 }

@@ -19,18 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.ui.components.button.SpinnerCustom
 import com.deviar.petask.common.utils.LevelDificult
+import com.deviar.petask.tasks.domain.NewTaskFormState
 
 @Composable
 fun FormAlertDialog(
-    selectedDate: String,
     selectedDateLong: Long,
+    newTaskFormState: NewTaskFormState,
     onDismiss: () -> Unit,
-    onConfirm: (nombre: String, correo: String) -> Unit,
     onDateSelected: (Long?) -> Unit,
+    onValueChangedText: (String) -> Unit,
+    onClickConfirm: () -> Unit,
+    onValueChangedDate: (String) -> Unit,
 ) {
     // Variables de estado locales para guardar lo que escribe el usuario
-    var nameInput by remember { mutableStateOf("") }
-    var emailInput by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = { onDismiss() }, // Se ejecuta al tocar fuera o presionar atrás
@@ -39,26 +40,18 @@ fun FormAlertDialog(
         },
         text = {
             DialogView(
-                selectedDate = selectedDate,
+                newTaskFormState = newTaskFormState,
                 selectedDateLong = selectedDateLong,
-                nameInput = nameInput,
-                onValueChangedText = {
-                    nameInput = it
-                },
-                onDateSelected = onDateSelected,
-                onValueChangedDate = {
-                    emailInput = it
-                },
+                onValueChangedTitle = onValueChangedText,
+                onClickDateSelected = onDateSelected,
+                onValueChangedDate = onValueChangedDate,
             )
         },
         confirmButton = {
             Button(
-                onClick = {
-                    // Enviamos los datos capturados a la función superior
-                    onConfirm(nameInput, emailInput)
-                },
+                onClick = onClickConfirm,
                 // Opcional: Deshabilitar el botón si algún campo está vacío
-                enabled = nameInput.isNotBlank() && emailInput.isNotBlank()
+                enabled = newTaskFormState.title.isNotBlank() && newTaskFormState.dateToDo.isNotBlank()
             ) {
                 Text("Guardar")
             }
@@ -73,19 +66,19 @@ fun FormAlertDialog(
 
 @Composable
 fun DialogView(
-    selectedDate: String = "",
+    newTaskFormState: NewTaskFormState,
     selectedDateLong: Long = 0L,
-    nameInput: String = "",
-    onValueChangedText: (String) -> Unit,
+    onValueChangedTitle: (String) -> Unit,
     onValueChangedDate: (String) -> Unit,
-    onDateSelected: (Long?) -> Unit ,
+    onClickDateSelected: (Long?) -> Unit,
 ) {
-    var textDateTask by remember { mutableStateOf(selectedDate) }
     var showDatePickerDialog by remember { mutableStateOf(false) }
+    var enabledDateSpicker by remember { mutableStateOf(false) }
     val modifer =
             Modifier
                 .fillMaxWidth()
                 .clickable {
+                    enabledDateSpicker = true
                     showDatePickerDialog = true
                 }
 
@@ -98,9 +91,9 @@ fun DialogView(
 
         // Primer campo de entrada
         OutlinedTextField(
-            value = nameInput,
-            onValueChange = onValueChangedText,
-            label = { Text("Descripción de la tarea") },
+            value = "Título",
+            onValueChange = onValueChangedTitle,
+            label = { Text(newTaskFormState.title) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -115,19 +108,20 @@ fun DialogView(
         ) {
             OutlinedTextField(
                 value = "Fecha de la tarea",
-                onValueChange = {},
+                onValueChange = onValueChangedDate,
                 readOnly = true,
-                enabled = false,
-                label = { Text(textDateTask) },
+                enabled = enabledDateSpicker,
+                label = { Text(newTaskFormState.dateToDo) },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
         if (showDatePickerDialog) {
             DatePickerDialogCustom(
                 selectedDate = selectedDateLong,
-                onDateSelected = onDateSelected,
+                onDateSelected = onClickDateSelected,
                 onDismiss = {
                     // Handle the dismiss event
+                    enabledDateSpicker = false
                     showDatePickerDialog = false
                 }
             )
