@@ -34,9 +34,19 @@ class TaskViewModel @Inject constructor(
 
 
     // Obtener la fecha de hoy
-    fun getCurrentDate(): String {
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return dateFormat.format(Date())
+
+    val _dateSelected: Flow<SimpleDateFormat> = MutableStateFlow(
+        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),
+    )
+
+    var dateSelected = _dateSelected.stateIn(
+        viewModelScope,
+    SharingStarted.WhileSubscribed(),
+    null,
+    )
+
+    fun getDateSelectedFormat(): String? {
+        return dateSelected.value?.format(Date())
     }
 
     fun getUpcomingDates(): List<String> {

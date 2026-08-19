@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
+import java.util.Date
 import kotlin.String
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -43,7 +44,12 @@ import kotlin.String
 fun TasksScreen(
     viewModel: TaskViewModel,
 ) {
-    var selectedDate by remember { mutableStateOf(viewModel.getCurrentDate()) }
+    var selectedDate by remember { mutableStateOf(viewModel.getDateSelectedFormat()) }
+    var selectedDateLong by remember {
+        mutableStateOf(
+        viewModel.dateSelected.value?.calendar?.time?.time
+        )
+    }
     var showDialog by remember { mutableStateOf(false) }
     val dates = viewModel.getUpcomingDates()
     val itemList = remember { mutableStateListOf<String>() }
@@ -62,7 +68,7 @@ fun TasksScreen(
                         bottom = 60.dp,
                     ),
                     onClickFloating = {
-                        showDialog = !showDialog
+                        showDialog = true
                     }
                 )
             },
@@ -71,12 +77,19 @@ fun TasksScreen(
             Column(modifier = Modifier.padding(paddingValues)) {
                 if (showDialog) {
                     FormAlertDialog(
-                        onDismiss = { showDialog = false },
+                        selectedDate = selectedDateLong ?: Date().time,
+                        onDismiss = {
+                                showDialog = false
+                            },
                         onConfirm = { nombre, correo -> {
-                            showDialog = false
-                            itemList.add(nombre)
-                        }
-                        }
+                                showDialog = false
+                                itemList.add(nombre)
+                            }
+                        },
+                        onDateSelected = {
+                            // Handle the selected date
+                            selectedDate = it?.toString() ?: viewModel.getDateSelectedFormat()
+                        },
                     )
                 }
                 TaskStructureScreen(
@@ -95,7 +108,7 @@ fun TasksScreen(
 
 @Composable
 fun TaskStructureScreen(
-    selectedDate: String,
+    selectedDate: String?,
     dates: List<String>,
     itemList: List<String>,
     onClickDate:(String) -> Unit = {}
@@ -116,7 +129,7 @@ fun TaskStructureScreen(
 
 @Composable
 fun ListaFechas(
-    selectedDate: String,
+    selectedDate: String?,
     dates: List<String>,
     onClickDate:(String) -> Unit = {}
 ) {
@@ -139,7 +152,7 @@ fun ListaFechas(
 
 @Composable
 fun ListaTask(
-    selectedDate: String,
+    selectedDate: String?,
     itemList: List<String>,
 ) {
     Column(
@@ -170,7 +183,7 @@ fun ListaTask(
 fun  FilledIconottomCustom(
     modifier: Modifier = Modifier,
     onClickArrow: () -> Unit,
-    selectedDate: String,
+    selectedDate: String?,
     imageVector: ImageVector = Icons.Filled.Delete,
     colorContent: Color = Color.White,
 ) {

@@ -26,8 +26,10 @@ import com.deviar.petask.common.utils.DificultLevel
 
 @Composable
 fun FormAlertDialog(
+    selectedDate: Long,
     onDismiss: () -> Unit,
-    onConfirm: (nombre: String, correo: String) -> Unit
+    onConfirm: (nombre: String, correo: String) -> Unit,
+    onDateSelected: (Long?) -> Unit,
 ) {
     // Variables de estado locales para guardar lo que escribe el usuario
     var nameInput by remember { mutableStateOf("") }
@@ -40,11 +42,12 @@ fun FormAlertDialog(
         },
         text = {
             DialogView(
+                selectedDate = selectedDate,
                 nameInput = nameInput,
                 onValueChangedText = {
                     nameInput = it
                 },
-                emailInput = emailInput,
+                onDateSelected = onDateSelected,
                 onValueChangedDate = {
                     emailInput = it
                 },
@@ -72,15 +75,14 @@ fun FormAlertDialog(
 
 @Composable
 fun DialogView(
+    selectedDate: Long = 0L,
     nameInput: String = "",
     onValueChangedText: (String) -> Unit,
-    emailInput: String = "",
     onValueChangedDate: (String) -> Unit,
+    onDateSelected: (Long?) -> Unit ,
 ) {
-    var dateSelected by remember { mutableLongStateOf(0L) }
     var textDateTask by remember { mutableStateOf("Fecha de la tarea") }
-    val interactionSource = remember { MutableInteractionSource() }
-    val showDatePickerDialog by interactionSource.collectIsPressedAsState()
+    var showDatePickerDialog by remember { mutableStateOf(false) }
 
     // Contenedor vertical para organizar los campos de texto
     Column(
@@ -103,27 +105,25 @@ fun DialogView(
             listado = listado
         )
 
+        // Segundo campo de entrada
+        Text(
+            text = textDateTask,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        showDatePickerDialog = true
+                    },
+        )
         if (showDatePickerDialog) {
             DatePickerDialogCustom(
-                onDateSelected = {
-                    // Handle the selected date
-                    dateSelected = it ?: 0L
-                    textDateTask = dateSelected.toString()
-                },
+                selectedDate = selectedDate,
+                onDateSelected = onDateSelected,
                 onDismiss = {
                     // Handle the dismiss event
+                    showDatePickerDialog = false
                 }
             )
         }
-
-        // Segundo campo de entrada
-        OutlinedTextField(
-            value = emailInput,
-            onValueChange = onValueChangedDate,
-            label = { Text(textDateTask) },
-            readOnly = true,
-            interactionSource = interactionSource,
-            modifier = Modifier.fillMaxWidth(),
-        )
     }
 }

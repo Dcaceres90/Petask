@@ -12,17 +12,19 @@ import androidx.compose.runtime.LaunchedEffect
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialogCustom(
+    selectedDate: Long,
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    //  val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = selectedDate
     )
 
     LaunchedEffect(datePickerState.selectedDateMillis) {
-       // viewModel.onDateSelected(datePickerState.selectedDateMillis)
+       onDateSelected(datePickerState.selectedDateMillis)
     }
+
+    //El tiempo seleccionado hay que hacerlo
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
