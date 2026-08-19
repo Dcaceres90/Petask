@@ -6,12 +6,17 @@ import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.database.domain.usecase.task.GetTaskByDateUseCase
 import com.deviar.petask.common.database.domain.usecase.task.InsertTaskUseCase
 import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
+import com.deviar.petask.tasks.domain.NewTaskFormState
+import com.deviar.petask.tasks.domain.TasksState
 import com.deviar.petask.tasks.util.TaskConstans
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -25,6 +30,44 @@ class TaskViewModel @Inject constructor(
     private val insertTaskUseCase: InsertTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
 ): ViewModel() {
+    private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
+    val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
+
+    fun setUiTaskState(taksState: TasksState) {
+        _uiTasksState.value = taksState
+    }
+
+    fun updateScreenSelectedDate(selectedDate: String) {
+        _uiTasksState.update { estadoActual ->
+            estadoActual.copy(
+                selectedDate = selectedDate
+            )
+        }
+    }
+
+    fun updateScreenDatesList(datesUpcoming: List<String>) {
+        _uiTasksState.update { estadoActual ->
+            estadoActual.copy(
+                datesUpcoming = datesUpcoming
+            )
+        }
+    }
+
+    private var _newTaskFormState: MutableStateFlow<NewTaskFormState> = MutableStateFlow(NewTaskFormState())
+    val newTaskFormState: StateFlow<NewTaskFormState> = _newTaskFormState.asStateFlow()
+
+    fun updateNewTaskFormScreenDateToDo(selectedDate: String) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                dateToDo = selectedDate
+            )
+        }
+    }
+
+    fun setNewTaskFormState(taksState: NewTaskFormState) {
+        _newTaskFormState.value = taksState
+    }
+
     private var _taskList: Flow<List<TaskModel?>>? = MutableStateFlow(arrayListOf())
     val taskSuccess = _taskList?.stateIn(
         viewModelScope,
@@ -35,18 +78,8 @@ class TaskViewModel @Inject constructor(
 
     // Obtener la fecha de hoy
 
-    val _dateSelected: Flow<SimpleDateFormat> = MutableStateFlow(
-        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),
-    )
-
-    var dateSelected = _dateSelected.stateIn(
-        viewModelScope,
-    SharingStarted.WhileSubscribed(),
-    null,
-    )
-
-    fun getDateSelectedFormat(): String? {
-        return dateSelected.value?.format(Date())
+    fun getDateSelectedFormat(): String {
+        return SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
     }
 
     fun getUpcomingDates(): List<String> {

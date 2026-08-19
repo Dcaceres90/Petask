@@ -1,11 +1,9 @@
 package com.deviar.petask.common.ui.components.dialog
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -13,20 +11,19 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.ui.components.button.SpinnerCustom
-import com.deviar.petask.common.utils.DificultLevel
+import com.deviar.petask.common.utils.LevelDificult
 
 @Composable
 fun FormAlertDialog(
-    selectedDate: Long,
+    selectedDate: String,
+    selectedDateLong: Long,
     onDismiss: () -> Unit,
     onConfirm: (nombre: String, correo: String) -> Unit,
     onDateSelected: (Long?) -> Unit,
@@ -43,6 +40,7 @@ fun FormAlertDialog(
         text = {
             DialogView(
                 selectedDate = selectedDate,
+                selectedDateLong = selectedDateLong,
                 nameInput = nameInput,
                 onValueChangedText = {
                     nameInput = it
@@ -75,14 +73,21 @@ fun FormAlertDialog(
 
 @Composable
 fun DialogView(
-    selectedDate: Long = 0L,
+    selectedDate: String = "",
+    selectedDateLong: Long = 0L,
     nameInput: String = "",
     onValueChangedText: (String) -> Unit,
     onValueChangedDate: (String) -> Unit,
     onDateSelected: (Long?) -> Unit ,
 ) {
-    var textDateTask by remember { mutableStateOf("Fecha de la tarea") }
+    var textDateTask by remember { mutableStateOf(selectedDate) }
     var showDatePickerDialog by remember { mutableStateOf(false) }
+    val modifer =
+            Modifier
+                .fillMaxWidth()
+                .clickable {
+                    showDatePickerDialog = true
+                }
 
     // Contenedor vertical para organizar los campos de texto
     Column(
@@ -100,24 +105,26 @@ fun DialogView(
             modifier = Modifier.fillMaxWidth()
         )
         //Spinner with onclick and alert dialog
-        val listado = DificultLevel.entries.map { it.name }
+        val listado = LevelDificult.entries.map { it.name }
         SpinnerCustom(
             listado = listado
         )
 
-        // Segundo campo de entrada
-        Text(
-            text = textDateTask,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        showDatePickerDialog = true
-                    },
-        )
+        Box(
+            modifier = modifer
+        ) {
+            OutlinedTextField(
+                value = "Fecha de la tarea",
+                onValueChange = {},
+                readOnly = true,
+                enabled = false,
+                label = { Text(textDateTask) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
         if (showDatePickerDialog) {
             DatePickerDialogCustom(
-                selectedDate = selectedDate,
+                selectedDate = selectedDateLong,
                 onDateSelected = onDateSelected,
                 onDismiss = {
                     // Handle the dismiss event

@@ -34,8 +34,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
+import com.deviar.petask.tasks.domain.TasksState
 import java.util.Date
 import kotlin.String
 
@@ -45,14 +47,13 @@ fun TasksScreen(
     viewModel: TaskViewModel,
 ) {
     var selectedDate by remember { mutableStateOf(viewModel.getDateSelectedFormat()) }
-    var selectedDateLong by remember {
-        mutableStateOf(
-        viewModel.dateSelected.value?.calendar?.time?.time
-        )
-    }
     var showDialog by remember { mutableStateOf(false) }
-    val dates = viewModel.getUpcomingDates()
     val itemList = remember { mutableStateListOf<String>() }
+    val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
+    val newTaskFormState by viewModel.newTaskFormState.collectAsStateWithLifecycle()
+    viewModel.updateScreenDatesList(
+        datesUpcoming = viewModel.getUpcomingDates(),
+    )
     Box(
         modifier = Modifier.padding(
             start = 20.dp,
@@ -77,7 +78,8 @@ fun TasksScreen(
             Column(modifier = Modifier.padding(paddingValues)) {
                 if (showDialog) {
                     FormAlertDialog(
-                        selectedDate = selectedDateLong ?: Date().time,
+                        selectedDate = newTaskFormState.dateToDo ?: "Fecha de la tarea",
+                        selectedDateLong = Date().time,
                         onDismiss = {
                                 showDialog = false
                             },
@@ -88,17 +90,19 @@ fun TasksScreen(
                         },
                         onDateSelected = {
                             // Handle the selected date
-                            selectedDate = it?.toString() ?: viewModel.getDateSelectedFormat()
+                            viewModel.updateNewTaskFormScreenDateToDo(
+                                selectedDate = it?.toString() ?: viewModel.getDateSelectedFormat(),
+                            )
                         },
                     )
                 }
                 TaskStructureScreen(
-                    selectedDate = selectedDate,
-                    dates = dates,
-                    itemList = itemList,
+                    uiTasksState,
                     onClickDate = { date ->
-                        selectedDate = date
-                    }
+                        viewModel.updateScreenSelectedDate(
+                            selectedDate = date ?: viewModel.getDateSelectedFormat(),
+                        )
+                    },
                 )
             }
         }
@@ -108,21 +112,19 @@ fun TasksScreen(
 
 @Composable
 fun TaskStructureScreen(
-    selectedDate: String?,
-    dates: List<String>,
-    itemList: List<String>,
+    tasksState: TasksState,
     onClickDate:(String) -> Unit = {}
 ) {
     Column {
         ListaFechas(
-            selectedDate = selectedDate,
-            dates = dates,
+            selectedDate = tasksState.selectedDate,
+            dates = tasksState.datesUpcoming,
             onClickDate = onClickDate
         )
         Spacer(modifier = Modifier.height(20.dp))
         ListaTask(
-            selectedDate = selectedDate,
-            itemList = itemList,
+            selectedDate = tasksState.selectedDate,
+            itemList = tasksState.taskList,
         )
     }
 }
@@ -131,7 +133,7 @@ fun TaskStructureScreen(
 fun ListaFechas(
     selectedDate: String?,
     dates: List<String>,
-    onClickDate:(String) -> Unit = {}
+    onClickDate:(String) -> Unit = {},
 ) {
     Column(
         modifier = Modifier,
@@ -141,10 +143,10 @@ fun ListaFechas(
 
         Spacer(modifier = Modifier.height(20.dp))
         // Mostrar los botones para cada fecha
-        Row() {
+        Row {
             ListHorizontalCustom(
                 items = dates,
-                onClickItem = onClickDate
+                onClickItem = onClickDate,
             )
         }
     }
@@ -216,9 +218,7 @@ fun  FilledIconottomCustom(
 fun PreviewTasksScreen() {
     PetaskTheme {
         TaskStructureScreen(
-            dates = listOf(),
-            selectedDate = "23/02/1990",
-            itemList = listOf(),
+            TasksState(),
             onClickDate = {},
         )
     }
