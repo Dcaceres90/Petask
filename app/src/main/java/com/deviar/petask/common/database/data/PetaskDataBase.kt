@@ -10,7 +10,7 @@ import com.deviar.petask.common.database.data.model.UserModel
 import com.deviar.petask.common.database.domain.dao.PetDao
 import com.deviar.petask.common.database.domain.typeconverter.PetTypeConverter
 
-@Database(entities = [UserModel::class, PetModel::class], version = 4)
+@Database(entities = [UserModel::class, PetModel::class], version = 5)
 
 @TypeConverters(PetTypeConverter::class)
 abstract class PetaskDataBase: RoomDatabase() {

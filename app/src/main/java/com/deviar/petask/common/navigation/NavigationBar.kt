@@ -34,7 +34,7 @@ fun PetaskNavigationBar(navController: NavHostController, modifier: Modifier = M
     val itemList = listOf(
         NavItem("Pet", Icons.Default.Pets, Pet),
         NavItem("Tasks", Icons.Default.Checklist, Tasks),
-        NavItem("Calendar", Icons.Default.CalendarMonth, Goals)
+        NavItem("Goals", Icons.Default.CalendarMonth, Goals)
     )
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination
