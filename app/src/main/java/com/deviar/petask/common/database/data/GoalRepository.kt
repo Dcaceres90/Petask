@@ -1,9 +1,12 @@
-package com.deviar.petask.common.database.data.model
+package com.deviar.petask.common.database.data
 
+import com.deviar.petask.common.database.data.model.GoalModel
+import com.deviar.petask.common.database.data.model.GoalType
 import com.deviar.petask.common.database.domain.dao.GoalDao
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import java.util.UUID
 import javax.inject.Inject
 
 class GoalRepository @Inject constructor(
@@ -24,7 +27,17 @@ class GoalRepository @Inject constructor(
         }
     }
 
-    suspend fun saveGoal(goal: GoalModel) {
+    suspend fun saveGoal(text: String, goalType: GoalType) {
+        val userId = getCurrentUserId() ?: return
+
+        val goal = GoalModel(
+            goalId = UUID.randomUUID().toString(),
+            userId = userId,
+            text = text,
+            isComplete = false,
+            goalType = goalType
+        )
+
         goalDao.insertGoal(goal)
     }
 

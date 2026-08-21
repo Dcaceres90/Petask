@@ -2,18 +2,23 @@ package com.deviar.petask.goals
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.deviar.petask.common.database.data.model.GoalModel
+import com.deviar.petask.common.database.data.model.GoalType
 import com.deviar.petask.goals.usecase.GetGoalsUseCase
+import com.deviar.petask.goals.usecase.SaveGoalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class GoalsViewModel @Inject constructor(
-    private var getGoalsUseCase: GetGoalsUseCase
+    private var getGoalsUseCase: GetGoalsUseCase,
+    private val saveGoalUseCase: SaveGoalUseCase
 )  : ViewModel() {
 
     val _uiState = MutableStateFlow(GoalsUiState())
@@ -46,11 +51,20 @@ class GoalsViewModel @Inject constructor(
         }
     }
 
+    fun createTestGoal(){
+        viewModelScope.launch {
+            saveGoalUseCase(
+                    text = "Mi primer goal",
+                    goalType = GoalType.WEEKLY
+            )
+
+        }
+    }
+
 
     fun onAddNewGoal (){}
     fun onDeleteGoal (){}
     fun updateGoalName(){}
-
 
 
 }

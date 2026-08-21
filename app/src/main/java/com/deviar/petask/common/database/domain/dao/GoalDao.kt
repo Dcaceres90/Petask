@@ -19,4 +19,5 @@ interface GoalDao {
     @Query("DELETE FROM goalmodel WHERE goalId = :goalId")
     suspend fun deleteByGoalId(goalId: String)
 
+
 }

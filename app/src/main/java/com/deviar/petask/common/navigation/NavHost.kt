@@ -150,7 +150,10 @@ fun NavHost(
             }
 
             composable<Goals> {
-                GoalsScreen()
+                GoalsScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    goalsViewModel = hiltViewModel()
+                )
 
             }
 
