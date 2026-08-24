@@ -57,7 +57,15 @@ class TaskViewModel @Inject constructor(
     private var _newTaskFormState: MutableStateFlow<NewTaskFormState> = MutableStateFlow(NewTaskFormState())
     val newTaskFormState: StateFlow<NewTaskFormState> = _newTaskFormState.asStateFlow()
 
-    fun updateNewTaskFormScreenDateToDo(selectedDate: String) {
+    fun updateNewTaskFormScreenDateToDoString(selectedDate: String) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                dateToDoString = selectedDate
+            )
+        }
+    }
+
+    fun updateNewTaskFormScreenDateToDo(selectedDate: Date) {
         _newTaskFormState.update { estadoActual ->
             estadoActual.copy(
                 dateToDo = selectedDate

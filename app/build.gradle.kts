@@ -46,6 +46,7 @@ android {
 dependencies {
 
     implementation(libs.ads.mobile.sdk)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)

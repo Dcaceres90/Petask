@@ -46,9 +46,7 @@ import kotlin.String
 fun TasksScreen(
     viewModel: TaskViewModel,
 ) {
-    var selectedDate by remember { mutableStateOf(viewModel.getDateSelectedFormat()) }
-    var showDialog by remember { mutableStateOf(false) }
-    val itemList = remember { mutableStateListOf<String>() }
+    var showFormAlertDialog by remember { mutableStateOf(false) }
     val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
     val newTaskFormState by viewModel.newTaskFormState.collectAsStateWithLifecycle()
     viewModel.updateScreenDatesList(
@@ -69,36 +67,39 @@ fun TasksScreen(
                         bottom = 60.dp,
                     ),
                     onClickFloating = {
-                        showDialog = true
+                        showFormAlertDialog = true
                     }
                 )
             },
         ) { paddingValues ->
             // contenido de la pantalla
             Column(modifier = Modifier.padding(paddingValues)) {
-                if (showDialog) {
+                if (showFormAlertDialog) {
                     FormAlertDialog(
                         newTaskFormState = newTaskFormState,
                         selectedDateLong = Date().time,
                         onDismiss = {
-                                showDialog = false
+                                showFormAlertDialog = false
                             },
                         onDateSelected = {
                             // Handle the selected date
-                            viewModel.updateNewTaskFormScreenDateToDo(
+                            viewModel.updateNewTaskFormScreenDateToDoString(
                                 selectedDate = it?.toString() ?: viewModel.getDateSelectedFormat(),
                             )
+
+                            viewModel.updateNewTaskFormScreenDateToDo(
+                                selectedDate = Date(it ?: 0L ),
+                            )
+
+
                         },
                         onValueChangedText = {
                             viewModel.updateTitleNewTaskFormScreen(title = it)
                         },
-                        onClickConfirm = {
+                        onClickConfirm = { newTask ->
                             // Enviamos los datos capturados a la función superior
-                            showDialog = false
-                            // itemList.add(nombre)
-                        },
-                        onValueChangedDate = {
-
+                            viewModel.insertTaskDataBase(newTask)
+                            showFormAlertDialog = false
                         },
                     )
                 }
@@ -123,7 +124,6 @@ fun TaskStructureScreen(
 ) {
     Column {
         ListaFechas(
-            selectedDate = tasksState.selectedDate,
             dates = tasksState.datesUpcoming,
             onClickDate = onClickDate
         )
@@ -137,7 +137,6 @@ fun TaskStructureScreen(
 
 @Composable
 fun ListaFechas(
-    selectedDate: String?,
     dates: List<String>,
     onClickDate:(String) -> Unit = {},
 ) {
@@ -145,8 +144,6 @@ fun ListaFechas(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Fecha seleccionada: $selectedDate")
-
         Spacer(modifier = Modifier.height(20.dp))
         // Mostrar los botones para cada fecha
         Row {
