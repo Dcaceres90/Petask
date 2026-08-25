@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.deviar.petask.common.database.data.model.GoalType
 import com.deviar.petask.common.ui.components.button.AddMenuButton
-import com.deviar.petask.goals.LocalNestedDialogState
+import com.deviar.petask.goals.state.LocalNestedDialogState
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

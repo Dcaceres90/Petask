@@ -3,7 +3,9 @@ package com.deviar.petask.goals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deviar.petask.common.database.data.model.GoalType
+import com.deviar.petask.goals.state.GoalsUiState
 import com.deviar.petask.goals.usecase.GetGoalsUseCase
+import com.deviar.petask.goals.state.GoalUiState
 import com.deviar.petask.goals.usecase.SaveGoalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

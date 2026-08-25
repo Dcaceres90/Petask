@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.deviar.petask.common.ui.theme.Secondary
-import com.deviar.petask.goals.LocalNestedDialogState
-import com.deviar.petask.goals.NestedDialogState
+import com.deviar.petask.goals.state.LocalNestedDialogState
+import com.deviar.petask.goals.state.NestedDialogState
 
 
 @OptIn(ExperimentalLayoutApi::class)

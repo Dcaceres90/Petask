@@ -1,4 +1,4 @@
-package com.deviar.petask.goals
+package com.deviar.petask.goals.state
 
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
