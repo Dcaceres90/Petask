@@ -2,7 +2,6 @@ package com.deviar.petask.goals
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.deviar.petask.common.database.data.model.GoalModel
 import com.deviar.petask.common.database.data.model.GoalType
 import com.deviar.petask.goals.usecase.GetGoalsUseCase
 import com.deviar.petask.goals.usecase.SaveGoalUseCase
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,11 +49,14 @@ class GoalsViewModel @Inject constructor(
         }
     }
 
-    fun createTestGoal(){
+    fun createTestGoal(
+        text: String,
+        goalType: GoalType
+    ){
         viewModelScope.launch {
             saveGoalUseCase(
-                    text = "Mi primer goal",
-                    goalType = GoalType.WEEKLY
+                    text = text,
+                    goalType = goalType
             )
 
         }
