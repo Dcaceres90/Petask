@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -11,7 +12,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -26,10 +26,13 @@ import java.util.Date
 fun FormAlertDialog(
     selectedDateLong: Long,
     newTaskFormState: NewTaskFormState,
+    datePickerState: DatePickerState,
     onDismiss: () -> Unit,
-    onDateSelected: (Long?) -> Unit,
     onValueChangedText: (String) -> Unit,
     onClickConfirm: (TaskModel) -> Unit,
+    onClickConfirmDateSpicker: () -> Unit,
+    onClickShowDialogDateSpicker: () -> Unit,
+    onDismissDateSpicker: () -> Unit,
 ) {
 
     // Variables de estado locales para guardar lo que escribe el usuario
@@ -37,14 +40,17 @@ fun FormAlertDialog(
     AlertDialog(
         onDismissRequest = { onDismiss() }, // Se ejecuta al tocar fuera o presionar atrás
         title = {
-            Text(text = "Registro de Usuario")
+            Text(text = "Crear Tarea")
         },
         text = {
             DialogView(
                 newTaskFormState = newTaskFormState,
                 selectedDateLong = selectedDateLong,
+                datePickerState = datePickerState,
                 onValueChangedTitle = onValueChangedText,
-                onClickDateSelected = onDateSelected,
+                onClickConfirmDateSpicker = onClickConfirmDateSpicker,
+                onClickShowDialogDateSpicker = onClickShowDialogDateSpicker,
+                onDismissDateSpicker = onDismissDateSpicker
             )
         },
         confirmButton = {
@@ -74,18 +80,14 @@ fun FormAlertDialog(
 @Composable
 fun DialogView(
     newTaskFormState: NewTaskFormState,
+    datePickerState: DatePickerState,
     selectedDateLong: Long = 0L,
     onValueChangedTitle: (String) -> Unit,
-    onClickDateSelected: (Long?) -> Unit,
+    onClickConfirmDateSpicker: () -> Unit,
+    onClickShowDialogDateSpicker: () -> Unit,
+    onDismissDateSpicker: () -> Unit,
 ) {
-    var showDatePickerDialog by remember { mutableStateOf(false) }
-    var enabledDateSpicker by remember { mutableStateOf(false) }
 
-    var selectedDateMillis by remember { mutableLongStateOf(selectedDateLong) }
-
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = selectedDateLong
-    )
     // Contenedor vertical para organizar los campos de texto
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -95,9 +97,9 @@ fun DialogView(
 
         // Primer campo de entrada
         OutlinedTextField(
-            value = "Título",
+            value = newTaskFormState.title,
             onValueChange = onValueChangedTitle,
-            label = { Text(newTaskFormState.title) },
+            label = { Text("Title") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -110,19 +112,10 @@ fun DialogView(
         DatePickerDialogCustom(
             selectedDate = selectedDateLong,
             showDialog = newTaskFormState.showDialog,
-            onClickConfirm = {
-                selectedDateMillis = datePickerState.selectedDateMillis ?: 0L
-                newTaskFormState.dateToDo = Date(datePickerState.selectedDateMillis ?: 0L)
-                newTaskFormState.showDialog = false
-            },
-            onClickShowDialog = {
-                newTaskFormState.showDialog = true
-            },
-            onDismiss = {
-                // Handle the dismiss event
-                enabledDateSpicker = false
-                showDatePickerDialog = false
-            },
+            datePickerState = datePickerState,
+            onClickConfirm = onClickConfirmDateSpicker,
+            onClickShowDialog = onClickShowDialogDateSpicker,
+            onDismiss = onDismissDateSpicker,
         )
     }
 }

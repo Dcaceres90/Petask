@@ -139,4 +139,12 @@ class TaskViewModel @Inject constructor(
             _taskList = getTaskByDateUseCase(selectedDate)
         }
     }
+
+    fun setTasksShowDialog(showDialog: Boolean) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                showDialog = showDialog,
+            )
+        }
+    }
 }

@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,6 +31,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,6 +50,12 @@ fun TasksScreen(
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
     val newTaskFormState by viewModel.newTaskFormState.collectAsStateWithLifecycle()
+
+    var selectedDateMillis by remember { mutableLongStateOf(Date().time) }
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = selectedDateMillis
+    )
     viewModel.updateScreenDatesList(
         datesUpcoming = viewModel.getUpcomingDates(),
     )
@@ -77,22 +84,11 @@ fun TasksScreen(
                 if (showFormAlertDialog) {
                     FormAlertDialog(
                         newTaskFormState = newTaskFormState,
-                        selectedDateLong = Date().time,
+                        selectedDateLong = selectedDateMillis,
+                        datePickerState = datePickerState,
                         onDismiss = {
                                 showFormAlertDialog = false
                             },
-                        onDateSelected = {
-                            // Handle the selected date
-                            viewModel.updateNewTaskFormScreenDateToDoString(
-                                selectedDate = it?.toString() ?: viewModel.getDateSelectedFormat(),
-                            )
-
-                            viewModel.updateNewTaskFormScreenDateToDo(
-                                selectedDate = Date(it ?: 0L ),
-                            )
-
-
-                        },
                         onValueChangedText = {
                             viewModel.updateTitleNewTaskFormScreen(title = it)
                         },
@@ -101,13 +97,31 @@ fun TasksScreen(
                             viewModel.insertTaskDataBase(newTask)
                             showFormAlertDialog = false
                         },
+                        onClickConfirmDateSpicker = {
+                            selectedDateMillis = datePickerState.selectedDateMillis ?: 0L
+                            newTaskFormState.showDialog = false
+                            viewModel.getTasksByDate(Date(datePickerState.selectedDateMillis ?: 0L))
+                            viewModel.setTasksShowDialog(
+                                false
+                            )
+                        },
+                        onClickShowDialogDateSpicker = {
+                            viewModel.setTasksShowDialog(
+                                true
+                            )
+                        },
+                        onDismissDateSpicker = {
+                            viewModel.setTasksShowDialog(
+                                true
+                            )
+                        },
                     )
                 }
                 TaskStructureScreen(
                     uiTasksState,
                     onClickDate = { date ->
                         viewModel.updateScreenSelectedDate(
-                            selectedDate = date ?: viewModel.getDateSelectedFormat(),
+                            selectedDate = date,
                         )
                     },
                 )

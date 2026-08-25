@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -27,17 +28,13 @@ import java.util.Locale
 @Composable
 fun DatePickerDialogCustom(
     selectedDate: Long,
+    datePickerState: DatePickerState,
     showDialog: Boolean,
     onClickConfirm: () -> Unit,
     onClickShowDialog: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var selectedDateMillis by remember { mutableLongStateOf(selectedDate) }
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = selectedDate
-    )
-
-    val displayDate = selectedDateMillis.let {
+    val displayDate = selectedDate.let {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         sdf.format(Date(it))
     } ?: ""
