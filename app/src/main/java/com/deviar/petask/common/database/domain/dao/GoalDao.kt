@@ -19,5 +19,9 @@ interface GoalDao {
     @Query("DELETE FROM goalmodel WHERE goalId = :goalId")
     suspend fun deleteByGoalId(goalId: String)
 
+    @Query("UPDATE GoalModel SET isComplete = :isComplete WHERE goalId = :goalId")
+    suspend fun updateGoalIsComplete(goalId: String, isComplete: Boolean)
+
+
 
 }

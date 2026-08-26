@@ -61,7 +61,12 @@ fun GoalsScreen(
             weeklyGoals.forEach { goal ->
                 GoalItem(
                     goal = goal,
-                    onCheckedChange = {}
+                    onCheckedChange = { isComplete ->
+                        goalsViewModel.updateIsCompleted(
+                            goalId = goal.goalId,
+                            isComplete = isComplete
+                        )
+                    }
                 )
             }
 
@@ -73,7 +78,12 @@ fun GoalsScreen(
             monthlyGoals.forEach { goal ->
                 GoalItem(
                     goal = goal,
-                    onCheckedChange = {}
+                    onCheckedChange = { isComplete ->
+                        goalsViewModel.updateIsCompleted(
+                            goalId = goal.goalId,
+                            isComplete = isComplete
+                        )
+                    }
                 )
             }
 
@@ -94,7 +104,7 @@ fun GoalsScreen(
                     GoalsDialogContent(
                         onDismiss = { showDialog = false },
                         onAddGoal = { text, goalType ->
-                            goalsViewModel.createTestGoal(
+                            goalsViewModel.createGoal(
                                 text = text,
                                 goalType = goalType
                             )

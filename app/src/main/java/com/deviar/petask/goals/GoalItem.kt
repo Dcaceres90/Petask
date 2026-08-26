@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.goals.state.GoalUiState
 
@@ -34,7 +35,12 @@ fun GoalItem(
             )
 
             Text(
-                text = goal.text
+                text = goal.text,
+                textDecoration = if (goal.isComplete) {
+                    TextDecoration.LineThrough
+                } else {
+                    TextDecoration.None
+                }
             )
         }
     }

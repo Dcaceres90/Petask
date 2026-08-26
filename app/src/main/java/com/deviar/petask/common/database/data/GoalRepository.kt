@@ -44,4 +44,11 @@ class GoalRepository @Inject constructor(
     suspend fun deleteGoal(goalId: String){
         goalDao.deleteByGoalId(goalId)
     }
+
+    suspend fun updateIsCompletedGoal(
+        goalId: String,
+        isComplete: Boolean
+    ) {
+        goalDao.updateGoalIsComplete(goalId, isComplete)
+    }
 }
