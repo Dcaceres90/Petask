@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun SpinnerCustom(
     listado: List<String>,
+    // TODO agragar un composable que se pase por parametro
 ) {
     var expandido by remember { mutableStateOf(false) }
     var seleccionado by remember { mutableStateOf(listado[0]) }
