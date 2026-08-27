@@ -51,4 +51,23 @@ class GoalRepository @Inject constructor(
     ) {
         goalDao.updateGoalIsComplete(goalId, isComplete)
     }
+
+    suspend fun updateGoal(
+        goalId: String,
+        text: String,
+        goalType: GoalType,
+        isComplete: Boolean
+    ) {
+        val userId = getCurrentUserId() ?: return
+
+        val goal = GoalModel(
+            goalId = goalId,
+            userId = userId,
+            text = text,
+            isComplete = isComplete,
+            goalType = goalType
+        )
+
+        goalDao.insertGoal(goal)
+    }
 }

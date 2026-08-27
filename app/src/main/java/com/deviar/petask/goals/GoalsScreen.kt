@@ -30,6 +30,7 @@ fun GoalsScreen(
 ) {
     val uiState by goalsViewModel.iuState.collectAsStateWithLifecycle()
 
+    var selectedGoal by remember { mutableStateOf<GoalUiState?>(null) }
     var showDialog by remember { mutableStateOf(false) }
 
     val weeklyGoals = uiState.goals.filter {
@@ -66,6 +67,10 @@ fun GoalsScreen(
                             goalId = goal.goalId,
                             isComplete = isComplete
                         )
+                    },
+                    onClick = {
+                        selectedGoal = goal
+                        showDialog = true
                     }
                 )
             }
@@ -83,6 +88,10 @@ fun GoalsScreen(
                             goalId = goal.goalId,
                             isComplete = isComplete
                         )
+                    },
+                    onClick = {
+                        selectedGoal = goal
+                        showDialog = true
                     }
                 )
             }
@@ -99,15 +108,27 @@ fun GoalsScreen(
 
         if (showDialog) {
             AddDialog(
-                onDismiss = { showDialog = false },
+                onDismiss = { showDialog = false
+                    selectedGoal = null },
                 onContent = {
                     GoalsDialogContent(
-                        onDismiss = { showDialog = false },
+                        goal = selectedGoal,
+                        onDismiss = { showDialog = false
+                            selectedGoal = null},
                         onAddGoal = { text, goalType ->
-                            goalsViewModel.createGoal(
-                                text = text,
-                                goalType = goalType
-                            )
+                            if (selectedGoal == null) {
+                                goalsViewModel.createGoal(
+                                    text = text,
+                                    goalType = goalType
+                                )
+                            } else {
+                                goalsViewModel.updateGoal(
+                                    goalId = selectedGoal!!.goalId,
+                                    text = text,
+                                    goalType = goalType,
+                                    isComplete = selectedGoal!!.isComplete
+                                )
+                            }
                         }
                     )
                 }

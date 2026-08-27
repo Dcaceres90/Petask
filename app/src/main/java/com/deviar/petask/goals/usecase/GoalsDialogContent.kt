@@ -31,16 +31,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.deviar.petask.common.database.data.model.GoalType
 import com.deviar.petask.common.ui.components.button.AddMenuButton
+import com.deviar.petask.goals.state.GoalUiState
 import com.deviar.petask.goals.state.LocalNestedDialogState
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun GoalsDialogContent(
+    goal: GoalUiState?,
     onDismiss: () -> Unit,
     onAddGoal: (String, GoalType) -> Unit
 ) {
-    var text by remember { mutableStateOf("") }
-    var selectedGoalType by remember { mutableStateOf(GoalType.WEEKLY) }
+    var text by remember { mutableStateOf(goal?.text ?: "") }
+    var selectedGoalType by remember { mutableStateOf(goal?.goalType ?: GoalType.WEEKLY) }
 
     var showTypeDialog by remember { mutableStateOf(false) }
     val nestedDialogState = LocalNestedDialogState.current
@@ -110,6 +112,8 @@ fun GoalsDialogContent(
             onDismiss()
 
         }) { Text("Add") }
+
+
 
         if (showTypeDialog) {
             AlertDialog(

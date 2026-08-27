@@ -7,6 +7,7 @@ import com.deviar.petask.goals.state.GoalsUiState
 import com.deviar.petask.goals.usecase.GetGoalsUseCase
 import com.deviar.petask.goals.state.GoalUiState
 import com.deviar.petask.goals.usecase.SaveGoalUseCase
+import com.deviar.petask.goals.usecase.UpdateGoalUseCase
 import com.deviar.petask.goals.usecase.UpdateIsCompletedGoalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class GoalsViewModel @Inject constructor(
     private var getGoalsUseCase: GetGoalsUseCase,
     private val saveGoalUseCase: SaveGoalUseCase,
-    private val updateIsCompletedGoalUseCase: UpdateIsCompletedGoalUseCase
+    private val updateIsCompletedGoalUseCase: UpdateIsCompletedGoalUseCase,
+    private val updateGoalUseCase: UpdateGoalUseCase
 )  : ViewModel() {
 
     val _uiState = MutableStateFlow(GoalsUiState())
@@ -78,8 +80,24 @@ class GoalsViewModel @Inject constructor(
         }
     }
 
+    fun updateGoal(
+        goalId: String,
+        text: String,
+        goalType: GoalType,
+        isComplete: Boolean
+    ){
+        viewModelScope.launch {
+            updateGoalUseCase(
+                goalId = goalId,
+                text = text,
+                goalType = goalType,
+                isComplete = isComplete
+            )
+        }
+    }
+
     fun onDeleteGoal (){}
-    fun updateGoalName(){}
+
 
 
 }

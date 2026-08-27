@@ -1,5 +1,6 @@
 package com.deviar.petask.goals
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,12 +17,14 @@ import com.deviar.petask.goals.state.GoalUiState
 @Composable
 fun GoalItem(
     goal : GoalUiState,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
+            .clickable{ onClick()}
     ){
         Row(
             modifier = Modifier
