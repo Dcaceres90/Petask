@@ -120,7 +120,7 @@ fun GoalsDialogContent(
                 onDismissRequest = {
                     showTypeDialog = false // No hacemos nada acá, el LaunchedEffect se encarga
                 },
-                title = { Text("Tipo de objetivo") },
+                title = {},
                 text = {
                     Column {
                         TextButton(

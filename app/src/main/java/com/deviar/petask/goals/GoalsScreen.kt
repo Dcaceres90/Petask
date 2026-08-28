@@ -71,7 +71,8 @@ fun GoalsScreen(
                     onClick = {
                         selectedGoal = goal
                         showDialog = true
-                    }
+                    },
+                    onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId)}
                 )
             }
 
@@ -92,7 +93,8 @@ fun GoalsScreen(
                     onClick = {
                         selectedGoal = goal
                         showDialog = true
-                    }
+                    },
+                    onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId)}
                 )
             }
 
