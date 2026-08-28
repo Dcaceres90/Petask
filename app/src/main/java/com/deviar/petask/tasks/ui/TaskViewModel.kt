@@ -46,6 +46,14 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    fun updateScreenTasks(taskList: List<TaskModel>) {
+        _uiTasksState.update { estadoActual ->
+            estadoActual.copy(
+                taskList = taskList
+            )
+        }
+    }
+
     fun updateScreenDatesList(datesUpcoming: List<String>) {
         _uiTasksState.update { estadoActual ->
             estadoActual.copy(
@@ -93,7 +101,7 @@ class TaskViewModel @Inject constructor(
         _newTaskFormState.value = taksState
     }
 
-    private var _taskList: Flow<List<TaskModel?>>? = MutableStateFlow(arrayListOf())
+    private var _taskList: Flow<List<TaskModel>>? = MutableStateFlow(arrayListOf())
     val taskSuccess = _taskList?.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -145,6 +153,16 @@ class TaskViewModel @Inject constructor(
             estadoActual.copy(
                 showDialog = showDialog,
             )
+        }
+    }
+
+    fun collectedSucessTask() {
+        viewModelScope.launch {
+            taskSuccess?.collect {
+                if (it != null) {
+                    updateScreenTasks(it)
+                }
+            }
         }
     }
 }

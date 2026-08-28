@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetTaskByDateUseCase @Inject constructor(
     private val taskRepository: TaskRepository
 ) {
-    suspend operator fun invoke(selectedDate: Date): Flow<List<TaskModel?>>? {
+    suspend operator fun invoke(selectedDate: Date): Flow<List<TaskModel>>? {
         return taskRepository.getTasks(selectedDate)
     }
 }

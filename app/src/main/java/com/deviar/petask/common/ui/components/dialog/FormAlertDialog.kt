@@ -33,6 +33,7 @@ fun FormAlertDialog(
     onClickConfirmDateSpicker: () -> Unit,
     onClickShowDialogDateSpicker: () -> Unit,
     onDismissDateSpicker: () -> Unit,
+    onClickSpinner: (String) -> Unit,
 ) {
 
     // Variables de estado locales para guardar lo que escribe el usuario
@@ -50,7 +51,8 @@ fun FormAlertDialog(
                 onValueChangedTitle = onValueChangedText,
                 onClickConfirmDateSpicker = onClickConfirmDateSpicker,
                 onClickShowDialogDateSpicker = onClickShowDialogDateSpicker,
-                onDismissDateSpicker = onDismissDateSpicker
+                onDismissDateSpicker = onDismissDateSpicker,
+                onClickSpinner = onClickSpinner,
             )
         },
         confirmButton = {
@@ -59,7 +61,8 @@ fun FormAlertDialog(
                     val newTask = TaskModel(
                         levelDificult = newTaskFormState.levelDificult,
                         text = newTaskFormState.textNewTask,
-                        //toDoDate = newTaskFormState.
+                        toDoDate = newTaskFormState.dateToDo,
+                        idUser = "0",
                     )
                     onClickConfirm(newTask)
                 },
@@ -86,6 +89,7 @@ fun DialogView(
     onClickConfirmDateSpicker: () -> Unit,
     onClickShowDialogDateSpicker: () -> Unit,
     onDismissDateSpicker: () -> Unit,
+    onClickSpinner: (String) -> Unit,
 ) {
 
     // Contenedor vertical para organizar los campos de texto
@@ -106,7 +110,8 @@ fun DialogView(
         //Spinner with onclick and alert dialog
         val listado = LevelDificult.entries.map { it.name }
         SpinnerCustom(
-            listado = listado
+            listado = listado,
+            onClickSpinner = onClickSpinner,
         )
 
         DatePickerDialogCustom(

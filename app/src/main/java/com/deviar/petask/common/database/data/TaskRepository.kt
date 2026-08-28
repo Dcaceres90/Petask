@@ -23,7 +23,7 @@ class TaskRepository
 
         suspend fun getTasks(
             selectedDate: Date,
-        ): Flow<List<TaskModel?>>? {
+        ): Flow<List<TaskModel>>? {
             val userId = getCurrentUserId() ?: return null
             return taskDao.getTasksByDateAndUserId(userId, selectedDate)
         }

@@ -5,7 +5,7 @@ import java.util.Date
 
 data class NewTaskFormState (
     var title: String = "Título de la tarea",
-    var levelDificult: LevelDificult = LevelDificult.EASY,
+    var levelDificult: LevelDificult = LevelDificult.HARD,
     var showDialog: Boolean = false,
     var dateToDoString: String = "23/02/1990",
     var textNewTask: String = "",

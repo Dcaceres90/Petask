@@ -36,9 +36,13 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
+import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.TasksState
+import kotlinx.coroutines.launch
 import java.util.Date
 import kotlin.String
 
@@ -59,6 +63,9 @@ fun TasksScreen(
     viewModel.updateScreenDatesList(
         datesUpcoming = viewModel.getUpcomingDates(),
     )
+    viewModel.getTasksByDate(Date(datePickerState.selectedDateMillis!!))
+    viewModel.collectedSucessTask()
+
     Box(
         modifier = Modifier.padding(
             start = 20.dp,
@@ -115,6 +122,13 @@ fun TasksScreen(
                                 true
                             )
                         },
+                        onClickSpinner = { entry ->
+                            LevelDificult.entries.forEach { levelDificult ->
+                                if(entry == levelDificult.name) {
+                                    viewModel.updateLevelDificultNewTaskFormScreen(levelDificult)
+                                }
+                            }
+                        }
                     )
                 }
                 TaskStructureScreen(
@@ -172,7 +186,7 @@ fun ListaFechas(
 @Composable
 fun ListaTask(
     selectedDate: String?,
-    itemList: List<String>,
+    itemList: List<TaskModel>,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -191,7 +205,7 @@ fun ListaTask(
 
         LazyColumn {
             items(itemList) { item ->
-                Text(item, modifier = Modifier.padding(8.dp))
+                Text(item.text, modifier = Modifier.padding(8.dp))
             }
         }
 

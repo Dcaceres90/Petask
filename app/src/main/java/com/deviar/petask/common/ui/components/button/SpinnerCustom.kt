@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun SpinnerCustom(
     listado: List<String>,
+    onClickSpinner: (String) -> Unit,
     // TODO agragar un composable que se pase por parametro
 ) {
     var expandido by remember { mutableStateOf(false) }
@@ -43,6 +44,7 @@ fun SpinnerCustom(
                     text = { Text(text = opcion) },
                     onClick = {
                         seleccionado = opcion
+                        onClickSpinner(seleccionado)
                         expandido = false
                     }
                 )
