@@ -65,6 +65,7 @@ fun TasksScreen(
     )
     viewModel.getTasksByDate(Date(datePickerState.selectedDateMillis!!))
     viewModel.collectedSucessTask()
+    viewModel.getUID()
 
     Box(
         modifier = Modifier.padding(
@@ -91,6 +92,7 @@ fun TasksScreen(
                 if (showFormAlertDialog) {
                     FormAlertDialog(
                         newTaskFormState = newTaskFormState,
+                        idUser = viewModel.uuidState.value,
                         selectedDateLong = selectedDateMillis,
                         datePickerState = datePickerState,
                         onDismiss = {
@@ -108,19 +110,13 @@ fun TasksScreen(
                             selectedDateMillis = datePickerState.selectedDateMillis ?: 0L
                             newTaskFormState.showDialog = false
                             viewModel.getTasksByDate(Date(datePickerState.selectedDateMillis ?: 0L))
-                            viewModel.setTasksShowDialog(
-                                false
-                            )
+                            viewModel.setTasksShowDialog(false)
                         },
                         onClickShowDialogDateSpicker = {
-                            viewModel.setTasksShowDialog(
-                                true
-                            )
+                            viewModel.setTasksShowDialog(true)
                         },
                         onDismissDateSpicker = {
-                            viewModel.setTasksShowDialog(
-                                true
-                            )
+                            viewModel.setTasksShowDialog(true)
                         },
                         onClickSpinner = { entry ->
                             LevelDificult.entries.forEach { levelDificult ->

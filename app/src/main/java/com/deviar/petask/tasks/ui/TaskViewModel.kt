@@ -1,8 +1,10 @@
 package com.deviar.petask.tasks.ui
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deviar.petask.common.database.data.model.TaskModel
+import com.deviar.petask.common.database.domain.usecase.GetUIDUseCase
 import com.deviar.petask.common.database.domain.usecase.task.GetTaskByDateUseCase
 import com.deviar.petask.common.database.domain.usecase.task.InsertTaskUseCase
 import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
@@ -30,6 +32,7 @@ class TaskViewModel @Inject constructor(
     private val getTaskByDateUseCase: GetTaskByDateUseCase,
     private val insertTaskUseCase: InsertTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
+    private val getUIDUseCase: GetUIDUseCase,
 ): ViewModel() {
     private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
     val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
@@ -153,6 +156,17 @@ class TaskViewModel @Inject constructor(
             estadoActual.copy(
                 showDialog = showDialog,
             )
+        }
+    }
+
+   var uuidState: MutableLiveData<String> = MutableLiveData("")
+
+
+    fun getUID() {
+        viewModelScope.launch {
+            taskSuccess?.collect {
+                 uuidState.value = getUIDUseCase.invoke()
+            }
         }
     }
 

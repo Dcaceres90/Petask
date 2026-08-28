@@ -25,6 +25,7 @@ import java.util.Date
 @Composable
 fun FormAlertDialog(
     selectedDateLong: Long,
+    idUser: String,
     newTaskFormState: NewTaskFormState,
     datePickerState: DatePickerState,
     onDismiss: () -> Unit,
@@ -62,7 +63,7 @@ fun FormAlertDialog(
                         levelDificult = newTaskFormState.levelDificult,
                         text = newTaskFormState.textNewTask,
                         toDoDate = newTaskFormState.dateToDo,
-                        idUser = "0",
+                        idUser = idUser,
                     )
                     onClickConfirm(newTask)
                 },

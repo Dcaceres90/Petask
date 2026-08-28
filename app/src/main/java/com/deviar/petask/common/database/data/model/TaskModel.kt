@@ -1,6 +1,5 @@
 package com.deviar.petask.common.database.data.model
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.deviar.petask.common.utils.LevelDificult
