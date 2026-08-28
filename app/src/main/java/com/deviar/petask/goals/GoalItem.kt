@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.deviar.petask.common.ui.theme.GoldCoin
 import com.deviar.petask.common.ui.theme.Secondary
 import com.deviar.petask.goals.state.GoalUiState
 
@@ -57,6 +58,11 @@ fun GoalItem(
             )
 
             Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = "+${goal.goalType.coinValue}",
+                color = GoldCoin
+            )
 
             IconButton(
                 onClick = onDeleteClick

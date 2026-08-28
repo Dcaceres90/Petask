@@ -1,5 +1,6 @@
 package com.deviar.petask.goals
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.deviar.petask.common.database.data.model.GoalType
@@ -29,6 +31,7 @@ fun GoalsScreen(
     goalsViewModel: GoalsViewModel
 ) {
     val uiState by goalsViewModel.iuState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     var selectedGoal by remember { mutableStateOf<GoalUiState?>(null) }
     var showDialog by remember { mutableStateOf(false) }
@@ -50,7 +53,15 @@ fun GoalsScreen(
                     bottom = 70.dp,
                 ),
                 onClickFloating = {
-                    showDialog = true
+                    if (uiState.goals.size >= 6) {
+                        Toast.makeText(
+                            context,
+                            "You can only add up to 6 goals in total",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        showDialog = true
+                    }
                 }
             )
         },
@@ -64,7 +75,7 @@ fun GoalsScreen(
                     goal = goal,
                     onCheckedChange = { isComplete ->
                         goalsViewModel.updateIsCompleted(
-                            goalId = goal.goalId,
+                            goal = goal,
                             isComplete = isComplete
                         )
                     },
@@ -86,7 +97,7 @@ fun GoalsScreen(
                     goal = goal,
                     onCheckedChange = { isComplete ->
                         goalsViewModel.updateIsCompleted(
-                            goalId = goal.goalId,
+                            goal = goal,
                             isComplete = isComplete
                         )
                     },
@@ -119,6 +130,7 @@ fun GoalsScreen(
                             selectedGoal = null},
                         onAddGoal = { text, goalType ->
                             if (selectedGoal == null) {
+
                                 goalsViewModel.createGoal(
                                     text = text,
                                     goalType = goalType

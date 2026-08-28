@@ -3,6 +3,8 @@ package com.deviar.petask.goals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deviar.petask.common.database.data.model.GoalType
+import com.deviar.petask.common.database.domain.usecase.UpdateCoinsUseCase
+import com.deviar.petask.common.database.domain.usecase.UpdateExpUseCase
 import com.deviar.petask.goals.state.GoalsUiState
 import com.deviar.petask.goals.usecase.GetGoalsUseCase
 import com.deviar.petask.goals.state.GoalUiState
@@ -24,7 +26,9 @@ class GoalsViewModel @Inject constructor(
     private val saveGoalUseCase: SaveGoalUseCase,
     private val updateIsCompletedGoalUseCase: UpdateIsCompletedGoalUseCase,
     private val updateGoalUseCase: UpdateGoalUseCase,
-    private val deleteGoalUseCase: DeleteGoalUseCase
+    private val deleteGoalUseCase: DeleteGoalUseCase,
+    private val updateExpUseCase: UpdateExpUseCase,
+    private val updateCoinsUseCase: UpdateCoinsUseCase
 )  : ViewModel() {
 
     val _uiState = MutableStateFlow(GoalsUiState())
@@ -61,6 +65,7 @@ class GoalsViewModel @Inject constructor(
         text: String,
         goalType: GoalType
     ){
+
         viewModelScope.launch {
             saveGoalUseCase(
                     text = text,
@@ -71,15 +76,24 @@ class GoalsViewModel @Inject constructor(
     }
 
     fun updateIsCompleted(
-        goalId: String,
-        isComplete: Boolean
+        goal: GoalUiState,
+        isComplete: Boolean,
     ) {
         viewModelScope.launch {
             updateIsCompletedGoalUseCase(
-                goalId = goalId,
+                goalId = goal.goalId,
                 isComplete = isComplete
             )
+            if (isComplete) {
+                updateExpUseCase(goal.goalType.exp)
+                updateCoinsUseCase(goal.goalType.coinValue)
+            }
+            if (!isComplete) {
+                updateExpUseCase(-goal.goalType.exp)
+                updateCoinsUseCase(-goal.goalType.coinValue)
+            }
         }
+
     }
 
     fun updateGoal(
@@ -88,6 +102,7 @@ class GoalsViewModel @Inject constructor(
         goalType: GoalType,
         isComplete: Boolean
     ){
+
         viewModelScope.launch {
             updateGoalUseCase(
                 goalId = goalId,
