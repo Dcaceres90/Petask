@@ -16,3 +16,5 @@ import kotlinx.serialization.Serializable
 @Serializable object Profile
 
 @Serializable object Onboarding
+
+@Serializable object CreatePet

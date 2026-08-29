@@ -1,5 +1,6 @@
 package com.deviar.petask.pet.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,40 +19,124 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.deviar.petask.R
+import com.deviar.petask.common.database.data.model.PetType
 import com.deviar.petask.common.ui.theme.Primary
 import com.deviar.petask.common.ui.theme.Secondary
-import com.deviar.petask.pet.ui.PetViewModel
-import com.deviar.petask.pet.domain.PetModel
+
 import com.deviar.petask.pet.domain.PetState
+import com.deviar.petask.pet.domain.PetUiState
 
 @Composable
 fun PetScreen(
     petViewModel: PetViewModel
 ) {
 
-    val pet = petViewModel.pet
-    val imageRes = when (pet.state) {
-        PetState.HAPPY -> R.drawable.img_pet_orange_happy
-        PetState.SAD -> R.drawable.img_pet_siamese_sad
-        PetState.ANGRY -> R.drawable.img_pet_siamese_angry
-        PetState.CONFUSED -> R.drawable.img_pet_siamese_confused
+    val uiState by petViewModel.uiState.collectAsStateWithLifecycle()
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState.feedError) {
+        uiState.feedError?.let { message ->
+            Toast.makeText(
+                context,
+                message,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
+
+    DisposableEffect(lifecycleOwner) {
+
+        val observer = LifecycleEventObserver { _, event ->
+
+            if (event == Lifecycle.Event.ON_RESUME) {
+                petViewModel.refreshPet()
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+
+        return
+    }
+
+    val pet = uiState
+    val type = pet.type ?: return
+
+    fun getPetImage(
+        type: PetType,
+        state: PetState
+    ): Int {
+
+        return when (type) {
+
+            PetType.ORANGE_CAT -> when (state) {
+                PetState.HAPPY -> R.drawable.img_pet_orange_happy
+                PetState.SAD -> R.drawable.img_pet_orange_sad
+                PetState.ANGRY -> R.drawable.img_pet_orange_angry
+                PetState.CONFUSED -> R.drawable.img_pet_orange_confused
+            }
+
+            PetType.SIAMESE_CAT -> when (state) {
+                PetState.HAPPY -> R.drawable.img_pet_siamese_happy
+                PetState.SAD -> R.drawable.img_pet_siamese_sad
+                PetState.ANGRY -> R.drawable.img_pet_siamese_angry
+                PetState.CONFUSED -> R.drawable.img_pet_siamese_confused
+            }
+
+            PetType.GRAY_CAT -> when (state) {
+                PetState.HAPPY -> R.drawable.img_pet_gray_happy
+                PetState.SAD -> R.drawable.img_pet_gray_sad
+                PetState.ANGRY -> R.drawable.img_pet_gray_angry
+                PetState.CONFUSED -> R.drawable.img_pet_gray_confused
+            }
+        }
+    }
+
+
+    val imageRes = getPetImage(
+        type = pet.type,
+        state = pet.state
+    )
+
 
     Box(Modifier.fillMaxSize()) {
         Image(
@@ -81,7 +166,7 @@ fun PetScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            PetDetails(pet)
+            PetDetails(pet, petViewModel = petViewModel)
             Spacer(modifier = Modifier.weight(1f))
 
 
@@ -90,7 +175,7 @@ fun PetScreen(
 }
 
 @Composable
-fun PetDetails(pet: PetModel) {
+fun PetDetails(pet: PetUiState, petViewModel: PetViewModel) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Secondary.copy(alpha = 0.6f)),
@@ -121,7 +206,7 @@ fun PetDetails(pet: PetModel) {
             ) {
 
                 Button(
-                    onClick = {},
+                    onClick = {petViewModel.feedPet()},
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Primary,
                         contentColor = Color.Black
@@ -148,6 +233,8 @@ fun PetDetails(pet: PetModel) {
                 }
 
             }
+
+            Text("Level = ${petViewModel.calculateLevel(pet.exp)}")
 
         }
     }
