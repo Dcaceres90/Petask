@@ -13,6 +13,7 @@ import com.deviar.petask.tasks.domain.NewTaskFormState
 import com.deviar.petask.tasks.domain.TasksState
 import com.deviar.petask.tasks.util.TaskConstans
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -84,6 +85,14 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    fun updateNewTaskFormScreenText(text: String) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                textNewTask = text
+            )
+        }
+    }
+
     fun updateTitleNewTaskFormScreen(title: String) {
         _newTaskFormState.update { estadoActual ->
             estadoActual.copy(
@@ -147,7 +156,12 @@ class TaskViewModel @Inject constructor(
 
     fun getTasksByDate(selectedDate: Date) {
         viewModelScope.launch {
-            _taskList = getTaskByDateUseCase(selectedDate)
+            getTaskByDateUseCase(selectedDate)
+                ?.collect { tasks ->
+                    if (!tasks.isNullOrEmpty()) {
+                        updateScreenTasks( taskList = tasks)
+                    }
+                }
         }
     }
 
@@ -165,7 +179,7 @@ class TaskViewModel @Inject constructor(
     fun getUID() {
         viewModelScope.launch {
             taskSuccess?.collect {
-                 uuidState.value = getUIDUseCase.invoke()
+                uuidState.value = getUIDUseCase.invoke()
             }
         }
     }
@@ -173,7 +187,7 @@ class TaskViewModel @Inject constructor(
     fun collectedSucessTask() {
         viewModelScope.launch {
             taskSuccess?.collect {
-                if (it != null) {
+                if (it?.isNotEmpty() == true) {
                     updateScreenTasks(it)
                 }
             }

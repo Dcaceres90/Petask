@@ -20,8 +20,8 @@ interface TaskDao {
     @Update
     suspend fun update(task: TaskModel)
 
-    @Query("SELECT * FROM TaskModel WHERE idUser = :userId AND DATE(toDoDate) = DATE(:selectedDate)")
-    fun getTasksByDateAndUserId(userId: String, selectedDate: Date): Flow<List<TaskModel>>
+    @Query("SELECT * FROM TaskModel WHERE idUser = :userId AND toDoDate >= :startOfDay AND toDoDate < :endOfDay")
+    fun getTasksByDateAndUserId(userId: String, startOfDay: Long, endOfDay: Long):  Flow<List<TaskModel>>
 
     @Query("DELETE FROM TaskModel WHERE idTask = :taskId")
     fun deleteByTaskId(taskId: String)

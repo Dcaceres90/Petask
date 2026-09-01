@@ -43,7 +43,9 @@ import com.deviar.petask.common.ui.components.button.ButtonFloating
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.TasksState
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import kotlin.String
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -153,7 +155,6 @@ fun TaskStructureScreen(
         )
         Spacer(modifier = Modifier.height(20.dp))
         ListaTask(
-            selectedDate = tasksState.selectedDate,
             itemList = tasksState.taskList,
         )
     }
@@ -181,27 +182,24 @@ fun ListaFechas(
 
 @Composable
 fun ListaTask(
-    selectedDate: String?,
     itemList: List<TaskModel>,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        FilledIconottomCustom(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color.White,
-                ),
-            onClickArrow = {
-                /* Mostrar DatePickerDialog aquí */
-            },
-            selectedDate = selectedDate
-        )
-
         LazyColumn {
             items(itemList) { item ->
-                Text(item.text, modifier = Modifier.padding(8.dp))
+                FilledIconottomCustom(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = Color.White,
+                        ),
+                    onClickArrow = {
+                        /* Mostrar DatePickerDialog aquí */
+                    },
+                    itemTask = item
+                )
             }
         }
 
@@ -212,7 +210,7 @@ fun ListaTask(
 fun  FilledIconottomCustom(
     modifier: Modifier = Modifier,
     onClickArrow: () -> Unit,
-    selectedDate: String?,
+    itemTask: TaskModel?,
     imageVector: ImageVector = Icons.Filled.Delete,
     colorContent: Color = Color.White,
 ) {
@@ -224,8 +222,11 @@ fun  FilledIconottomCustom(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val time = dateFormat.format(itemTask?.toDoDate?.time)
+
             Text(
-                "Seleccionar Fecha: $selectedDate",
+                "${itemTask?.text} ${itemTask?.levelDificult?.name} $time",
                 color = colorContent,
             )
             Icon(

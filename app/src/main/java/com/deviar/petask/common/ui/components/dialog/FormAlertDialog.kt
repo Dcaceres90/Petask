@@ -61,7 +61,7 @@ fun FormAlertDialog(
                 onClick = {
                     val newTask = TaskModel(
                         levelDificult = newTaskFormState.levelDificult,
-                        text = newTaskFormState.textNewTask,
+                        text = newTaskFormState.title,
                         toDoDate = newTaskFormState.dateToDo,
                         idUser = idUser,
                     )
