@@ -1,4 +1,4 @@
-package com.deviar.petask.goals.state
+package com.deviar.petask.goals.ui.state
 
 data class GoalsUiState (
     val goals: List<GoalUiState> = emptyList(),

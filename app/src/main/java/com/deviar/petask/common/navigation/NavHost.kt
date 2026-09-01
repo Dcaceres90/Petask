@@ -17,7 +17,7 @@ import com.deviar.petask.tasks.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
 import com.deviar.petask.createpet.CreatePetScreen
-import com.deviar.petask.goals.GoalsScreen
+import com.deviar.petask.goals.ui.GoalsScreen
 import com.deviar.petask.onboarding.ui.OnboardingScreen
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel

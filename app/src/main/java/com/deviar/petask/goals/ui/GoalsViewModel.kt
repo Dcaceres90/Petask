@@ -1,14 +1,14 @@
-package com.deviar.petask.goals
+package com.deviar.petask.goals.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deviar.petask.common.database.data.model.GoalType
 import com.deviar.petask.common.database.domain.usecase.UpdateCoinsUseCase
 import com.deviar.petask.common.database.domain.usecase.UpdateExpUseCase
-import com.deviar.petask.goals.state.GoalsUiState
-import com.deviar.petask.goals.usecase.GetGoalsUseCase
-import com.deviar.petask.goals.state.GoalUiState
+import com.deviar.petask.goals.ui.state.GoalUiState
+import com.deviar.petask.goals.ui.state.GoalsUiState
 import com.deviar.petask.goals.usecase.DeleteGoalUseCase
+import com.deviar.petask.goals.usecase.GetGoalsUseCase
 import com.deviar.petask.goals.usecase.SaveGoalUseCase
 import com.deviar.petask.goals.usecase.UpdateGoalUseCase
 import com.deviar.petask.goals.usecase.UpdateIsCompletedGoalUseCase

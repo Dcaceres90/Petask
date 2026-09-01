@@ -1,4 +1,4 @@
-package com.deviar.petask.goals.usecase
+package com.deviar.petask.goals.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.deviar.petask.common.database.data.model.GoalType
 import com.deviar.petask.common.ui.components.button.AddMenuButton
-import com.deviar.petask.goals.state.GoalUiState
-import com.deviar.petask.goals.state.LocalNestedDialogState
+import com.deviar.petask.goals.ui.state.GoalUiState
+import com.deviar.petask.goals.ui.state.LocalNestedDialogState
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -107,11 +107,14 @@ fun GoalsDialogContent(
         )
 
         Spacer(modifier = Modifier.weight(1f))
-        Button(onClick = {
-            onAddGoal(text, selectedGoalType)
-            onDismiss()
+        Button(
+            onClick = {
+                onAddGoal(text, selectedGoalType)
+                onDismiss()
 
-        }) { Text("Add") }
+            },
+            enabled = text.isNotBlank()
+            ) { Text("Add") }
 
 
 

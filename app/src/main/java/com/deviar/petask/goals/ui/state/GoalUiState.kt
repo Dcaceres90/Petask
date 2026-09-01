@@ -1,4 +1,4 @@
-package com.deviar.petask.goals.state
+package com.deviar.petask.goals.ui.state
 
 import com.deviar.petask.common.database.data.model.GoalType
 

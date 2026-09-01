@@ -1,4 +1,4 @@
-package com.deviar.petask.goals
+package com.deviar.petask.goals.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,14 +17,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.deviar.petask.common.database.data.model.GoalType
 import com.deviar.petask.common.ui.components.button.FloatingButton
 import com.deviar.petask.common.ui.components.dialog.AddDialog
-import com.deviar.petask.goals.state.GoalUiState
-import com.deviar.petask.goals.usecase.GoalsDialogContent
+import com.deviar.petask.goals.ui.component.GoalItem
+import com.deviar.petask.goals.ui.component.GoalsDialogContent
+import com.deviar.petask.goals.ui.state.GoalUiState
 
+
+//Todo TEXTO EN VOLVER A ADOPTAR DICIENDO QUE EL PET SE ESCAPÓ
+//TODO TEXTO EN ONBOARDING ACLARANDO QUE EL PET  PUEDE ESCAPARSE Y MANEJO DE DATOS
+// TODO fix coins bug
 @Composable
 fun GoalsScreen(
     modifier: Modifier,
@@ -66,57 +72,63 @@ fun GoalsScreen(
             )
         },
     ) { paddingValues ->
-        Column(modifier = modifier.padding(paddingValues)) {
 
-            Text("Weekly Goals")
+        if (uiState.isLoading) {
+            CircularProgressIndicator()
+        } else {
 
-            weeklyGoals.forEach { goal ->
-                GoalItem(
-                    goal = goal,
-                    onCheckedChange = { isComplete ->
-                        goalsViewModel.updateIsCompleted(
-                            goal = goal,
-                            isComplete = isComplete
-                        )
-                    },
-                    onClick = {
-                        selectedGoal = goal
-                        showDialog = true
-                    },
-                    onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId)}
+            Column(modifier = modifier.padding(paddingValues)) {
+
+                Text(
+                    text = "Weekly Goals",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
-            }
 
-            Spacer(Modifier.height(30.dp))
+                weeklyGoals.forEach { goal ->
+                    GoalItem(
+                        goal = goal,
+                        onCheckedChange = { isComplete ->
+                            goalsViewModel.updateIsCompleted(
+                                goal = goal,
+                                isComplete = isComplete
+                            )
+                        },
+                        onClick = {
+                            selectedGoal = goal
+                            showDialog = true
+                        },
+                        onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId) }
+                    )
+                }
 
-            Text("Monthly Goals")
+                Spacer(Modifier.height(30.dp))
 
-
-            monthlyGoals.forEach { goal ->
-                GoalItem(
-                    goal = goal,
-                    onCheckedChange = { isComplete ->
-                        goalsViewModel.updateIsCompleted(
-                            goal = goal,
-                            isComplete = isComplete
-                        )
-                    },
-                    onClick = {
-                        selectedGoal = goal
-                        showDialog = true
-                    },
-                    onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId)}
+                Text(
+                    text = "Monthly Goals",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
+
+
+                monthlyGoals.forEach { goal ->
+                    GoalItem(
+                        goal = goal,
+                        onCheckedChange = { isComplete ->
+                            goalsViewModel.updateIsCompleted(
+                                goal = goal,
+                                isComplete = isComplete
+                            )
+                        },
+                        onClick = {
+                            selectedGoal = goal
+                            showDialog = true
+                        },
+                        onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId) }
+                    )
+                }
+
             }
-
-            Spacer(Modifier.height(30.dp))
-
-            if (uiState.isLoading) {
-                CircularProgressIndicator()
-            } else {
-                Text("Cantidad de objetivos: ${uiState.goals.size}")
-            }
-
         }
 
         if (showDialog) {
@@ -126,8 +138,10 @@ fun GoalsScreen(
                 onContent = {
                     GoalsDialogContent(
                         goal = selectedGoal,
-                        onDismiss = { showDialog = false
-                            selectedGoal = null},
+                        onDismiss = {
+                            showDialog = false
+                            selectedGoal = null
+                        },
                         onAddGoal = { text, goalType ->
                             if (selectedGoal == null) {
 
