@@ -28,9 +28,8 @@ import com.deviar.petask.goals.ui.component.GoalsDialogContent
 import com.deviar.petask.goals.ui.state.GoalUiState
 
 
-//Todo TEXTO EN VOLVER A ADOPTAR DICIENDO QUE EL PET SE ESCAPÓ
-//TODO TEXTO EN ONBOARDING ACLARANDO QUE EL PET  PUEDE ESCAPARSE Y MANEJO DE DATOS
 // TODO fix coins bug
+// TODO fix petask adding coins
 @Composable
 fun GoalsScreen(
     modifier: Modifier,
