@@ -29,7 +29,6 @@ import com.deviar.petask.goals.ui.state.GoalUiState
 
 
 // TODO fix coins bug
-// TODO fix petask adding coins
 @Composable
 fun GoalsScreen(
     modifier: Modifier,

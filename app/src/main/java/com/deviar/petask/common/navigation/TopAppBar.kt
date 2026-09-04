@@ -41,12 +41,11 @@ fun PetaskTopAppBar(
     userImageUri: String?,
     navigateToProfile: () -> Unit,
     navigateToLogin: () -> Unit,
-    onLogoutClick: () -> Unit,
-    onAddCoins : () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
 
     TopAppBar(
-        title = { Text("Petask", Modifier.clickable{ onAddCoins() }) },
+        title = { Text("Petask") },
         actions = {
             CoinConteiner(coins)
             DropdownMenu(

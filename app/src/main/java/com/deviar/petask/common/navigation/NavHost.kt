@@ -68,8 +68,7 @@ fun NavHost(
                     userImageUri = profileViewModel.state.imageUri,
                     navigateToProfile = { navController.navigate(Profile) },
                     navigateToLogin = { navController.navigate(Login) { popUpTo(0) } },
-                    onLogoutClick = { mainViewModel.singOut() },
-                    onAddCoins = {mainViewModel.earnCoins(200)}
+                    onLogoutClick = { mainViewModel.singOut() }
                 )
             }
         },
