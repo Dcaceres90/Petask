@@ -11,17 +11,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.deviar.petask.R
 import com.deviar.petask.common.database.data.model.PetType
 import com.deviar.petask.common.ui.components.PetaskButton
 import com.deviar.petask.common.ui.components.textfields.PetaskTextField
+import com.deviar.petask.onboarding.ui.PetCareDisclaimer
+
 
 @Composable
 fun CreatePetScreen(
@@ -41,24 +45,41 @@ fun CreatePetScreen(
 
     val pets = PetType.entries
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
 
+        Text(
+            text = "Your pet decided to move in with the neighbor next door. they offered snacks way more often! But don’t worry, you can always welcome a new little friend!",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+
         Spacer(modifier = Modifier.height(200.dp))
 
-        Text("Choose your new kitten")
+        Text(
+            text = "Choose your new kitten",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
 
-        Text("How do you want to call your kitten?")
+        Spacer(modifier = Modifier.height(200.dp))
+
+        Text(
+            text = "How do you want to call your kitten?",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
 
         PetaskTextField(
             value = uiState.petName,
             onValueChange = {
                 createPetViewModel.onPetNameChange(it)
             },
-            label = "petName"
+            label = "Pet's Name"
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -94,5 +115,7 @@ fun CreatePetScreen(
             enabled = uiState.petName.isNotBlank()
                     && uiState.selectedPet != null
         )
+
+        PetCareDisclaimer()
     }
 }

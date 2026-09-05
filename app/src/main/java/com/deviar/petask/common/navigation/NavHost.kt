@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,12 +12,12 @@ import androidx.navigation.compose.rememberNavController
 import com.deviar.petask.auth.ui.login.LoginScreen
 import com.deviar.petask.auth.ui.register.RegisterScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.deviar.petask.calendar.CalendarScreen
 import com.deviar.petask.pet.ui.PetScreen
 import com.deviar.petask.tasks.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
 import com.deviar.petask.createpet.CreatePetScreen
+import com.deviar.petask.goals.ui.GoalsScreen
 import com.deviar.petask.onboarding.ui.OnboardingScreen
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
@@ -46,7 +45,7 @@ fun NavHost(
         currentDestination?.route in listOf(
             Pet::class.qualifiedName,
             Tasks::class.qualifiedName,
-            Calendar::class.qualifiedName,
+            Goals::class.qualifiedName,
             Profile::class.qualifiedName
         )
 
@@ -69,8 +68,7 @@ fun NavHost(
                     userImageUri = profileViewModel.state.imageUri,
                     navigateToProfile = { navController.navigate(Profile) },
                     navigateToLogin = { navController.navigate(Login) { popUpTo(0) } },
-                    onLogoutClick = { mainViewModel.singOut() },
-                    onAddCoins = {mainViewModel.earnCoins(200)}
+                    onLogoutClick = { mainViewModel.singOut() }
                 )
             }
         },
@@ -150,8 +148,11 @@ fun NavHost(
                 )
             }
 
-            composable<Calendar> {
-                CalendarScreen()
+            composable<Goals> {
+                GoalsScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    goalsViewModel = hiltViewModel()
+                )
 
             }
 
