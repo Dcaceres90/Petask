@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.deviar.petask.MainViewModel
 import com.deviar.petask.R
 import com.deviar.petask.common.ui.components.UserImage
 import com.deviar.petask.common.ui.theme.Brown
@@ -37,22 +39,25 @@ import com.deviar.petask.common.ui.theme.GoldCoin
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetaskTopAppBar(
-    coins: Int,
     userImageUri: String?,
     navigateToProfile: () -> Unit,
     navigateToLogin: () -> Unit,
-    onLogoutClick: () -> Unit
+    mainViewModel: MainViewModel
 ) {
+
 
     TopAppBar(
         title = { Text("Petask") },
         actions = {
-            CoinConteiner(coins)
+            CoinConteiner(
+                //coins
+                mainViewModel.state.coins
+            )
             DropdownMenu(
                 navigateToProfile = navigateToProfile,
                 navigateToLogin = navigateToLogin,
                 userImageUri = userImageUri,
-                onLogoutClick
+                onLogoutClick = { mainViewModel.singOut() }
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
