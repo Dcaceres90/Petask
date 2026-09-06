@@ -19,7 +19,7 @@ The application combines task management with a simple reward system: completing
 - MVVM
 - Clean Architecture
 - Room
-- Retrofit
+- Coil
 - Firebase Authentication with Email/Password and google
 - Hilt
 - Flow
