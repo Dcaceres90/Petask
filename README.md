@@ -5,7 +5,7 @@ The application combines task management with a simple reward system: completing
 ## Features
 
 - Firebase Authentication (Email/Password and Google)
-- User profile (Update picture from the gallery or use camera)
+- User profile (Update picture from gallery or camera)
 - Virtual pet with different states depending on its needs
 - Task management
 - Weekly and Monthly Goals
