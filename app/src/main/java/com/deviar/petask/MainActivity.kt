@@ -22,7 +22,8 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     isLogged = mainViewModel.isLogged,
                     hasUserModel = mainViewModel.state.hasUserModel,
-                    hasPetModel = mainViewModel.state.hasPetModel
+                    hasPetModel = mainViewModel.state.hasPetModel,
+                    mainViewModel = mainViewModel
                 )
                 Log.i(
                     "Iara",

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,7 +30,8 @@ fun NavHost(
     isLogged: Boolean,
     hasUserModel: Boolean,
     hasPetModel: Boolean,
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel
+    //mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     val navController = rememberNavController()
@@ -64,11 +66,10 @@ fun NavHost(
         topBar = {
             if (showBar) {
                 PetaskTopAppBar(
-                    coins = mainViewModel.state.coins,
                     userImageUri = profileViewModel.state.imageUri,
                     navigateToProfile = { navController.navigate(Profile) },
                     navigateToLogin = { navController.navigate(Login) { popUpTo(0) } },
-                    onLogoutClick = { mainViewModel.singOut() }
+                    mainViewModel = mainViewModel
                 )
             }
         },
@@ -137,6 +138,9 @@ fun NavHost(
             }
 
             composable<Pet> {
+                LaunchedEffect(Unit) { //Find better choice to fix this issue later, maybe with "we are setting up your app" first screen.  
+                    mainViewModel.loadUser()
+                }
                 PetScreen(
                     petViewModel = hiltViewModel()
                 )

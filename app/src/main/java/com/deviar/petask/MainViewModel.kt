@@ -34,6 +34,10 @@ class MainViewModel @Inject constructor(
         observeUser()
     }
 
+    fun loadUser() {
+        observeUser()
+    }
+
     private fun observeUser() {
 
         viewModelScope.launch {

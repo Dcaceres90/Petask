@@ -78,53 +78,73 @@ fun GoalsScreen(
             Column(modifier = modifier.padding(paddingValues)) {
 
                 Text(
-                    text = "Weekly Goals",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                weeklyGoals.forEach { goal ->
-                    GoalItem(
-                        goal = goal,
-                        onCheckedChange = { isComplete ->
-                            goalsViewModel.updateIsCompleted(
-                                goal = goal,
-                                isComplete = isComplete
-                            )
-                        },
-                        onClick = {
-                            selectedGoal = goal
-                            showDialog = true
-                        },
-                        onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId) }
-                    )
-                }
-
-                Spacer(Modifier.height(30.dp))
-
-                Text(
                     text = "Monthly Goals",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 
-
-                monthlyGoals.forEach { goal ->
-                    GoalItem(
-                        goal = goal,
-                        onCheckedChange = { isComplete ->
-                            goalsViewModel.updateIsCompleted(
-                                goal = goal,
-                                isComplete = isComplete
-                            )
-                        },
-                        onClick = {
-                            selectedGoal = goal
-                            showDialog = true
-                        },
-                        onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId) }
+                if (monthlyGoals.isEmpty()) {
+                    Text(
+                        text = "Set your goals. Make it happen! ",
+                        style = MaterialTheme.typography.bodyMedium
                     )
+                } else {
+
+
+                    monthlyGoals.forEach { goal ->
+                        GoalItem(
+                            goal = goal,
+                            onCheckedChange = { isComplete ->
+                                goalsViewModel.updateIsCompleted(
+                                    goal = goal,
+                                    isComplete = isComplete
+                                )
+                            },
+                            onClick = {
+                                selectedGoal = goal
+                                showDialog = true
+                            },
+                            onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId) }
+                        )
+                    }
                 }
+
+                Spacer(Modifier.height(30.dp))
+
+                Text(
+                    text = "Weekly Goals",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                if (weeklyGoals.isEmpty()) {
+                    Text(
+                        text = "Nothing planned yet. What will you achieve?",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                } else {
+
+                    weeklyGoals.forEach { goal ->
+                        GoalItem(
+                            goal = goal,
+                            onCheckedChange = { isComplete ->
+                                goalsViewModel.updateIsCompleted(
+                                    goal = goal,
+                                    isComplete = isComplete
+                                )
+                            },
+                            onClick = {
+                                selectedGoal = goal
+                                showDialog = true
+                            },
+                            onDeleteClick = { goalsViewModel.deleteGoal(goal.goalId) }
+                        )
+                    }
+                }
+
+
+
+
 
             }
         }
