@@ -151,7 +151,7 @@ fun PetScreen(
                 .padding(horizontal = 16.dp)
         ) {
 
-            Spacer(modifier = Modifier.weight(2f))
+            Spacer(modifier = Modifier.weight(2.5f))
 
             Box(
                 modifier = Modifier
@@ -191,14 +191,26 @@ fun PetDetails(pet: PetUiState, petViewModel: PetViewModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = pet.name,
-                modifier = Modifier.padding(vertical = 6.dp),
-                fontSize = 25.sp,
-                fontWeight = FontWeight.ExtraBold,
-                fontStyle = FontStyle.Italic
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = pet.name,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontStyle = FontStyle.Italic
+                )
 
-            )
+                Spacer(modifier = Modifier.width(20.dp))
+
+                Text(
+                    text = "Lv. ${petViewModel.calculateLevel(pet.exp)}",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Primary
+                )
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -212,7 +224,7 @@ fun PetDetails(pet: PetUiState, petViewModel: PetViewModel) {
                         contentColor = Color.Black
                     ),
                     shape = MaterialTheme.shapes.medium
-                ) { Text("Feed") }
+                ) { Text(text = "FEED", color = Color.White) }
 
                 Spacer(modifier = Modifier.width(16.dp))
 
@@ -233,8 +245,6 @@ fun PetDetails(pet: PetUiState, petViewModel: PetViewModel) {
                 }
 
             }
-
-            Text("Level = ${petViewModel.calculateLevel(pet.exp)}")
 
         }
     }

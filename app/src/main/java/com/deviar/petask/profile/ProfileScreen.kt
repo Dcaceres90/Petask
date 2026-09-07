@@ -122,30 +122,7 @@ fun ProfileScreen(
                     showBottomSheet = true
                 }
             )
-//            if (state.imageUri != null) {
-//                AsyncImage(
-//                    model = state.imageUri,
-//                    contentDescription = null,
-//                    modifier = Modifier
-//                        .size(100.dp)
-//                        .clip(CircleShape)
-//                        .clickable {
-//                            showBottomSheet = true
-//                        },
-//                    contentScale = ContentScale.Crop
-//                )
-//            } else {
-//                Image(
-//                    painter = painterResource(R.drawable.ic_user_mage),
-//                    contentDescription = null,
-//                    modifier = Modifier
-//                        .size(100.dp)
-//                        .clip(CircleShape)
-//                        .clickable {
-//                            showBottomSheet = true
-//                        }
-//                )
-//            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
