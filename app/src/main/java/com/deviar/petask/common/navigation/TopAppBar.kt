@@ -130,11 +130,6 @@ fun DropdownMenu(
             )
 
             DropdownMenuItem(
-                text = { Text("Configuration", color = GoldCoin) },
-                onClick = { }
-            )
-
-            DropdownMenuItem(
                 text = { Text("Log Out", color = Color.Red) },
                 onClick = {
                     expanded = false

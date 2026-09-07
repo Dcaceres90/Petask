@@ -44,7 +44,7 @@ fun PetaskNavigationBar(navController: NavHostController, modifier: Modifier = M
         modifier = modifier
             .height(80.dp)
             .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
+            .clip(RoundedCornerShape(20.dp))
     ) {
         itemList.forEach { item ->
             NavigationBarItem(
