@@ -13,7 +13,6 @@ import com.deviar.petask.tasks.domain.NewTaskFormState
 import com.deviar.petask.tasks.domain.TasksState
 import com.deviar.petask.tasks.util.TaskConstans
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,10 +41,10 @@ class TaskViewModel @Inject constructor(
         _uiTasksState.value = taksState
     }
 
-    fun updateScreenSelectedDate(selectedDate: String) {
+    fun updateScreenSelectedDate(selectedDateList: String) {
         _uiTasksState.update { estadoActual ->
             estadoActual.copy(
-                selectedDate = selectedDate
+                selectedDate = selectedDateList
             )
         }
     }

@@ -36,13 +36,11 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.TasksState
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -111,7 +109,18 @@ fun TasksScreen(
                         onClickConfirmDateSpicker = {
                             selectedDateMillis = datePickerState.selectedDateMillis ?: 0L
                             newTaskFormState.showDialog = false
-                            viewModel.getTasksByDate(Date(datePickerState.selectedDateMillis ?: 0L))
+                            //Capaz cambiar falel guardado del date
+
+                            val displayDate = selectedDateMillis.let {
+                                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                sdf.format(Date(it))
+                            } ?: ""
+                            viewModel.updateNewTaskFormScreenDateToDoString(
+                                selectedDate = displayDate,
+                            )
+                            viewModel.updateNewTaskFormScreenDateToDo(
+                                selectedDate = Date(selectedDateMillis),
+                            )
                             viewModel.setTasksShowDialog(false)
                         },
                         onClickShowDialogDateSpicker = {
@@ -133,7 +142,7 @@ fun TasksScreen(
                     uiTasksState,
                     onClickDate = { date ->
                         viewModel.updateScreenSelectedDate(
-                            selectedDate = date,
+                            selectedDateList = date,
                         )
                     },
                 )
