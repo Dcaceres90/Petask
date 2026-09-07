@@ -30,7 +30,7 @@ fun DatePickerDialogCustom(
     selectedDate: Long,
     datePickerState: DatePickerState,
     showDialog: Boolean,
-    onClickConfirm: () -> Unit,
+    onClickConfirm: (Long) -> Unit,
     onClickShowDialog: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -60,7 +60,11 @@ fun DatePickerDialogCustom(
         DatePickerDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
-                TextButton(onClick = onClickConfirm) { Text("Aceptar") }
+                TextButton(
+                    onClick = {
+                        onClickConfirm(datePickerState.selectedDateMillis ?: selectedDate)
+                    }
+                ) { Text("Aceptar") }
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) { Text("Cancelar") }

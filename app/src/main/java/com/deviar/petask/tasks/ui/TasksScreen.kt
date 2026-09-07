@@ -107,7 +107,7 @@ fun TasksScreen(
                             showFormAlertDialog = false
                         },
                         onClickConfirmDateSpicker = {
-                            selectedDateMillis = datePickerState.selectedDateMillis ?: 0L
+                            selectedDateMillis = it
                             newTaskFormState.showDialog = false
                             //Capaz cambiar falel guardado del date
 
