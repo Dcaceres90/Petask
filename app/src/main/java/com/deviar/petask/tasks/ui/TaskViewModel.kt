@@ -9,6 +9,7 @@ import com.deviar.petask.common.database.domain.usecase.task.GetTaskByDateUseCas
 import com.deviar.petask.common.database.domain.usecase.task.InsertTaskUseCase
 import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
 import com.deviar.petask.common.utils.LevelDificult
+import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.NewTaskFormState
 import com.deviar.petask.tasks.domain.TasksState
 import com.deviar.petask.tasks.util.TaskConstans
@@ -57,7 +58,7 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    fun updateScreenDatesList(datesUpcoming: List<String>) {
+    fun updateScreenDatesList(datesUpcoming: List<DateState>) {
         _uiTasksState.update { estadoActual ->
             estadoActual.copy(
                 datesUpcoming = datesUpcoming
@@ -126,16 +127,25 @@ class TaskViewModel @Inject constructor(
         return SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
     }
 
-    fun getUpcomingDates(): List<String> {
+    fun getUpcomingDates(): List<DateState> {
         val calendar = Calendar.getInstance()
-        val datesList = mutableListOf<String>()
+        val datesList = mutableListOf<DateState>()
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        datesList.add(dateFormat.format(calendar.time))
-
+        //datesList.add(dateFormat.format(calendar.time))
+        datesList.add(
+            DateState(
+                date = calendar.time,
+                showDate = dateFormat.format(calendar.time),
+            )
+        )
         for (i in TaskConstans.PRIMER_DIA_MOSTRAR ..TaskConstans.ULTIMO_DIA_MOSTRAR) {  // Obtener las próximas 5 fechas
             calendar.add(Calendar.DAY_OF_YEAR, 1)
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            datesList.add(dateFormat.format(calendar.time))
+            datesList.add(
+                DateState(
+                    date = calendar.time,
+                    showDate = dateFormat.format(calendar.time),
+                )
+            )
         }
 
         return datesList

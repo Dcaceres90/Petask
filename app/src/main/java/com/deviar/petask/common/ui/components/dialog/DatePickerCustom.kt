@@ -45,7 +45,7 @@ fun DatePickerDialogCustom(
             value = displayDate,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Fecha") },
+            label = { Text("Date") },
             trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
             modifier = Modifier.fillMaxWidth()
         )

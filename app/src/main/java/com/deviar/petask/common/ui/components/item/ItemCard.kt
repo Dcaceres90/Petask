@@ -15,11 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.ui.theme.Primary
 import com.deviar.petask.common.ui.theme.Secondary
+import com.deviar.petask.tasks.domain.DateState
 
 @Composable
 fun ItemCard(
-    texto: String,
-    onClickItem: (String) -> Unit,
+    dateState: DateState,
+    onClickItem: (DateState) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -33,13 +34,13 @@ fun ItemCard(
                 .background(color = Primary)
                 .clickable(
                     onClick = {
-                        onClickItem(texto)
+                        onClickItem(dateState)
                     }
                 ),
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = texto,
+                text = dateState.showDate,
                 color = Secondary,
             )
         }

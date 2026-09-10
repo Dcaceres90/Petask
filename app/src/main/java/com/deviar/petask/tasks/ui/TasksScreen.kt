@@ -40,6 +40,7 @@ import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
 import com.deviar.petask.common.utils.LevelDificult
+import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.TasksState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -141,8 +142,10 @@ fun TasksScreen(
                 TaskStructureScreen(
                     uiTasksState,
                     onClickDate = { date ->
+                        //TODO Pensar el onClick
+
                         viewModel.updateScreenSelectedDate(
-                            selectedDateList = date,
+                            selectedDateList = date.showDate,
                         )
                     },
                 )
@@ -155,7 +158,7 @@ fun TasksScreen(
 @Composable
 fun TaskStructureScreen(
     tasksState: TasksState,
-    onClickDate:(String) -> Unit = {}
+    onClickDate:(DateState) -> Unit = {}
 ) {
     Column {
         ListaFechas(
@@ -171,8 +174,8 @@ fun TaskStructureScreen(
 
 @Composable
 fun ListaFechas(
-    dates: List<String>,
-    onClickDate:(String) -> Unit = {},
+    dates: List<DateState>,
+    onClickDate:(DateState) -> Unit = {},
 ) {
     Column(
         modifier = Modifier,

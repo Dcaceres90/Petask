@@ -36,7 +36,7 @@ fun FormAlertDialog(
     AlertDialog(
         onDismissRequest = { onDismiss() }, // Se ejecuta al tocar fuera o presionar atrás
         title = {
-            Text(text = "Crear Tarea")
+            Text(text = "Create Task")
         },
         text = {
             DialogView(
@@ -64,12 +64,12 @@ fun FormAlertDialog(
                 // Opcional: Deshabilitar el botón si algún campo está vacío
                 enabled = newTaskFormState.title.isNotBlank() && newTaskFormState.dateToDoString.isNotBlank()
             ) {
-                Text("Guardar")
+                Text("Save")
             }
         },
         dismissButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text("Cancelar")
+                Text("Cancel")
             }
         }
     )

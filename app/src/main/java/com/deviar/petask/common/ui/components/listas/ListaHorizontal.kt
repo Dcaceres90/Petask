@@ -10,11 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.ui.components.item.ItemCard
+import com.deviar.petask.tasks.domain.DateState
 
 @Composable
 fun ListHorizontalCustom(
-    items: List<String>,
-    onClickItem: (String) -> Unit,
+    items: List<DateState>,
+    onClickItem: (DateState) -> Unit,
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -23,8 +24,8 @@ fun ListHorizontalCustom(
     ) {
         items(items) { item ->
             ItemCard(
-                texto = item,
-                onClickItem,
+                dateState = item,
+                onClickItem = onClickItem,
             )
         }
     }
@@ -34,7 +35,7 @@ fun ListHorizontalCustom(
 @Composable
 fun ListHorizontalCustomPreview() {
     ListHorizontalCustom(
-        items = listOf("Item 1", "Item 2", "Item 3", "Item 4"),
+        items = listOf(),
         onClickItem = {},
     )
 }
