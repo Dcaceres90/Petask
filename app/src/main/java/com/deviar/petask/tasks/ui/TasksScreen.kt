@@ -143,7 +143,7 @@ fun TasksScreen(
                     uiTasksState,
                     onClickDate = { date ->
                         //TODO Pensar el onClick
-
+                        // Revizar la actualizacion de la lista
                         viewModel.updateScreenSelectedDate(
                             selectedDateList = date.showDate,
                         )
