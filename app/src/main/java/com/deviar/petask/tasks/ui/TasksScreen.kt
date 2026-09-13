@@ -148,6 +148,18 @@ fun TasksScreen(
                             selectedDateList = date.showDate,
                         )
                     },
+                    onClickArrow = {
+                        //Hay que pensar como cambiar el FormAlertDialog
+                        viewModel.updateNewTaskFormScreenText(it.text)
+                        viewModel.updateLevelDificultNewTaskFormScreen(it.levelDificult)
+                        viewModel.updateNewTaskFormScreenDateToDo(it.toDoDate)
+                        val displayDate = it.toDoDate.time.let {
+                            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                            sdf.format(Date(it))
+                        } ?: ""
+                        viewModel.updateNewTaskFormScreenDateToDoString(displayDate)
+                        showFormAlertDialog = true
+                    },
                 )
             }
         }
@@ -158,7 +170,8 @@ fun TasksScreen(
 @Composable
 fun TaskStructureScreen(
     tasksState: TasksState,
-    onClickDate:(DateState) -> Unit = {}
+    onClickDate:(DateState) -> Unit = {},
+    onClickArrow:(TaskModel) -> Unit,
 ) {
     Column {
         ListaFechas(
@@ -168,6 +181,7 @@ fun TaskStructureScreen(
         Spacer(modifier = Modifier.height(20.dp))
         ListaTask(
             itemList = tasksState.taskList,
+            onClickArrow = onClickArrow,
         )
     }
 }
@@ -195,6 +209,7 @@ fun ListaFechas(
 @Composable
 fun ListaTask(
     itemList: List<TaskModel>,
+    onClickArrow: (TaskModel) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -208,7 +223,7 @@ fun ListaTask(
                             color = Color.White,
                         ),
                     onClickArrow = {
-                        /* Mostrar DatePickerDialog aquí */
+                        onClickArrow(item)
                     },
                     itemTask = item
                 )
@@ -221,14 +236,16 @@ fun ListaTask(
 @Composable
 fun  FilledIconottomCustom(
     modifier: Modifier = Modifier,
-    onClickArrow: () -> Unit,
+    onClickArrow: (TaskModel) -> Unit,
     itemTask: TaskModel?,
     imageVector: ImageVector = Icons.Filled.Delete,
     colorContent: Color = Color.White,
 ) {
     FilledIconButton(
         modifier = modifier,
-        onClick = onClickArrow,
+        onClick ={
+            onClickArrow(itemTask ?: TaskModel())
+        },
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
@@ -260,6 +277,7 @@ fun PreviewTasksScreen() {
         TaskStructureScreen(
             TasksState(),
             onClickDate = {},
+            onClickArrow = {},
         )
     }
 }
