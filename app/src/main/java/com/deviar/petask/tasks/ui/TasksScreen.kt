@@ -40,6 +40,7 @@ import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
 import com.deviar.petask.common.utils.LevelDificult
+import com.deviar.petask.common.utils.SwipeToDeleteContainer
 import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.TasksState
 import java.text.SimpleDateFormat
@@ -52,7 +53,14 @@ import kotlin.String
 fun TasksScreen(
     viewModel: TaskViewModel,
 ) {
+    //TODO Pensar el onClickDate
+    // Revizar la actualizacion de la lista
+    // No esta editando
+    // No funciona el onClick de la lista horizontal
+    // Revisar los tasksState
+
     var showFormAlertDialog by remember { mutableStateOf(false) }
+    var isEditTask by remember { mutableStateOf(false) }
     val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
     val newTaskFormState by viewModel.newTaskFormState.collectAsStateWithLifecycle()
 
@@ -84,6 +92,7 @@ fun TasksScreen(
                     ),
                     onClickFloating = {
                         showFormAlertDialog = true
+                        isEditTask = false
                     }
                 )
             },
@@ -104,7 +113,11 @@ fun TasksScreen(
                         },
                         onClickConfirm = { newTask ->
                             // Enviamos los datos capturados a la función superior
-                            viewModel.insertTaskDataBase(newTask)
+                            if (!isEditTask) {
+                                viewModel.insertTaskDataBase(newTask)
+                            } else {
+                                viewModel.updateTaskDataBase(newTask)
+                            }
                             showFormAlertDialog = false
                         },
                         onClickConfirmDateSpicker = {
@@ -112,9 +125,9 @@ fun TasksScreen(
                             newTaskFormState.showDialog = false
                             //Capaz cambiar falel guardado del date
 
-                            val displayDate = selectedDateMillis.let {
+                            val displayDate = selectedDateMillis.let { time ->
                                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                                sdf.format(Date(it))
+                                sdf.format(Date(time))
                             } ?: ""
                             viewModel.updateNewTaskFormScreenDateToDoString(
                                 selectedDate = displayDate,
@@ -140,24 +153,26 @@ fun TasksScreen(
                     )
                 }
                 TaskStructureScreen(
-                    uiTasksState,
+                    tasksState = uiTasksState,
                     onClickDate = { date ->
-                        //TODO Pensar el onClick
-                        // Revizar la actualizacion de la lista
                         viewModel.updateScreenSelectedDate(
                             selectedDateList = date.showDate,
                         )
+                    },
+                    onDeleted = {
+                        viewModel.deleteTaskDataBase(it.idTask)
                     },
                     onClickArrow = {
                         //Hay que pensar como cambiar el FormAlertDialog
                         viewModel.updateNewTaskFormScreenText(it.text)
                         viewModel.updateLevelDificultNewTaskFormScreen(it.levelDificult)
                         viewModel.updateNewTaskFormScreenDateToDo(it.toDoDate)
-                        val displayDate = it.toDoDate.time.let {
+                        val displayDate = it.toDoDate.time.let { time ->
                             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                            sdf.format(Date(it))
+                            sdf.format(Date(time))
                         } ?: ""
                         viewModel.updateNewTaskFormScreenDateToDoString(displayDate)
+                        isEditTask = true
                         showFormAlertDialog = true
                     },
                 )
@@ -170,6 +185,7 @@ fun TasksScreen(
 @Composable
 fun TaskStructureScreen(
     tasksState: TasksState,
+    onDeleted: (TaskModel) -> Unit,
     onClickDate:(DateState) -> Unit = {},
     onClickArrow:(TaskModel) -> Unit,
 ) {
@@ -181,6 +197,7 @@ fun TaskStructureScreen(
         Spacer(modifier = Modifier.height(20.dp))
         ListaTask(
             itemList = tasksState.taskList,
+            onDeleted = onDeleted,
             onClickArrow = onClickArrow,
         )
     }
@@ -209,6 +226,7 @@ fun ListaFechas(
 @Composable
 fun ListaTask(
     itemList: List<TaskModel>,
+    onDeleted: (TaskModel) -> Unit,
     onClickArrow: (TaskModel) -> Unit,
 ) {
     Column(
@@ -216,16 +234,25 @@ fun ListaTask(
     ) {
         LazyColumn {
             items(itemList) { item ->
-                FilledIconottomCustom(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            color = Color.White,
-                        ),
-                    onClickArrow = {
-                        onClickArrow(item)
+                SwipeToDeleteContainer(
+                    item = item,
+                    onDelete = onDeleted,
+                    content = {
+                        FilledIconottomCustom(
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(
+                                        horizontal = 16.dp,
+                                    ).background(
+                                        color = Color.Transparent,
+                                    ),
+                            onClickArrow = {
+                                onClickArrow(item)
+                            },
+                            itemTask = item
+                        )
                     },
-                    itemTask = item
                 )
             }
         }
@@ -234,11 +261,10 @@ fun ListaTask(
 }
 
 @Composable
-fun  FilledIconottomCustom(
+fun FilledIconottomCustom(
     modifier: Modifier = Modifier,
     onClickArrow: (TaskModel) -> Unit,
     itemTask: TaskModel?,
-    imageVector: ImageVector = Icons.Filled.Delete,
     colorContent: Color = Color.White,
 ) {
     FilledIconButton(
@@ -246,7 +272,7 @@ fun  FilledIconottomCustom(
         onClick ={
             onClickArrow(itemTask ?: TaskModel())
         },
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(30)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -257,11 +283,6 @@ fun  FilledIconottomCustom(
             Text(
                 "${itemTask?.text} ${itemTask?.levelDificult?.name} $time",
                 color = colorContent,
-            )
-            Icon(
-                imageVector = imageVector,
-                contentDescription = "Regresar",
-                tint = colorContent,
             )
         }
     }
@@ -277,6 +298,7 @@ fun PreviewTasksScreen() {
         TaskStructureScreen(
             TasksState(),
             onClickDate = {},
+            onDeleted = {},
             onClickArrow = {},
         )
     }

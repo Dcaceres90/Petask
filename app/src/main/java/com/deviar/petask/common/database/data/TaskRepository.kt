@@ -48,6 +48,6 @@ class TaskRepository
         }
 
         suspend fun updateTask(task: TaskModel){
-            taskDao.update(task)
+            taskDao.updateTask(task)
         }
 }

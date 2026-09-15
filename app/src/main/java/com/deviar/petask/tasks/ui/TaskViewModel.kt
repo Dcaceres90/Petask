@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.database.domain.usecase.GetUIDUseCase
+import com.deviar.petask.common.database.domain.usecase.task.DeleteTaskUseCase
 import com.deviar.petask.common.database.domain.usecase.task.GetTaskByDateUseCase
 import com.deviar.petask.common.database.domain.usecase.task.InsertTaskUseCase
 import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
@@ -14,6 +15,7 @@ import com.deviar.petask.tasks.domain.NewTaskFormState
 import com.deviar.petask.tasks.domain.TasksState
 import com.deviar.petask.tasks.util.TaskConstans
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,6 +36,7 @@ class TaskViewModel @Inject constructor(
     private val insertTaskUseCase: InsertTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
     private val getUIDUseCase: GetUIDUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
 ): ViewModel() {
     private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
     val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
@@ -154,6 +157,12 @@ class TaskViewModel @Inject constructor(
     fun updateTaskDataBase(task: TaskModel) {
         viewModelScope.launch {
             updateTaskUseCase(task)
+        }
+    }
+
+    fun deleteTaskDataBase(taskId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteTaskUseCase(taskId = taskId.toString())
         }
     }
 
