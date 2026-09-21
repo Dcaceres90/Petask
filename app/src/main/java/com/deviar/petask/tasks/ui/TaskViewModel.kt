@@ -13,6 +13,7 @@ import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.NewTaskFormState
 import com.deviar.petask.tasks.domain.TasksState
+import com.deviar.petask.tasks.domain.TasksUiState
 import com.deviar.petask.tasks.util.TaskConstans
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -41,11 +42,9 @@ class TaskViewModel @Inject constructor(
     private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
     val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
 
-    fun setUiTaskState(taksState: TasksState) {
-        _uiTasksState.value = taksState
-    }
-
-    fun updateScreenSelectedDate(selectedDateList: String) {
+    private var _uiTasks = MutableStateFlow(TasksUiState.Loading)
+    val uiTasks: StateFlow<TasksUiState> = _uiTasks.asStateFlow()
+    fun updateScreenSelectedDate(selectedDateList: DateState) {
         _uiTasksState.update { estadoActual ->
             estadoActual.copy(
                 selectedDate = selectedDateList
