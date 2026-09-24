@@ -95,7 +95,7 @@ fun DialogView(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp) // Espaciado entre campos
     ) {
-        Text(text = "Por favor, introduce tus datos:")
+        Text(text = "Please, fill the fields")
 
         // Primer campo de entrada
         OutlinedTextField(

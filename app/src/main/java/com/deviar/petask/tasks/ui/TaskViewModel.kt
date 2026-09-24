@@ -11,10 +11,10 @@ import com.deviar.petask.common.database.domain.usecase.task.InsertTaskUseCase
 import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.DateState
+import com.deviar.petask.tasks.domain.HorizotalListState
 import com.deviar.petask.tasks.domain.NewTaskFormState
 import com.deviar.petask.tasks.domain.TaskState
-import com.deviar.petask.tasks.domain.TasksState
-import com.deviar.petask.tasks.domain.TasksUiState
+import com.deviar.petask.tasks.domain.TasksListUiState
 import com.deviar.petask.tasks.util.TaskConstans
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -40,34 +40,41 @@ class TaskViewModel @Inject constructor(
     private val getUIDUseCase: GetUIDUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
 ): ViewModel() {
-    private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
-    val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
+    private var _horizotalListState: MutableStateFlow<HorizotalListState> = MutableStateFlow(HorizotalListState())
+    val horizotalListState: StateFlow<HorizotalListState> = _horizotalListState.asStateFlow()
 
-    private var _uiTasks = MutableStateFlow(TasksUiState.Loading)
-    val uiTasks: StateFlow<TasksUiState> = _uiTasks.asStateFlow()
-    fun updateScreenSelectedDate(selectedDateList: DateState) {
-        _uiTasksState.update { estadoActual ->
+    private var _uiTasks = MutableStateFlow<TasksListUiState>(TasksListUiState.Loading)
+    val uiTasks: StateFlow<TasksListUiState> = _uiTasks.asStateFlow()
+
+    fun updateScreenSelectedDate(selectedDate: DateState) {
+        _horizotalListState.update { estadoActual ->
             estadoActual.copy(
-                selectedDate = selectedDateList
+                selectedDate = selectedDate,
             )
         }
     }
 
     fun updateScreenTasks(taskList: List<TaskModel>) {
-        _uiTasksState.update { estadoActual ->
-            estadoActual.copy(
-                taskList = taskList
-            )
+        viewModelScope.launch {
+            try {
+                _uiTasks.value =
+                    TasksListUiState.Success(
+                        taskList = taskList,
+                    )
+            } catch (e: Exception) {
+                _uiTasks.value = TasksListUiState.Error(e.message ?: "Ocurrio un error")
+            }
         }
     }
 
     fun updateScreenDatesList(datesUpcoming: List<DateState>) {
-        _uiTasksState.update { estadoActual ->
+        _horizotalListState.update { estadoActual ->
             estadoActual.copy(
-                datesUpcoming = datesUpcoming
+                datesUpcoming = datesUpcoming,
             )
         }
     }
+
 
     private var _newTaskFormState: MutableStateFlow<NewTaskFormState> = MutableStateFlow(NewTaskFormState())
     val newTaskFormState: StateFlow<NewTaskFormState> = _newTaskFormState.asStateFlow()

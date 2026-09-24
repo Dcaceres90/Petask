@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,11 +20,13 @@ import com.deviar.petask.calendar.CalendarScreen
 import com.deviar.petask.pet.ui.PetScreen
 import com.deviar.petask.tasks.ui.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.deviar.petask.MainViewModel
 import com.deviar.petask.pet.ui.PetViewModel
 import com.deviar.petask.onboarding.ui.OnboardingScreen
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
+import com.deviar.petask.tasks.ui.TaskViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -137,8 +140,11 @@ fun NavHost(
             }
 
             composable<Tasks> {
+                val viewModel = hiltViewModel<TaskViewModel>()
+                val uiTasks by viewModel.uiTasks.collectAsStateWithLifecycle()
                 TasksScreen(
-                    viewModel = hiltViewModel(),
+                    viewModel = viewModel,
+                    uiTasks = uiTasks,
                 )
             }
 
