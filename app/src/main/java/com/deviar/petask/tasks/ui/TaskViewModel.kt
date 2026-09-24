@@ -12,6 +12,7 @@ import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.NewTaskFormState
+import com.deviar.petask.tasks.domain.TaskState
 import com.deviar.petask.tasks.domain.TasksState
 import com.deviar.petask.tasks.domain.TasksUiState
 import com.deviar.petask.tasks.util.TaskConstans
@@ -71,10 +72,20 @@ class TaskViewModel @Inject constructor(
     private var _newTaskFormState: MutableStateFlow<NewTaskFormState> = MutableStateFlow(NewTaskFormState())
     val newTaskFormState: StateFlow<NewTaskFormState> = _newTaskFormState.asStateFlow()
 
+    fun updateTaskFormScreen(task: TaskState) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                taskEdit = task,
+            )
+        }
+    }
+
     fun updateNewTaskFormScreenDateToDoString(selectedDate: String) {
         _newTaskFormState.update { estadoActual ->
             estadoActual.copy(
-                dateToDoString = selectedDate
+                taskEdit = estadoActual.taskEdit.copy(
+                    dateToDoString = selectedDate,
+                ),
             )
         }
     }
@@ -82,15 +93,9 @@ class TaskViewModel @Inject constructor(
     fun updateNewTaskFormScreenDateToDo(selectedDate: Date) {
         _newTaskFormState.update { estadoActual ->
             estadoActual.copy(
-                dateToDo = selectedDate
-            )
-        }
-    }
-
-    fun updateNewTaskFormScreenText(text: String) {
-        _newTaskFormState.update { estadoActual ->
-            estadoActual.copy(
-                textNewTask = text
+                taskEdit = estadoActual.taskEdit.copy(
+                    dateToDo = selectedDate,
+                ),
             )
         }
     }
@@ -106,13 +111,11 @@ class TaskViewModel @Inject constructor(
     fun updateLevelDificultNewTaskFormScreen(levelDificult: LevelDificult) {
         _newTaskFormState.update { estadoActual ->
             estadoActual.copy(
-                levelDificult = levelDificult,
+                taskEdit = estadoActual.taskEdit.copy(
+                    levelDificult = levelDificult,
+                ),
             )
         }
-    }
-
-    fun setNewTaskFormState(taksState: NewTaskFormState) {
-        _newTaskFormState.value = taksState
     }
 
     private var _taskList: Flow<List<TaskModel>>? = MutableStateFlow(arrayListOf())
@@ -121,13 +124,6 @@ class TaskViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(),
         null,
     )
-
-
-    // Obtener la fecha de hoy
-
-    fun getDateSelectedFormat(): String {
-        return SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
-    }
 
     fun getUpcomingDates(): List<DateState> {
         val calendar = Calendar.getInstance()

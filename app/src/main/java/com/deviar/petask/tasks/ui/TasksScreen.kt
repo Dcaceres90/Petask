@@ -48,6 +48,7 @@ import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.common.utils.SwipeToDeleteContainer
 import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.NewTaskFormState
+import com.deviar.petask.tasks.domain.TaskState
 import com.deviar.petask.tasks.domain.TasksState
 import com.deviar.petask.tasks.domain.TasksUiState
 import java.text.SimpleDateFormat
@@ -157,14 +158,18 @@ fun TasksScreen(
         },
         onClickArrow = {
             //Hay que pensar como cambiar el FormAlertDialog
-            viewModel.updateNewTaskFormScreenText(it.text)
-            viewModel.updateLevelDificultNewTaskFormScreen(it.levelDificult)
-            viewModel.updateNewTaskFormScreenDateToDo(it.toDoDate)
             val displayDate = it.toDoDate.time.let { time ->
                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                 sdf.format(Date(time))
             } ?: ""
-            viewModel.updateNewTaskFormScreenDateToDoString(displayDate)
+            val taskState = TaskState(
+                idTask = it.idTask,
+                dateToDo = it.toDoDate,
+                dateToDoString = displayDate,
+                levelDificult = it.levelDificult,
+                textNewTask = it.text,
+            )
+            viewModel.updateTaskFormScreen(taskState)
             isEditTask = true
             showFormAlertDialog = true
         },

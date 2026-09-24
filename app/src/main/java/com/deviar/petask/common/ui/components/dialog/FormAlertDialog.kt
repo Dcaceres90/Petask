@@ -54,15 +54,18 @@ fun FormAlertDialog(
             Button(
                 onClick = {
                     val newTask = TaskModel(
-                        levelDificult = newTaskFormState.levelDificult,
+                        idTask = newTaskFormState.taskEdit.idTask,
+                        levelDificult = newTaskFormState.taskEdit.levelDificult,
                         text = newTaskFormState.title,
-                        toDoDate = newTaskFormState.dateToDo,
+                        toDoDate = newTaskFormState.taskEdit.dateToDo,
                         idUser = idUser,
                     )
                     onClickConfirm(newTask)
                 },
                 // Opcional: Deshabilitar el botón si algún campo está vacío
-                enabled = newTaskFormState.title.isNotBlank() && newTaskFormState.dateToDoString.isNotBlank()
+                enabled =
+                    newTaskFormState.title.isNotBlank() &&
+                        newTaskFormState.taskEdit.dateToDoString.isNotBlank()
             ) {
                 Text("Save")
             }
