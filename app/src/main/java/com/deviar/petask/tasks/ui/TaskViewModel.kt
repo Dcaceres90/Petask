@@ -12,7 +12,7 @@ import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.HorizotalListState
-import com.deviar.petask.tasks.domain.NewTaskFormState
+import com.deviar.petask.tasks.domain.FormTaskState
 import com.deviar.petask.tasks.domain.TaskState
 import com.deviar.petask.tasks.domain.TasksListUiState
 import com.deviar.petask.tasks.util.TaskConstans
@@ -76,11 +76,11 @@ class TaskViewModel @Inject constructor(
     }
 
 
-    private var _newTaskFormState: MutableStateFlow<NewTaskFormState> = MutableStateFlow(NewTaskFormState())
-    val newTaskFormState: StateFlow<NewTaskFormState> = _newTaskFormState.asStateFlow()
+    private var _FormTaskState: MutableStateFlow<FormTaskState> = MutableStateFlow(FormTaskState())
+    val formTaskState: StateFlow<FormTaskState> = _FormTaskState.asStateFlow()
 
     fun updateTaskFormScreen(task: TaskState) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = task,
             )
@@ -88,7 +88,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateNewTaskFormScreenDateToDoString(selectedDate: String) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     dateToDoString = selectedDate,
@@ -98,7 +98,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateNewTaskFormScreenDateToDo(selectedDate: Date) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     dateToDo = selectedDate,
@@ -108,7 +108,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateTitleNewTaskFormScreen(title: String) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 title = title
             )
@@ -116,7 +116,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateLevelDificultNewTaskFormScreen(levelDificult: LevelDificult) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     levelDificult = levelDificult,
@@ -186,7 +186,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun setTasksShowDialog(showDialog: Boolean) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 showDialog = showDialog,
             )

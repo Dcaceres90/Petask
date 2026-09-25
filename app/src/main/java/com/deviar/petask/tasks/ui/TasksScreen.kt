@@ -42,8 +42,7 @@ import com.deviar.petask.common.ui.components.button.ButtonFloating
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.common.utils.SwipeToDeleteContainer
 import com.deviar.petask.tasks.domain.DateState
-import com.deviar.petask.tasks.domain.HorizotalListState
-import com.deviar.petask.tasks.domain.NewTaskFormState
+import com.deviar.petask.tasks.domain.FormTaskState
 import com.deviar.petask.tasks.domain.TaskState
 import com.deviar.petask.tasks.domain.TasksListUiState
 import java.text.SimpleDateFormat
@@ -59,12 +58,11 @@ fun TasksScreen(
     //TODO Mejorar las animaciones
     // Revizar la actualizacion de una lista a otra o pensar que paner cuando no hay tareas en ese dia
     // Cambiar los nombres de los state por mas entendibles
-    // Hacer una clase de respuesta
     // Esta actualizando mal las listas
     var showFormAlertDialog by remember { mutableStateOf(false) }
     var isEditTask by remember { mutableStateOf(false) }
     val horizotalListState by viewModel.horizotalListState.collectAsStateWithLifecycle()
-    val newTaskFormState by viewModel.newTaskFormState.collectAsStateWithLifecycle()
+    val newTaskFormState by viewModel.formTaskState.collectAsStateWithLifecycle()
 
     viewModel.updateScreenDatesList(
         datesUpcoming = viewModel.getUpcomingDates(),
@@ -124,7 +122,7 @@ fun TasksScreen(
                         taskList = uiTasks.taskList,
                         viewModel = viewModel,
                         showFormAlertDialog = showFormAlertDialog,
-                        newTaskFormState = newTaskFormState,
+                        formTaskState = newTaskFormState,
                         datePickerState = datePickerState,
                         selectedDateMillis = selectedDateMillis,
                         onClickFloating = {
@@ -189,7 +187,7 @@ fun SuccessTasksListScreen(
     taskList: List<TaskModel> = arrayListOf(),
     viewModel: TaskViewModel,
     showFormAlertDialog: Boolean,
-    newTaskFormState: NewTaskFormState,
+    formTaskState: FormTaskState,
     datePickerState: DatePickerState,
     selectedDateMillis: Long,
     onClickFloating: () -> Unit = {},
@@ -215,7 +213,7 @@ fun SuccessTasksListScreen(
             Column(modifier = Modifier.padding(paddingValues)) {
                 if (showFormAlertDialog) {
                     FormAlertDialog(
-                        newTaskFormState = newTaskFormState,
+                        formTaskState = formTaskState,
                         idUser = viewModel.uuidState.value,
                         selectedDateLong = selectedDateMillis,
                         datePickerState = datePickerState,

@@ -14,13 +14,13 @@ import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.button.SpinnerCustom
 import com.deviar.petask.common.utils.LevelDificult
-import com.deviar.petask.tasks.domain.NewTaskFormState
+import com.deviar.petask.tasks.domain.FormTaskState
 
 @Composable
 fun FormAlertDialog(
     selectedDateLong: Long,
     idUser: String,
-    newTaskFormState: NewTaskFormState,
+    formTaskState: FormTaskState,
     datePickerState: DatePickerState,
     onDismiss: () -> Unit,
     onValueChangedText: (String) -> Unit,
@@ -40,7 +40,7 @@ fun FormAlertDialog(
         },
         text = {
             DialogView(
-                newTaskFormState = newTaskFormState,
+                formTaskState = formTaskState,
                 selectedDateLong = selectedDateLong,
                 datePickerState = datePickerState,
                 onValueChangedTitle = onValueChangedText,
@@ -54,18 +54,18 @@ fun FormAlertDialog(
             Button(
                 onClick = {
                     val newTask = TaskModel(
-                        idTask = newTaskFormState.taskEdit.idTask,
-                        levelDificult = newTaskFormState.taskEdit.levelDificult,
-                        text = newTaskFormState.title,
-                        toDoDate = newTaskFormState.taskEdit.dateToDo,
+                        idTask = formTaskState.taskEdit.idTask,
+                        levelDificult = formTaskState.taskEdit.levelDificult,
+                        text = formTaskState.title,
+                        toDoDate = formTaskState.taskEdit.dateToDo,
                         idUser = idUser,
                     )
                     onClickConfirm(newTask)
                 },
                 // Opcional: Deshabilitar el botón si algún campo está vacío
                 enabled =
-                    newTaskFormState.title.isNotBlank() &&
-                        newTaskFormState.taskEdit.dateToDoString.isNotBlank()
+                    formTaskState.title.isNotBlank() &&
+                        formTaskState.taskEdit.dateToDoString.isNotBlank()
             ) {
                 Text("Save")
             }
@@ -80,7 +80,7 @@ fun FormAlertDialog(
 
 @Composable
 fun DialogView(
-    newTaskFormState: NewTaskFormState,
+    formTaskState: FormTaskState,
     datePickerState: DatePickerState,
     selectedDateLong: Long = 0L,
     onValueChangedTitle: (String) -> Unit,
@@ -99,7 +99,7 @@ fun DialogView(
 
         // Primer campo de entrada
         OutlinedTextField(
-            value = newTaskFormState.title,
+            value = formTaskState.title,
             onValueChange = onValueChangedTitle,
             label = { Text("Title") },
             singleLine = true,
@@ -114,7 +114,7 @@ fun DialogView(
 
         DatePickerDialogCustom(
             selectedDate = selectedDateLong,
-            showDialog = newTaskFormState.showDialog,
+            showDialog = formTaskState.showDialog,
             datePickerState = datePickerState,
             onClickConfirm = onClickConfirmDateSpicker,
             onClickShowDialog = onClickShowDialogDateSpicker,
