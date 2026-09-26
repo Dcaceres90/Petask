@@ -10,8 +10,10 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
 composeBom = "2024.09.00"
 
-googleGmsGoogleServices = "4.4.4"
+
 firebaseBom = "34.11.0"
+googleGmsGoogleServices = "4.4.4"
+crashlytics = "3.0.8"
 
 navigationCompose = "2.9.8"
 kotlinSerialization ="1.8.1"
@@ -43,6 +45,8 @@ compose-material-icons-extended = { group = "androidx.compose.material", name = 
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firebase-crashlytics = {module = "com.google.firebase:firebase-crashlytics"}
+
 androidx-navigation-compose = {module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose"}
 kotlinx-serialization-json = {module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization"}
 
@@ -63,6 +67,8 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+crashlytics = {id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
+
 jetbrainsKotlinSerialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
