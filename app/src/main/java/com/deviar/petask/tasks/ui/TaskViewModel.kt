@@ -42,6 +42,7 @@ class TaskViewModel @Inject constructor(
 ): ViewModel() {
     private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
     val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
+    val itemSelected : MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
 
     private var _uiTasks = MutableStateFlow(TasksUiState.Loading)
     val uiTasks: StateFlow<TasksUiState> = _uiTasks.asStateFlow()
@@ -90,6 +91,16 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    fun updateNewTaskIsComplete(isComplete: Boolean) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                taskEdit = estadoActual.taskEdit.copy(
+                    isComplete = isComplete,
+                ),
+            )
+        }
+    }
+
     fun updateNewTaskFormScreenDateToDo(selectedDate: Date) {
         _newTaskFormState.update { estadoActual ->
             estadoActual.copy(
@@ -128,7 +139,7 @@ class TaskViewModel @Inject constructor(
     fun getUpcomingDates(): List<DateState> {
         val calendar = Calendar.getInstance()
         val datesList = mutableListOf<DateState>()
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
         //datesList.add(dateFormat.format(calendar.time))
         datesList.add(
             DateState(
