@@ -44,15 +44,22 @@ fun LoginScreen(
     modifier: Modifier,
     loginViewModel: LoginViewModel,
     navigateToRegister: () -> Unit,
+    navigateToOnboarding: () -> Unit,
     navigateToPet: () -> Unit
 ) {
 
     val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
     val recoveryMessage = uiState.recoveryMessage
+
     LaunchedEffect(uiState.loginSuccess) {
 
         if (uiState.loginSuccess) {
-            navigateToPet()
+
+            if (uiState.isNewUser) {
+                navigateToOnboarding()
+            } else {
+                navigateToPet()
+            }
         }
     }
 

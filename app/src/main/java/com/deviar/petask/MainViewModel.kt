@@ -12,6 +12,8 @@ import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,19 +33,27 @@ class MainViewModel @Inject constructor(
         observeUser()
     }
 
+    fun loadUser() {
+        observeUser()
+    }
+
     private fun observeUser() {
 
         viewModelScope.launch {
 
-            getUserUseCase().collect { user ->
+            combine(
+                getUserUseCase(),
+                getPetUseCase()
+            ) { user, pet ->
 
-                val pet = getPetUseCase()
-
-                state = state.copy(
+                MainState(
                     coins = user?.coins ?: 0,
-                    hasCompletedOnboarding = pet != null,
+                    hasUserModel = user != null,
+                    hasPetModel = pet != null,
                     isLoading = false
                 )
+            }.collect { newState ->
+                state = newState
             }
         }
     }
@@ -67,6 +77,7 @@ class MainViewModel @Inject constructor(
 
 data class MainState(
     val coins: Int = 0,
-    val hasCompletedOnboarding: Boolean = false,
+    val hasUserModel: Boolean = false,
+    val hasPetModel: Boolean = false,
     val isLoading: Boolean = true
 )

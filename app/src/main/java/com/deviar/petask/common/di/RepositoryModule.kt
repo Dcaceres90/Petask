@@ -3,6 +3,8 @@ package com.deviar.petask.common.di
 import com.deviar.petask.auth.data.AuthRepository
 import com.deviar.petask.common.database.data.PetRepository
 import com.deviar.petask.common.database.data.UserRepository
+import com.deviar.petask.common.database.data.GoalRepository
+import com.deviar.petask.common.database.domain.dao.GoalDao
 import com.deviar.petask.common.database.domain.dao.PetDao
 import com.deviar.petask.common.database.domain.dao.UserDao
 import com.google.firebase.auth.FirebaseAuth
@@ -27,6 +29,11 @@ class RepositoryModule {
         petDao: PetDao,
         auth: FirebaseAuth
     ): PetRepository = PetRepository(petDao, auth)
+
+    fun provideGoalRepository(
+        goalDao: GoalDao,
+        auth: FirebaseAuth
+    ): GoalRepository = GoalRepository(goalDao, auth)
 
     // todos los repositorios van acá
     @Provides

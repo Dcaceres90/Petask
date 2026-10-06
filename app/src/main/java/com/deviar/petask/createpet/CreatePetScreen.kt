@@ -1,4 +1,4 @@
-package com.deviar.petask.onboarding.ui
+package com.deviar.petask.createpet
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -11,35 +11,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.deviar.petask.common.database.data.model.PetType
-import com.deviar.petask.common.ui.components.textfields.PetaskTextField
 import com.deviar.petask.R
+import com.deviar.petask.common.database.data.model.PetType
 import com.deviar.petask.common.ui.components.PetaskButton
+import com.deviar.petask.common.ui.components.textfields.PetaskTextField
+import com.deviar.petask.onboarding.ui.PetCareDisclaimer
+
 
 @Composable
-fun OnboardingScreen(
-    onboardingViewModel: OnboardingViewModel,
+fun CreatePetScreen(
+    createPetViewModel: CreatePetViewModel,
     navigateToPet: () -> Unit
 ) {
 
-    val uiState by onboardingViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by createPetViewModel.uiState.collectAsStateWithLifecycle()
 
     fun getPetImage(petType: PetType): Int {
         return when (petType) {
@@ -56,24 +50,23 @@ fun OnboardingScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-    ){
-        Spacer(modifier = Modifier.height(100.dp))
+    ) {
 
         Text(
-            text = "What is your name?",
+            text = "Your pet decided to move in with the neighbor next door. they offered snacks way more often! But don’t worry, you can always welcome a new little friend!",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
 
-        PetaskTextField(
-            value = uiState.name,
-            onValueChange = {
-                onboardingViewModel.onNameChange(it)
-            },
-            label = "Name"
-        )
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(200.dp))
 
+        Text(
+            text = "Choose your new kitten",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(200.dp))
 
         Text(
             text = "How do you want to call your kitten?",
@@ -83,19 +76,13 @@ fun OnboardingScreen(
 
         PetaskTextField(
             value = uiState.petName,
-            onValueChange = { petName ->
-                onboardingViewModel.onPetNameChange(petName)
+            onValueChange = {
+                createPetViewModel.onPetNameChange(it)
             },
-            label = "Pet's name"
+            label = "Pet's Name"
         )
+
         Spacer(modifier = Modifier.height(32.dp))
-
-
-        Text(
-            text = "Pick your kitten color",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -105,33 +92,30 @@ fun OnboardingScreen(
             pets.forEach { pet ->
 
                 Image(
-                    painterResource(getPetImage(pet)),
+                    painter = painterResource(getPetImage(pet)),
                     contentDescription = null,
                     modifier = Modifier
                         .size(120.dp)
-                        .clickable{ onboardingViewModel.onPetSelected(pet) }
+                        .clickable {
+                            createPetViewModel.onPetSelected(pet)
+                        }
                 )
             }
-
         }
 
         PetaskButton(
             onClick = {
-                onboardingViewModel.createUser(
-                    onSuccess = {navigateToPet()}
+                createPetViewModel.createPet(
+                    onSuccess = {
+                        navigateToPet()
+                    }
                 )
             },
             text = "Start your Journey",
-            enabled = uiState.name.isNotBlank()
-                    && uiState.petName.isNotBlank()
+            enabled = uiState.petName.isNotBlank()
                     && uiState.selectedPet != null
         )
 
-        Spacer(modifier = Modifier.height(50.dp))
-
         PetCareDisclaimer()
-
     }
 }
-
-

@@ -11,8 +11,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable object Tasks
 
-@Serializable object Calendar
+@Serializable object Goals
 
 @Serializable object Profile
 
 @Serializable object Onboarding
+
+@Serializable object CreatePet

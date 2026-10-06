@@ -1,6 +1,5 @@
 package com.deviar.petask.common.navigation
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -19,48 +17,47 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.deviar.petask.MainViewModel
 import com.deviar.petask.R
 import com.deviar.petask.common.ui.components.UserImage
 import com.deviar.petask.common.ui.theme.Brown
 import com.deviar.petask.common.ui.theme.Creamy_light
 import com.deviar.petask.common.ui.theme.GoldCoin
-import com.deviar.petask.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetaskTopAppBar(
-    coins: Int,
     userImageUri: String?,
     navigateToProfile: () -> Unit,
     navigateToLogin: () -> Unit,
-    onLogoutClick: () -> Unit,
-    onAddCoins : () -> Unit,
+    mainViewModel: MainViewModel
 ) {
 
+
     TopAppBar(
-        title = { Text("Petask", Modifier.clickable{ onAddCoins() }) },
+        title = { Text("Petask") },
         actions = {
-            CoinConteiner(coins)
+            CoinConteiner(
+                //coins
+                mainViewModel.state.coins
+            )
             DropdownMenu(
                 navigateToProfile = navigateToProfile,
                 navigateToLogin = navigateToLogin,
                 userImageUri = userImageUri,
-                onLogoutClick
+                onLogoutClick = { mainViewModel.singOut() }
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -130,11 +127,6 @@ fun DropdownMenu(
                     expanded = false
                     navigateToProfile()
                 }
-            )
-
-            DropdownMenuItem(
-                text = { Text("Configuration", color = GoldCoin) },
-                onClick = { }
             )
 
             DropdownMenuItem(
