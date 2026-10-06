@@ -2,6 +2,10 @@ package com.deviar.petask.tasks.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,10 +37,13 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.room.Index
 import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
@@ -45,6 +53,7 @@ import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.FormTaskState
 import com.deviar.petask.tasks.domain.TaskState
 import com.deviar.petask.tasks.domain.TasksListUiState
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -313,12 +322,13 @@ fun ListaTask(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LazyColumn {
-            items(itemList) { item ->
+            itemsIndexed(itemList) {index, item ->
                 SwipeToDeleteContainer(
                     item = item,
                     onDelete = onDeleted,
                     content = {
                         FilledIconottomCustom(
+                            index = index.toLong(),
                             modifier =
                                 Modifier
                                     .fillMaxSize()
@@ -330,7 +340,7 @@ fun ListaTask(
                             onClickArrow = {
                                 onClickArrow(item)
                             },
-                            itemTask = item
+                            itemTask = item,
                         )
                     },
                 )
@@ -342,13 +352,42 @@ fun ListaTask(
 
 @Composable
 fun FilledIconottomCustom(
+    index: Long,
     modifier: Modifier = Modifier,
     onClickArrow: (TaskModel) -> Unit,
     itemTask: TaskModel?,
     colorContent: Color = Color.White,
 ) {
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(index * 50L)
+        visible = true
+    }
+
+    val offsetY by animateFloatAsState(
+        targetValue = if (visible) 0f else -100f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow,
+        ),
+        label = "offset",
+    )
+
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = 300,
+        ),
+        label = "alpha",
+    )
+
     FilledIconButton(
-        modifier = modifier,
+        modifier =
+            modifier.graphicsLayer {
+                translationY = offsetY
+                this.alpha = alpha
+            }
+        ,
         onClick ={
             onClickArrow(itemTask ?: TaskModel())
         },
