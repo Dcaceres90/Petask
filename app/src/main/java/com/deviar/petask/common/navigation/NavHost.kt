@@ -51,7 +51,6 @@ fun NavHost(
             Pet::class.qualifiedName,
             Tasks::class.qualifiedName,
             Goals::class.qualifiedName,
-            Calendar::class.qualifiedName,
             Profile::class.qualifiedName
         )
 
