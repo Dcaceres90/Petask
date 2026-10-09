@@ -103,6 +103,22 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    fun updateIsEditTask(isEditTask: Boolean) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                isEditTask = isEditTask,
+            )
+        }
+    }
+
+    fun updateisEmptyTitleTask(isEmptyTitleTask: Boolean) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                isEmptyTitleTask = isEmptyTitleTask,
+            )
+        }
+    }
+
     fun updateNewTaskFormScreenDateToDo(selectedDate: Date) {
         _newTaskFormState.update { estadoActual ->
             estadoActual.copy(

@@ -15,6 +15,7 @@ import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.button.SpinnerCustom
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.NewTaskFormState
+import java.util.Date
 
 @Composable
 fun FormAlertDialog(
@@ -32,7 +33,6 @@ fun FormAlertDialog(
 ) {
 
     // Variables de estado locales para guardar lo que escribe el usuario
-
     AlertDialog(
         onDismissRequest = { onDismiss() }, // Se ejecuta al tocar fuera o presionar atrás
         title = {
@@ -97,9 +97,15 @@ fun DialogView(
     ) {
         Text(text = "Por favor, introduce tus datos:")
 
+        val title = if (!newTaskFormState.isEditTask && newTaskFormState.isEmptyTitleTask) {
+            "Título de la tarea"
+        } else {
+            newTaskFormState.title
+        }
+
         // Primer campo de entrada
         OutlinedTextField(
-            value = newTaskFormState.title,
+            value = title,
             onValueChange = onValueChangedTitle,
             label = { Text("Title") },
             singleLine = true,
@@ -113,7 +119,7 @@ fun DialogView(
         )
 
         DatePickerDialogCustom(
-            selectedDate = selectedDateLong,
+            selectedDate = if (!newTaskFormState.isEditTask) selectedDateLong else Date().time,
             showDialog = newTaskFormState.showDialog,
             datePickerState = datePickerState,
             onClickConfirm = onClickConfirmDateSpicker,

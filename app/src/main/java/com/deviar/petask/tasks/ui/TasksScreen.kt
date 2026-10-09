@@ -61,11 +61,10 @@ import java.util.Locale
 fun TasksScreen(
     viewModel: TaskViewModel,
 ) {
-    //TODO Limpiar formulario,
+    //TODO
     // terminar el check de la tarea borrando la del la base de datos
     // snackBar para avisar que se ha completado la tarea y deshaser la transaccion
     var showFormAlertDialog by remember { mutableStateOf(false) }
-    var isEditTask by remember { mutableStateOf(false) }
     val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
     val uiTasks by viewModel.uiTasks.collectAsStateWithLifecycle()
     val newTaskFormState by viewModel.newTaskFormState.collectAsStateWithLifecycle()
@@ -123,7 +122,8 @@ fun TasksScreen(
         uiTasksState = uiTasksState,
         onClickFloating = {
             showFormAlertDialog = true
-            isEditTask = false
+            viewModel.updateIsEditTask(false)
+            viewModel.updateisEmptyTitleTask(true)
         },
         onDismiss = {
             showFormAlertDialog = false
@@ -147,7 +147,7 @@ fun TasksScreen(
         },
         onClickConfirm = { newTask ->
             // Enviamos los datos capturados a la función superior
-            if (!isEditTask) {
+            if (!newTaskFormState.isEditTask) {
                 viewModel.insertTaskDataBase(newTask)
             } else {
                 viewModel.updateTaskDataBase(newTask)
@@ -168,7 +168,7 @@ fun TasksScreen(
                 textNewTask = it.text,
             )
             viewModel.updateTaskFormScreen(taskState)
-            isEditTask = true
+            viewModel.updateIsEditTask(true)
             showFormAlertDialog = true
         },
     )
@@ -210,6 +210,7 @@ fun SuccessTasksListScreen(
             // contenido de la pantalla
             Column(modifier = Modifier.padding(paddingValues)) {
                 if (showFormAlertDialog) {
+
                     FormAlertDialog(
                         newTaskFormState = newTaskFormState,
                         idUser = viewModel.uuidState.value,
@@ -217,6 +218,7 @@ fun SuccessTasksListScreen(
                         datePickerState = datePickerState,
                         onDismiss = onDismiss,
                         onValueChangedText = {
+                            viewModel.updateisEmptyTitleTask(false)
                             viewModel.updateTitleNewTaskFormScreen(title = it)
                         },
                         onClickConfirm = onClickConfirm,
