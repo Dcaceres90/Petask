@@ -61,9 +61,9 @@ import java.util.Locale
 fun TasksScreen(
     viewModel: TaskViewModel,
 ) {
-    //TODO Limpiar formulario, terminar el check de la tarea borrando la del la base de datos
-    // Agregar que sume monedas, cambiar el formato de la fecha.
-    // agregar padding las fechas
+    //TODO Limpiar formulario,
+    // terminar el check de la tarea borrando la del la base de datos
+    // snackBar para avisar que se ha completado la tarea y deshaser la transaccion
     var showFormAlertDialog by remember { mutableStateOf(false) }
     var isEditTask by remember { mutableStateOf(false) }
     val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
@@ -248,8 +248,16 @@ fun SuccessTasksListScreen(
                     },
                     onClickArrow = onClickArrow,
                     onCheckedChange = {
-                        viewModel.updateTaskDataBase(it)
-                        viewModel.updateNewTaskIsComplete(it.isComplete)
+                        if (it.isComplete) {
+                            viewModel.updateTaskDataBase(it)
+                            viewModel.updateNewTaskIsComplete(it.isComplete)
+                            viewModel.updateCoins(it.levelDificult.coinValue)
+                            viewModel.deleteTaskDataBase(
+                                taskId = it.idTask,
+                            )
+                            // TODO Actualizar lista
+                            // snackBar()
+                        }
                     },
                 )
             }

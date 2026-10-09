@@ -11,7 +11,9 @@ sealed class TasksUiState {
         val selectedDate: DateState =
             DateState(
                 date = Date(),
-                showDate = "23/02/1990",
+                showMonthName = "Oct",
+                showDayName = "13",
+                showDayNumber = "Mar",
             ),
     ): TasksUiState()
     data class Error(val menssage: String): TasksUiState()

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.database.domain.usecase.GetUIDUseCase
+import com.deviar.petask.common.database.domain.usecase.UpdateCoinsUseCase
 import com.deviar.petask.common.database.domain.usecase.task.DeleteTaskUseCase
 import com.deviar.petask.common.database.domain.usecase.task.GetTaskByDateUseCase
 import com.deviar.petask.common.database.domain.usecase.task.InsertTaskUseCase
@@ -39,6 +40,7 @@ class TaskViewModel @Inject constructor(
     private val updateTaskUseCase: UpdateTaskUseCase,
     private val getUIDUseCase: GetUIDUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
+    private val updateCoinsUseCase: UpdateCoinsUseCase,
 ): ViewModel() {
     private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
     val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
@@ -139,12 +141,16 @@ class TaskViewModel @Inject constructor(
     fun getUpcomingDates(): List<DateState> {
         val calendar = Calendar.getInstance()
         val datesList = mutableListOf<DateState>()
-        val dateFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
+        val monthNameFormat = SimpleDateFormat("MMM", Locale.getDefault())
+        val dayNumberFormat = SimpleDateFormat("dd", Locale.getDefault())
+        val dayNameFormat = SimpleDateFormat("EEE", Locale.getDefault())
         //datesList.add(dateFormat.format(calendar.time))
         datesList.add(
             DateState(
                 date = calendar.time,
-                showDate = dateFormat.format(calendar.time),
+                showMonthName = monthNameFormat.format(calendar.time),
+                showDayName = dayNameFormat.format(calendar.time),
+                showDayNumber = dayNumberFormat.format(calendar.time),
             )
         )
         for (i in TaskConstans.PRIMER_DIA_MOSTRAR ..TaskConstans.ULTIMO_DIA_MOSTRAR) {  // Obtener las próximas 5 fechas
@@ -152,7 +158,9 @@ class TaskViewModel @Inject constructor(
             datesList.add(
                 DateState(
                     date = calendar.time,
-                    showDate = dateFormat.format(calendar.time),
+                    showMonthName = monthNameFormat.format(calendar.time),
+                    showDayName = dayNameFormat.format(calendar.time),
+                    showDayNumber = dayNumberFormat.format(calendar.time),
                 )
             )
         }
@@ -215,6 +223,12 @@ class TaskViewModel @Inject constructor(
                     updateScreenTasks(it)
                 }
             }
+        }
+    }
+
+    fun updateCoins(amount: Int) {
+        viewModelScope.launch {
+            updateCoinsUseCase(amount = amount)
         }
     }
 }
