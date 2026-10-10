@@ -33,8 +33,13 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +57,7 @@ import com.deviar.petask.tasks.domain.NewTaskFormState
 import com.deviar.petask.tasks.domain.TaskState
 import com.deviar.petask.tasks.domain.TasksState
 import com.deviar.petask.tasks.domain.TasksUiState
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -62,13 +68,13 @@ fun TasksScreen(
     viewModel: TaskViewModel,
 ) {
     //TODO
-    // terminar el check de la tarea borrando la del la base de datos
     // snackBar para avisar que se ha completado la tarea y deshaser la transaccion
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
     val uiTasks by viewModel.uiTasks.collectAsStateWithLifecycle()
     val newTaskFormState by viewModel.newTaskFormState.collectAsStateWithLifecycle()
 
+    val snackbarHostState = remember { SnackbarHostState() }
     viewModel.updateScreenDatesList(
         datesUpcoming = viewModel.getUpcomingDates(),
     )
@@ -120,6 +126,7 @@ fun TasksScreen(
         datePickerState = datePickerState,
         selectedDateMillis = selectedDateMillis,
         uiTasksState = uiTasksState,
+        snackbarHostState = snackbarHostState,
         onClickFloating = {
             showFormAlertDialog = true
             viewModel.updateIsEditTask(false)
@@ -182,12 +189,14 @@ fun SuccessTasksListScreen(
     datePickerState: DatePickerState,
     selectedDateMillis: Long,
     uiTasksState: TasksState,
+    snackbarHostState: SnackbarHostState,
     onClickFloating: () -> Unit = {},
     onDismiss: () -> Unit = {},
     onClickConfirmDateSpicker: (Long) -> Unit,
     onClickConfirm: (TaskModel) -> Unit,
     onClickArrow: (TaskModel) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier.padding(
             start = 10.dp,
@@ -206,6 +215,7 @@ fun SuccessTasksListScreen(
                     onClickFloating = onClickFloating,
                 )
             },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { paddingValues ->
             // contenido de la pantalla
             Column(modifier = Modifier.padding(paddingValues)) {
@@ -251,14 +261,39 @@ fun SuccessTasksListScreen(
                     onClickArrow = onClickArrow,
                     onCheckedChange = {
                         if (it.isComplete) {
-                            viewModel.updateTaskDataBase(it)
                             viewModel.updateNewTaskIsComplete(it.isComplete)
                             viewModel.updateCoins(it.levelDificult.coinValue)
                             viewModel.deleteTaskDataBase(
                                 taskId = it.idTask,
                             )
-                            // TODO Actualizar lista
                             // snackBar()
+                            scope.launch {
+                                val result = snackbarHostState.showSnackbar(
+                                    message = "Elemento eliminado",
+                                    actionLabel = "Deshacer",
+                                    duration = SnackbarDuration.Long // o Indefinite para forzar la acción
+                                )
+                                when (result) {
+                                    SnackbarResult.ActionPerformed -> {
+                                        // El usuario pulsó "Deshacer": restauramos el elemento
+                                        val taskDeleted = TaskModel(
+                                            idTask = it.idTask,
+                                            idUser = it.idUser,
+                                            text = it.text,
+                                            isComplete = false,
+                                            levelDificult = it.levelDificult,
+                                            toDoDate = it.toDoDate,
+                                        )
+                                        viewModel.insertTaskDataBase(taskDeleted)
+                                        viewModel.updateNewTaskIsComplete(taskDeleted.isComplete)
+                                        viewModel.updateCoins(-taskDeleted.levelDificult.coinValue)
+                                    }
+
+                                    SnackbarResult.Dismissed -> {
+                                        // El usuario descartó la snackbar sin deshacer
+                                    }
+                                }
+                            }
                         }
                     },
                 )
