@@ -67,8 +67,7 @@ import java.util.Locale
 fun TasksScreen(
     viewModel: TaskViewModel,
 ) {
-    //TODO
-    // snackBar para avisar que se ha completado la tarea y deshaser la transaccion
+    //TODO revisar la actualizacion de la lista
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
     val uiTasks by viewModel.uiTasks.collectAsStateWithLifecycle()
