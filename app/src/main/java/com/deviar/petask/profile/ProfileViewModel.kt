@@ -30,7 +30,7 @@ class ProfileViewModel @Inject constructor(
         loadUser()
     }
 
-    private fun loadUser() {
+     fun loadUser() {
         viewModelScope.launch {
             getUserUseCase().collect { user ->
                 if (user != null) {

@@ -3,4 +3,6 @@ data class FormTaskState (
     var title: String = "Título de la tarea",
     var taskEdit: TaskState = TaskState(),
     var showDialog: Boolean = false,
+    var isEditTask: Boolean = false,
+    var isEmptyTitleTask: Boolean = false,
 )

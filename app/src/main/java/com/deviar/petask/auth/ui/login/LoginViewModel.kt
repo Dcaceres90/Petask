@@ -3,19 +3,26 @@ package com.deviar.petask.auth.ui.login
 import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.deviar.petask.auth.data.GoogleAuthManager
 import com.deviar.petask.auth.domain.LoginUseCase
 import com.deviar.petask.auth.domain.ResetUseCase
+import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val resetUseCase: ResetUseCase,
+    private val getUserUseCase: GetUserUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -45,16 +52,28 @@ class LoginViewModel @Inject constructor(
     fun isPasswordFormatValid(password: String):Boolean = password.length >= 6
 
     fun login() {
+
         loginUseCase(
             email = _uiState.value.email,
             password = _uiState.value.password,
         ) { error ->
 
             if (error == null) {
-                _uiState.update { state ->
-                    state.copy(loginSuccess = true)
+
+                viewModelScope.launch {
+
+                    val user = getUserUseCase().first()
+
+                    _uiState.update { state ->
+                        state.copy(
+                            loginSuccess = true,
+                            isNewUser = user == null
+                        )
+                    }
                 }
+
             } else {
+
                 _uiState.update { state ->
                     state.copy(firebaseError = error)
                 }
@@ -91,10 +110,18 @@ class LoginViewModel @Inject constructor(
         val success = googleAuthManager.signIn()
 
         if (success) {
+
+            val user = getUserUseCase().first()
+
             _uiState.update {
-                it.copy(loginSuccess = true)
+                it.copy(
+                    loginSuccess = true,
+                    isNewUser = user == null
+                )
             }
+
         } else {
+
             _uiState.update {
                 it.copy(firebaseError = "Google login failed")
             }
@@ -108,5 +135,6 @@ data class LoginUiState(
     val isLoginEnabled:Boolean = false,
     val firebaseError: String? = null,
     val recoveryMessage: String? = null,
-    val loginSuccess: Boolean = false
+    val loginSuccess: Boolean = false,
+    val isNewUser: Boolean = false
 )

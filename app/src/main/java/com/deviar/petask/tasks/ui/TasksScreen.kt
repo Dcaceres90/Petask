@@ -31,27 +31,41 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.ui.components.listas.ListHorizontalCustom
 import com.deviar.petask.common.ui.theme.PetaskTheme
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.room.Index
 import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
+import com.deviar.petask.common.ui.theme.GoldCoin
+import com.deviar.petask.common.ui.theme.Secondary
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.common.utils.SwipeToDeleteContainer
 import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.FormTaskState
 import com.deviar.petask.tasks.domain.TaskState
+import com.deviar.petask.tasks.domain.TasksState
+import com.deviar.petask.tasks.domain.TasksUiState
+import kotlinx.coroutines.launch
 import com.deviar.petask.tasks.domain.TasksListUiState
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
@@ -64,7 +78,8 @@ fun TasksScreen(
     viewModel: TaskViewModel,
     uiTasks: TasksListUiState,
 ) {
-    //TODO Mejorar las animaciones
+    //TODO revisar la actualizacion de la lista
+    // Mejorar las animaciones
     // Revizar la actualizacion de una lista a otra o pensar que paner cuando no hay tareas en ese dia
     // Cambiar los nombres de los state por mas entendibles
     // Esta actualizando mal las listas
@@ -72,7 +87,11 @@ fun TasksScreen(
     var isEditTask by remember { mutableStateOf(false) }
     val horizotalListState by viewModel.horizotalListState.collectAsStateWithLifecycle()
     val newTaskFormState by viewModel.formTaskState.collectAsStateWithLifecycle()
+    val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
+    val uiTasks by viewModel.uiTasks.collectAsStateWithLifecycle()
+    val newTaskFormState by viewModel.newTaskFormState.collectAsStateWithLifecycle()
 
+    val snackbarHostState = remember { SnackbarHostState() }
     viewModel.updateScreenDatesList(
         datesUpcoming = viewModel.getUpcomingDates(),
     )
@@ -136,7 +155,8 @@ fun TasksScreen(
                         selectedDateMillis = selectedDateMillis,
                         onClickFloating = {
                             showFormAlertDialog = true
-                            isEditTask = false
+                            viewModel.updateIsEditTask(false)
+                            viewModel.updateisEmptyTitleTask(true)
                         },
                         onDismiss = {
                             showFormAlertDialog = false
@@ -160,7 +180,7 @@ fun TasksScreen(
                         },
                         onClickConfirm = { newTask ->
                             // Enviamos los datos capturados a la función superior
-                            if (!isEditTask) {
+                            if (!newTaskFormState.isEditTask) {
                                 viewModel.insertTaskDataBase(newTask)
                             } else {
                                 viewModel.updateTaskDataBase(newTask)
@@ -181,7 +201,7 @@ fun TasksScreen(
                                 textNewTask = it.text,
                             )
                             viewModel.updateTaskFormScreen(taskState)
-                            isEditTask = true
+                            viewModel.updateIsEditTask(true)
                             showFormAlertDialog = true
                         },
                     )
@@ -199,13 +219,22 @@ fun SuccessTasksListScreen(
     formTaskState: FormTaskState,
     datePickerState: DatePickerState,
     selectedDateMillis: Long,
+    uiTasksState: TasksState,
+    snackbarHostState: SnackbarHostState,
     onClickFloating: () -> Unit = {},
     onDismiss: () -> Unit = {},
     onClickConfirmDateSpicker: (Long) -> Unit,
     onClickConfirm: (TaskModel) -> Unit,
     onClickArrow: (TaskModel) -> Unit,
 ) {
-    Box {
+    val scope = rememberCoroutineScope()
+    Box(
+        modifier = Modifier.padding(
+            start = 10.dp,
+            top = 60.dp,
+            end = 10.dp
+        )
+    ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             floatingActionButton = {
@@ -217,6 +246,7 @@ fun SuccessTasksListScreen(
                     onClickFloating = onClickFloating,
                 )
             },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { paddingValues ->
             // contenido de la pantalla
             Column(modifier = Modifier.padding(paddingValues)) {
@@ -228,6 +258,7 @@ fun SuccessTasksListScreen(
                         datePickerState = datePickerState,
                         onDismiss = onDismiss,
                         onValueChangedText = {
+                            viewModel.updateisEmptyTitleTask(false)
                             viewModel.updateTitleNewTaskFormScreen(title = it)
                         },
                         onClickConfirm = onClickConfirm,
@@ -248,11 +279,53 @@ fun SuccessTasksListScreen(
                     )
                 }
                 TaskStructureScreen(
-                    taskList = taskList,
+                    tasksState = uiTasksState,
+                    onClickDate = { date ->
+                        viewModel.updateScreenSelectedDate(
+                            selectedDateList = date,
+                        )
+                    },
                     onDeleted = {
                         viewModel.deleteTaskDataBase(it.idTask)
                     },
                     onClickArrow = onClickArrow,
+                    onCheckedChange = {
+                        if (it.isComplete) {
+                            viewModel.updateNewTaskIsComplete(it.isComplete)
+                            viewModel.updateCoins(it.levelDificult.coinValue)
+                            viewModel.deleteTaskDataBase(
+                                taskId = it.idTask,
+                            )
+                            // snackBar()
+                            scope.launch {
+                                val result = snackbarHostState.showSnackbar(
+                                    message = "Elemento eliminado",
+                                    actionLabel = "Deshacer",
+                                    duration = SnackbarDuration.Long // o Indefinite para forzar la acción
+                                )
+                                when (result) {
+                                    SnackbarResult.ActionPerformed -> {
+                                        // El usuario pulsó "Deshacer": restauramos el elemento
+                                        val taskDeleted = TaskModel(
+                                            idTask = it.idTask,
+                                            idUser = it.idUser,
+                                            text = it.text,
+                                            isComplete = false,
+                                            levelDificult = it.levelDificult,
+                                            toDoDate = it.toDoDate,
+                                        )
+                                        viewModel.insertTaskDataBase(taskDeleted)
+                                        viewModel.updateNewTaskIsComplete(taskDeleted.isComplete)
+                                        viewModel.updateCoins(-taskDeleted.levelDificult.coinValue)
+                                    }
+
+                                    SnackbarResult.Dismissed -> {
+                                        // El usuario descartó la snackbar sin deshacer
+                                    }
+                                }
+                            }
+                        }
+                    },
                 )
             }
         }
@@ -264,13 +337,20 @@ fun TaskStructureScreen(
     taskList: List<TaskModel> = arrayListOf(),
     onDeleted: (TaskModel) -> Unit,
     onClickArrow:(TaskModel) -> Unit,
+    onCheckedChange: (TaskModel) -> Unit,
 ) {
     Column {
+        ListaFechas(
+            dates = tasksState.datesUpcoming,
+            onClickDate = onClickDate,
+        )
+        Spacer(modifier = Modifier.height(20.dp))
         if (taskList.isNotEmpty()) {
             ListaTask(
                 itemList = taskList,
                 onDeleted = onDeleted,
                 onClickArrow = onClickArrow,
+                onCheckedChange = onCheckedChange,
             )
         } else {
             Box(
@@ -317,9 +397,10 @@ fun ListaTask(
     itemList: List<TaskModel>,
     onDeleted: (TaskModel) -> Unit,
     onClickArrow: (TaskModel) -> Unit,
+    onCheckedChange: (TaskModel) -> Unit,
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
         LazyColumn {
             itemsIndexed(itemList) {index, item ->
@@ -331,16 +412,25 @@ fun ListaTask(
                             index = index.toLong(),
                             modifier =
                                 Modifier
-                                    .fillMaxSize()
-                                    .padding(
-                                        horizontal = 16.dp,
-                                    ).background(
+                                    .background(
                                         color = Color.Transparent,
-                                    ),
+                                    )
+                                    .fillMaxSize(),
                             onClickArrow = {
                                 onClickArrow(item)
                             },
                             itemTask = item,
+                            onCheckedChange = {
+                                val taskModel = TaskModel(
+                                    idTask = item.idTask,
+                                    idUser = item.idUser,
+                                    text = item.text,
+                                    isComplete = it,
+                                    levelDificult = item.levelDificult,
+                                    toDoDate = item.toDoDate,
+                                )
+                                onCheckedChange(taskModel)
+                            },
                         )
                     },
                 )
@@ -356,7 +446,8 @@ fun FilledIconottomCustom(
     modifier: Modifier = Modifier,
     onClickArrow: (TaskModel) -> Unit,
     itemTask: TaskModel?,
-    colorContent: Color = Color.White,
+    colorContent: Color = Color.Black,
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -391,18 +482,45 @@ fun FilledIconottomCustom(
         onClick ={
             onClickArrow(itemTask ?: TaskModel())
         },
-        shape = RoundedCornerShape(30)
+        shape = RoundedCornerShape(30),
+        colors = IconButtonColors(
+            containerColor = Secondary,
+            contentColor = colorContent,
+            disabledContainerColor = Color.Gray,
+            disabledContentColor = Color.Gray,
+        ),
     ) {
         Row(
+            modifier =
+                Modifier
+                    .fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val time = dateFormat.format(itemTask?.toDoDate?.time)
-
-            Text(
-                "${itemTask?.text} ${itemTask?.levelDificult?.name} $time",
-                color = colorContent,
+            Checkbox(
+                checked = itemTask?.isComplete == true,
+                onCheckedChange = onCheckedChange,
             )
+            Column {
+                Row() {
+                    Text(
+                        modifier = Modifier.weight(4F),
+                        text = "${itemTask?.text}",
+                        color = colorContent,
+                    )
+                    Text(
+                        modifier = Modifier.weight(1F),
+                        text = "+ ${itemTask?.levelDificult?.coinValue}",
+                        color = GoldCoin,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                // Todo hacer padin
+                Text(
+                    text = "${itemTask?.levelDificult?.name}",
+                    color = colorContent,
+                    fontSize = 10.sp,
+                )
+            }
         }
     }
 }
@@ -415,8 +533,11 @@ fun FilledIconottomCustom(
 fun PreviewTasksScreen() {
     PetaskTheme {
         TaskStructureScreen(
+            TasksState(),
+            onClickDate = {},
             onDeleted = {},
             onClickArrow = {},
+            onCheckedChange = {},
         )
     }
 }
