@@ -15,6 +15,7 @@ import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.button.SpinnerCustom
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.FormTaskState
+import java.util.Date
 
 @Composable
 fun FormAlertDialog(
@@ -96,10 +97,10 @@ fun DialogView(
     ) {
         Text(text = "Please, fill the fields")
 
-        val title = if (!newTaskFormState.isEditTask && newTaskFormState.isEmptyTitleTask) {
+        val title = if (!formTaskState.isEditTask && formTaskState.isEmptyTitleTask) {
             "Título de la tarea"
         } else {
-            newTaskFormState.title
+            formTaskState.title
         }
 
         // Primer campo de entrada
@@ -118,7 +119,7 @@ fun DialogView(
         )
 
         DatePickerDialogCustom(
-            selectedDate = if (!newTaskFormState.isEditTask) selectedDateLong else Date().time,
+            selectedDate = if (!formTaskState.isEditTask) selectedDateLong else Date().time,
             showDialog = formTaskState.showDialog,
             datePickerState = datePickerState,
             onClickConfirm = onClickConfirmDateSpicker,

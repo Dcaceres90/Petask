@@ -4,9 +4,11 @@ import java.util.Date
 
 data class HorizotalListState (
     val datesUpcoming: List<DateState> = arrayListOf(),
-    val selectedDate: DateState =
+    var selectedDate: DateState =
         DateState(
             date = Date(),
-            showDate = "23/02/1990",
+            showMonthName = "Oct",
+            showDayName = "13",
+            showDayNumber = "Mar",
         ),
 )

@@ -38,12 +38,11 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeUser() {
-
         viewModelScope.launch {
 
             combine(
                 getUserUseCase(),
-                getPetUseCase()
+                getPetUseCase(),
             ) { user, pet ->
 
                 MainState(

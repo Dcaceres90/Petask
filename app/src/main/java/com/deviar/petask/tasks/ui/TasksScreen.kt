@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -52,7 +51,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.room.Index
 import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.dialog.FormAlertDialog
 import com.deviar.petask.common.ui.components.button.ButtonFloating
@@ -62,9 +60,8 @@ import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.common.utils.SwipeToDeleteContainer
 import com.deviar.petask.tasks.domain.DateState
 import com.deviar.petask.tasks.domain.FormTaskState
+import com.deviar.petask.tasks.domain.HorizotalListState
 import com.deviar.petask.tasks.domain.TaskState
-import com.deviar.petask.tasks.domain.TasksState
-import com.deviar.petask.tasks.domain.TasksUiState
 import kotlinx.coroutines.launch
 import com.deviar.petask.tasks.domain.TasksListUiState
 import kotlinx.coroutines.delay
@@ -84,12 +81,8 @@ fun TasksScreen(
     // Cambiar los nombres de los state por mas entendibles
     // Esta actualizando mal las listas
     var showFormAlertDialog by remember { mutableStateOf(false) }
-    var isEditTask by remember { mutableStateOf(false) }
     val horizotalListState by viewModel.horizotalListState.collectAsStateWithLifecycle()
     val newTaskFormState by viewModel.formTaskState.collectAsStateWithLifecycle()
-    val uiTasksState by viewModel.uiTasksState.collectAsStateWithLifecycle()
-    val uiTasks by viewModel.uiTasks.collectAsStateWithLifecycle()
-    val newTaskFormState by viewModel.newTaskFormState.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
     viewModel.updateScreenDatesList(
@@ -187,6 +180,7 @@ fun TasksScreen(
                             }
                             showFormAlertDialog = false
                         },
+                        snackbarHostState = snackbarHostState,
                         onClickArrow = {
                             //Hay que pensar como cambiar el FormAlertDialog
                             val displayDate = it.toDoDate.time.let { time ->
@@ -219,7 +213,6 @@ fun SuccessTasksListScreen(
     formTaskState: FormTaskState,
     datePickerState: DatePickerState,
     selectedDateMillis: Long,
-    uiTasksState: TasksState,
     snackbarHostState: SnackbarHostState,
     onClickFloating: () -> Unit = {},
     onDismiss: () -> Unit = {},
@@ -279,12 +272,7 @@ fun SuccessTasksListScreen(
                     )
                 }
                 TaskStructureScreen(
-                    tasksState = uiTasksState,
-                    onClickDate = { date ->
-                        viewModel.updateScreenSelectedDate(
-                            selectedDateList = date,
-                        )
-                    },
+                    taskList = taskList,
                     onDeleted = {
                         viewModel.deleteTaskDataBase(it.idTask)
                     },
@@ -340,10 +328,6 @@ fun TaskStructureScreen(
     onCheckedChange: (TaskModel) -> Unit,
 ) {
     Column {
-        ListaFechas(
-            dates = tasksState.datesUpcoming,
-            onClickDate = onClickDate,
-        )
         Spacer(modifier = Modifier.height(20.dp))
         if (taskList.isNotEmpty()) {
             ListaTask(
@@ -533,8 +517,7 @@ fun FilledIconottomCustom(
 fun PreviewTasksScreen() {
     PetaskTheme {
         TaskStructureScreen(
-            TasksState(),
-            onClickDate = {},
+            taskList = arrayListOf(),
             onDeleted = {},
             onClickArrow = {},
             onCheckedChange = {},

@@ -42,9 +42,6 @@ class TaskViewModel @Inject constructor(
     private val deleteTaskUseCase: DeleteTaskUseCase,
     private val updateCoinsUseCase: UpdateCoinsUseCase,
 ): ViewModel() {
-    private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
-    val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
-    val itemSelected : MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
     private var _horizotalListState: MutableStateFlow<HorizotalListState> = MutableStateFlow(HorizotalListState())
     val horizotalListState: StateFlow<HorizotalListState> = _horizotalListState.asStateFlow()
     private var _uiTasks = MutableStateFlow<TasksListUiState>(TasksListUiState.Loading)
@@ -102,7 +99,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateNewTaskIsComplete(isComplete: Boolean) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     isComplete = isComplete,
@@ -112,7 +109,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateIsEditTask(isEditTask: Boolean) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 isEditTask = isEditTask,
             )
@@ -120,7 +117,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateisEmptyTitleTask(isEmptyTitleTask: Boolean) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 isEmptyTitleTask = isEmptyTitleTask,
             )
