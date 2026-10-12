@@ -78,8 +78,10 @@ fun TasksScreen(
 ) {
     //TODO
     // Mejorar las animaciones
+    // No funciona los onClicks
     // Revizar la actualizacion de una lista a otra o pensar que paner cuando no hay tareas en ese dia
     // Cambiar los nombres de los state por mas entendibles
+
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     var selectedDateMillis by remember {
@@ -116,7 +118,9 @@ fun TasksScreen(
 
                     viewModel.collectedSucessTask()
                     viewModel.getUID()
-                    viewModel.getTasksByDate(selectedDate = Date(horizotalListState.selectedDate.date.time))
+                    viewModel.getTasksByDate(
+                        selectedDate = Date(horizotalListState.selectedDate.date.time),
+                    )
                     Box(
                         modifier =
                             Modifier

@@ -25,6 +25,7 @@ import com.deviar.petask.pet.ui.PetScreen
 import com.deviar.petask.tasks.ui.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import com.deviar.petask.MainViewModel
 import com.deviar.petask.pet.ui.PetViewModel
 import com.deviar.petask.createpet.CreatePetScreen
@@ -33,6 +34,7 @@ import com.deviar.petask.onboarding.ui.OnboardingScreen
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
 import com.deviar.petask.tasks.ui.TaskViewModel
+import kotlinx.coroutines.launch
 import java.util.Date
 
 
@@ -44,7 +46,7 @@ fun NavHost(
     isLogged: Boolean,
     hasUserModel: Boolean,
     hasPetModel: Boolean,
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
 
     val navController = rememberNavController()
@@ -158,8 +160,20 @@ fun NavHost(
 
             composable<Tasks> {
                 val viewModel = hiltViewModel<TaskViewModel>()
+
                 val horizotalListState by viewModel.horizotalListState.collectAsStateWithLifecycle()
                 val uiTasks by viewModel.uiTasks.collectAsStateWithLifecycle()
+
+                LaunchedEffect( viewModel.horizotalListState) {
+                    viewModel.horizotalListState.collect {
+                        viewModel.collectedSucessTask()
+                        viewModel.getUID()
+                        viewModel.getTasksByDate(
+                            selectedDate = Date(it.selectedDate.date.time),
+                        )
+                    }
+                }
+
                 TasksScreen(
                     viewModel = viewModel,
                     horizotalListState = horizotalListState,
