@@ -240,7 +240,7 @@ class TaskViewModel @Inject constructor(
     fun collectedSucessTask() {
         viewModelScope.launch {
             taskSuccess?.collect {
-                if (it?.isNotEmpty() == true) {
+                if (it != null) {
                     updateScreenTasks(it)
                 }
             }

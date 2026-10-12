@@ -10,6 +10,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +33,7 @@ import com.deviar.petask.onboarding.ui.OnboardingScreen
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
 import com.deviar.petask.tasks.ui.TaskViewModel
+import java.util.Date
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -153,9 +158,11 @@ fun NavHost(
 
             composable<Tasks> {
                 val viewModel = hiltViewModel<TaskViewModel>()
+                val horizotalListState by viewModel.horizotalListState.collectAsStateWithLifecycle()
                 val uiTasks by viewModel.uiTasks.collectAsStateWithLifecycle()
                 TasksScreen(
                     viewModel = viewModel,
+                    horizotalListState = horizotalListState,
                     uiTasks = uiTasks,
                 )
             }

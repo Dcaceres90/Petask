@@ -73,21 +73,15 @@ import java.util.Locale
 @Composable
 fun TasksScreen(
     viewModel: TaskViewModel,
+    horizotalListState: HorizotalListState,
     uiTasks: TasksListUiState,
 ) {
-    //TODO revisar la actualizacion de la lista
+    //TODO
     // Mejorar las animaciones
     // Revizar la actualizacion de una lista a otra o pensar que paner cuando no hay tareas en ese dia
     // Cambiar los nombres de los state por mas entendibles
-    // Esta actualizando mal las listas
     var showFormAlertDialog by remember { mutableStateOf(false) }
-    val horizotalListState by viewModel.horizotalListState.collectAsStateWithLifecycle()
-    val newTaskFormState by viewModel.formTaskState.collectAsStateWithLifecycle()
-
     val snackbarHostState = remember { SnackbarHostState() }
-    viewModel.updateScreenDatesList(
-        datesUpcoming = viewModel.getUpcomingDates(),
-    )
     var selectedDateMillis by remember {
         mutableLongStateOf(value = horizotalListState.selectedDate.date.time)
     }
@@ -96,9 +90,8 @@ fun TasksScreen(
         initialSelectedDateMillis = selectedDateMillis
     )
 
-    viewModel.getTasksByDate(selectedDate = Date(horizotalListState.selectedDate.date.time))
-    viewModel.collectedSucessTask()
-    viewModel.getUID()
+    val newTaskFormState by viewModel.formTaskState.collectAsStateWithLifecycle()
+
     Box(
         modifier = Modifier.padding(
             start = 20.dp,
@@ -117,6 +110,13 @@ fun TasksScreen(
             Spacer(modifier = Modifier.height(20.dp))
             when (uiTasks) {
                 is TasksListUiState.Loading -> {
+                    viewModel.updateScreenDatesList(
+                        datesUpcoming = viewModel.getUpcomingDates(),
+                    )
+
+                    viewModel.collectedSucessTask()
+                    viewModel.getUID()
+                    viewModel.getTasksByDate(selectedDate = Date(horizotalListState.selectedDate.date.time))
                     Box(
                         modifier =
                             Modifier
@@ -224,7 +224,6 @@ fun SuccessTasksListScreen(
     Box(
         modifier = Modifier.padding(
             start = 10.dp,
-            top = 60.dp,
             end = 10.dp
         )
     ) {
@@ -328,7 +327,6 @@ fun TaskStructureScreen(
     onCheckedChange: (TaskModel) -> Unit,
 ) {
     Column {
-        Spacer(modifier = Modifier.height(20.dp))
         if (taskList.isNotEmpty()) {
             ListaTask(
                 itemList = taskList,
