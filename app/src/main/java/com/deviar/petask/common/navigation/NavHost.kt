@@ -10,10 +10,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,16 +21,13 @@ import com.deviar.petask.pet.ui.PetScreen
 import com.deviar.petask.tasks.ui.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import com.deviar.petask.MainViewModel
-import com.deviar.petask.pet.ui.PetViewModel
 import com.deviar.petask.createpet.CreatePetScreen
 import com.deviar.petask.goals.ui.GoalsScreen
 import com.deviar.petask.onboarding.ui.OnboardingScreen
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
 import com.deviar.petask.tasks.ui.TaskViewModel
-import kotlinx.coroutines.launch
 import java.util.Date
 
 

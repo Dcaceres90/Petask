@@ -78,9 +78,9 @@ fun TasksScreen(
 ) {
     //TODO
     // Mejorar las animaciones
-    // No funciona los onClicks
-    // Revizar la actualizacion de una lista a otra o pensar que paner cuando no hay tareas en ese dia
+    // Formulario que el titulo se borre
     // Cambiar los nombres de los state por mas entendibles
+    // Cuando se borre
 
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -116,11 +116,6 @@ fun TasksScreen(
                         datesUpcoming = viewModel.getUpcomingDates(),
                     )
 
-                    viewModel.collectedSucessTask()
-                    viewModel.getUID()
-                    viewModel.getTasksByDate(
-                        selectedDate = Date(horizotalListState.selectedDate.date.time),
-                    )
                     Box(
                         modifier =
                             Modifier
@@ -278,6 +273,9 @@ fun SuccessTasksListScreen(
                     taskList = taskList,
                     onDeleted = {
                         viewModel.deleteTaskDataBase(it.idTask)
+                        viewModel.getTasksByDate(
+                            selectedDate = Date(viewModel.horizotalListState.value.selectedDate.date.time),
+                        )
                     },
                     onClickArrow = onClickArrow,
                     onCheckedChange = {

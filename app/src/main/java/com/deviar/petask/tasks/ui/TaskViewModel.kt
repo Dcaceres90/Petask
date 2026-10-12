@@ -211,7 +211,7 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch {
             getTaskByDateUseCase(selectedDate)
                 ?.collect { tasks ->
-                    if (!tasks.isNullOrEmpty()) {
+                    if (tasks != null) {
                         updateScreenTasks( taskList = tasks)
                     }
                 }
