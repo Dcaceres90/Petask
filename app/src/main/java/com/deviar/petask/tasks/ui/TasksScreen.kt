@@ -68,8 +68,8 @@ import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TasksScreen(
     viewModel: TaskViewModel,
@@ -431,7 +431,7 @@ fun FilledIconottomCustom(
 ) {
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        delay(index * 50L)
+        delay((index * 50L).milliseconds)
         visible = true
     }
 
@@ -494,7 +494,6 @@ fun FilledIconottomCustom(
                         fontWeight = FontWeight.Bold,
                     )
                 }
-                // Todo hacer padin
                 Text(
                     text = "${itemTask?.levelDificult?.name}",
                     color = colorContent,
