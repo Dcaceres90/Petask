@@ -1,4 +1,6 @@
 package com.deviar.petask.common.ui.components.dialog
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +11,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.database.data.model.TaskModel
@@ -89,7 +93,6 @@ fun DialogView(
     onDismissDateSpicker: () -> Unit,
     onClickSpinner: (String) -> Unit,
 ) {
-
     // Contenedor vertical para organizar los campos de texto
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -97,19 +100,13 @@ fun DialogView(
     ) {
         Text(text = "Please, fill the fields")
 
-        val title = if (!formTaskState.isEditTask && formTaskState.isEmptyTitleTask) {
-            "Título de la tarea"
-        } else {
-            formTaskState.title
-        }
-
         // Primer campo de entrada
         OutlinedTextField(
-            value = title,
+            value = formTaskState.title,
             onValueChange = onValueChangedTitle,
             label = { Text("Title") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         //Spinner with onclick and alert dialog
         val listado = LevelDificult.entries.map { it.name }

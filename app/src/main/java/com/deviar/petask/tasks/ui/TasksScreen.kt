@@ -80,7 +80,6 @@ fun TasksScreen(
     // Mejorar las animaciones
     // Formulario que el titulo se borre
     // Cambiar los nombres de los state por mas entendibles
-    // Cuando se borre
 
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
