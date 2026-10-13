@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.deviar.petask.common.database.data.PetaskDataBase
 import com.deviar.petask.common.database.domain.dao.GoalDao
 import com.deviar.petask.common.database.domain.dao.PetDao
+import com.deviar.petask.common.database.domain.dao.TaskDao
 import com.deviar.petask.common.database.domain.dao.UserDao
 import dagger.Module
 import dagger.Provides
@@ -44,4 +45,8 @@ object DataBaseModule {
         return database.goalDao
     }
 
+    @Provides
+    fun provideTaskDao(database: PetaskDataBase): TaskDao {
+        return database.taskDao
+    }
 }

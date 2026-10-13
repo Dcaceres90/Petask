@@ -1,0 +1,250 @@
+package com.deviar.petask.tasks.ui
+
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.deviar.petask.common.database.data.model.TaskModel
+import com.deviar.petask.common.database.domain.usecase.GetUIDUseCase
+import com.deviar.petask.common.database.domain.usecase.UpdateCoinsUseCase
+import com.deviar.petask.common.database.domain.usecase.task.DeleteTaskUseCase
+import com.deviar.petask.common.database.domain.usecase.task.GetTaskByDateUseCase
+import com.deviar.petask.common.database.domain.usecase.task.InsertTaskUseCase
+import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
+import com.deviar.petask.common.utils.LevelDificult
+import com.deviar.petask.tasks.domain.DateState
+import com.deviar.petask.tasks.domain.NewTaskFormState
+import com.deviar.petask.tasks.domain.TaskState
+import com.deviar.petask.tasks.domain.TasksState
+import com.deviar.petask.tasks.domain.TasksUiState
+import com.deviar.petask.tasks.util.TaskConstans
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import javax.inject.Inject
+
+@HiltViewModel
+class TaskViewModel @Inject constructor(
+    private val getTaskByDateUseCase: GetTaskByDateUseCase,
+    private val insertTaskUseCase: InsertTaskUseCase,
+    private val updateTaskUseCase: UpdateTaskUseCase,
+    private val getUIDUseCase: GetUIDUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
+    private val updateCoinsUseCase: UpdateCoinsUseCase,
+): ViewModel() {
+    private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
+    val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
+    val itemSelected : MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
+
+    private var _uiTasks = MutableStateFlow(TasksUiState.Loading)
+    val uiTasks: StateFlow<TasksUiState> = _uiTasks.asStateFlow()
+    fun updateScreenSelectedDate(selectedDateList: DateState) {
+        _uiTasksState.update { estadoActual ->
+            estadoActual.copy(
+                selectedDate = selectedDateList
+            )
+        }
+    }
+
+    fun updateScreenTasks(taskList: List<TaskModel>) {
+        _uiTasksState.update { estadoActual ->
+            estadoActual.copy(
+                taskList = taskList
+            )
+        }
+    }
+
+    fun updateScreenDatesList(datesUpcoming: List<DateState>) {
+        _uiTasksState.update { estadoActual ->
+            estadoActual.copy(
+                datesUpcoming = datesUpcoming
+            )
+        }
+    }
+
+    private var _newTaskFormState: MutableStateFlow<NewTaskFormState> = MutableStateFlow(NewTaskFormState())
+    val newTaskFormState: StateFlow<NewTaskFormState> = _newTaskFormState.asStateFlow()
+
+    fun updateTaskFormScreen(task: TaskState) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                taskEdit = task,
+            )
+        }
+    }
+
+    fun updateNewTaskFormScreenDateToDoString(selectedDate: String) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                taskEdit = estadoActual.taskEdit.copy(
+                    dateToDoString = selectedDate,
+                ),
+            )
+        }
+    }
+
+    fun updateNewTaskIsComplete(isComplete: Boolean) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                taskEdit = estadoActual.taskEdit.copy(
+                    isComplete = isComplete,
+                ),
+            )
+        }
+    }
+
+    fun updateIsEditTask(isEditTask: Boolean) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                isEditTask = isEditTask,
+            )
+        }
+    }
+
+    fun updateisEmptyTitleTask(isEmptyTitleTask: Boolean) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                isEmptyTitleTask = isEmptyTitleTask,
+            )
+        }
+    }
+
+    fun updateNewTaskFormScreenDateToDo(selectedDate: Date) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                taskEdit = estadoActual.taskEdit.copy(
+                    dateToDo = selectedDate,
+                ),
+            )
+        }
+    }
+
+    fun updateTitleNewTaskFormScreen(title: String) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                title = title
+            )
+        }
+    }
+
+    fun updateLevelDificultNewTaskFormScreen(levelDificult: LevelDificult) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                taskEdit = estadoActual.taskEdit.copy(
+                    levelDificult = levelDificult,
+                ),
+            )
+        }
+    }
+
+    private var _taskList: Flow<List<TaskModel>>? = MutableStateFlow(arrayListOf())
+    val taskSuccess = _taskList?.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        null,
+    )
+
+    fun getUpcomingDates(): List<DateState> {
+        val calendar = Calendar.getInstance()
+        val datesList = mutableListOf<DateState>()
+        val monthNameFormat = SimpleDateFormat("MMM", Locale.getDefault())
+        val dayNumberFormat = SimpleDateFormat("dd", Locale.getDefault())
+        val dayNameFormat = SimpleDateFormat("EEE", Locale.getDefault())
+        //datesList.add(dateFormat.format(calendar.time))
+        datesList.add(
+            DateState(
+                date = calendar.time,
+                showMonthName = monthNameFormat.format(calendar.time),
+                showDayName = dayNameFormat.format(calendar.time),
+                showDayNumber = dayNumberFormat.format(calendar.time),
+            )
+        )
+        for (i in TaskConstans.PRIMER_DIA_MOSTRAR ..TaskConstans.ULTIMO_DIA_MOSTRAR) {  // Obtener las próximas 5 fechas
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            datesList.add(
+                DateState(
+                    date = calendar.time,
+                    showMonthName = monthNameFormat.format(calendar.time),
+                    showDayName = dayNameFormat.format(calendar.time),
+                    showDayNumber = dayNumberFormat.format(calendar.time),
+                )
+            )
+        }
+
+        return datesList
+    }
+
+    fun updateTaskDataBase(task: TaskModel) {
+        viewModelScope.launch {
+            updateTaskUseCase(task)
+        }
+    }
+
+    fun deleteTaskDataBase(taskId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteTaskUseCase(taskId = taskId.toString())
+        }
+    }
+
+    fun insertTaskDataBase(newTask: TaskModel) {
+        viewModelScope.launch {
+            insertTaskUseCase(newTask)
+        }
+    }
+
+    fun getTasksByDate(selectedDate: Date) {
+        viewModelScope.launch {
+            getTaskByDateUseCase(selectedDate)
+                ?.collect { tasks ->
+                    if (!tasks.isNullOrEmpty()) {
+                        updateScreenTasks( taskList = tasks)
+                    }
+                }
+        }
+    }
+
+    fun setTasksShowDialog(showDialog: Boolean) {
+        _newTaskFormState.update { estadoActual ->
+            estadoActual.copy(
+                showDialog = showDialog,
+            )
+        }
+    }
+
+   var uuidState: MutableLiveData<String> = MutableLiveData("")
+
+
+    fun getUID() {
+        viewModelScope.launch {
+            taskSuccess?.collect {
+                uuidState.value = getUIDUseCase.invoke()
+            }
+        }
+    }
+
+    fun collectedSucessTask() {
+        viewModelScope.launch {
+            taskSuccess?.collect {
+                if (it?.isNotEmpty() == true) {
+                    updateScreenTasks(it)
+                }
+            }
+        }
+    }
+
+    fun updateCoins(amount: Int) {
+        viewModelScope.launch {
+            updateCoinsUseCase(amount = amount)
+        }
+    }
+}

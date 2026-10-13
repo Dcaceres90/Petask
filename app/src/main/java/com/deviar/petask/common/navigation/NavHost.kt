@@ -1,6 +1,9 @@
 package com.deviar.petask.common.navigation
 
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -14,9 +17,10 @@ import com.deviar.petask.auth.ui.login.LoginScreen
 import com.deviar.petask.auth.ui.register.RegisterScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.deviar.petask.pet.ui.PetScreen
-import com.deviar.petask.tasks.TasksScreen
+import com.deviar.petask.tasks.ui.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deviar.petask.MainViewModel
+import com.deviar.petask.pet.ui.PetViewModel
 import com.deviar.petask.createpet.CreatePetScreen
 import com.deviar.petask.goals.ui.GoalsScreen
 import com.deviar.petask.onboarding.ui.OnboardingScreen
@@ -24,21 +28,20 @@ import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NavHost(
     modifier: Modifier = Modifier,
     isLogged: Boolean,
     hasUserModel: Boolean,
     hasPetModel: Boolean,
-    mainViewModel: MainViewModel
-    //mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     val navController = rememberNavController()
 
     val profileViewModel: ProfileViewModel = hiltViewModel()
-
-
     val currentDestination =
         navController.currentBackStackEntryAsState()
             .value?.destination
@@ -81,8 +84,7 @@ fun NavHost(
                     modifier = Modifier.navigationBarsPadding()
                 )
             }
-        }
-
+        },
     ) { innerPadding ->
 
         NavHost(
@@ -138,7 +140,7 @@ fun NavHost(
             }
 
             composable<Pet> {
-                LaunchedEffect(Unit) { //Find better choice to fix this issue later, maybe with "we are setting up your app" first screen.  
+                LaunchedEffect(Unit) { //Find better choice to fix this issue later, maybe with "we are setting up your app" first screen.
                     mainViewModel.loadUser()
                 }
                 PetScreen(
@@ -148,7 +150,7 @@ fun NavHost(
 
             composable<Tasks> {
                 TasksScreen(
-
+                    viewModel = hiltViewModel(),
                 )
             }
 

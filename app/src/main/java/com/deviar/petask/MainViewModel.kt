@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.deviar.petask.auth.domain.SingOutUseCase
+import com.deviar.petask.auth.domain.SignOutUseCase
 import com.deviar.petask.common.database.domain.usecase.GetPetUseCase
 import com.deviar.petask.common.database.domain.usecase.UpdateCoinsUseCase
 import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
@@ -19,14 +19,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val singOutUseCase: SingOutUseCase,
+    private val singOutUseCase: SignOutUseCase,
     private val updateCoinsUseCase: UpdateCoinsUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val getPetUseCase: GetPetUseCase
 ): ViewModel() {
 
     val isLogged = Firebase.auth.currentUser != null
-
 
     var state by mutableStateOf(MainState())
 
