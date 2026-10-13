@@ -76,10 +76,7 @@ fun TasksScreen(
     horizotalListState: HorizotalListState,
     uiTasks: TasksListUiState,
 ) {
-    //TODO
-    // Mejorar las animaciones
-    // Formulario que el titulo se borre
-    // Cambiar los nombres de los state por mas entendibles
+    //TODO Cambiar los nombres de los state por mas entendibles
 
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
