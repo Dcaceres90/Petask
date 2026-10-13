@@ -12,10 +12,10 @@ import com.deviar.petask.common.database.domain.usecase.task.InsertTaskUseCase
 import com.deviar.petask.common.database.domain.usecase.task.UpdateTaskUseCase
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.DateState
-import com.deviar.petask.tasks.domain.NewTaskFormState
+import com.deviar.petask.tasks.domain.HorizotalListState
+import com.deviar.petask.tasks.domain.FormTaskState
 import com.deviar.petask.tasks.domain.TaskState
-import com.deviar.petask.tasks.domain.TasksState
-import com.deviar.petask.tasks.domain.TasksUiState
+import com.deviar.petask.tasks.domain.TasksListUiState
 import com.deviar.petask.tasks.util.TaskConstans
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -42,41 +42,46 @@ class TaskViewModel @Inject constructor(
     private val deleteTaskUseCase: DeleteTaskUseCase,
     private val updateCoinsUseCase: UpdateCoinsUseCase,
 ): ViewModel() {
-    private var _uiTasksState: MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
-    val uiTasksState: StateFlow<TasksState> = _uiTasksState.asStateFlow()
-    val itemSelected : MutableStateFlow<TasksState> = MutableStateFlow(TasksState())
+    private var _horizotalListState: MutableStateFlow<HorizotalListState> = MutableStateFlow(HorizotalListState())
+    val horizotalListState: StateFlow<HorizotalListState> = _horizotalListState.asStateFlow()
+    private var _uiTasks = MutableStateFlow<TasksListUiState>(TasksListUiState.Loading)
+    val uiTasks: StateFlow<TasksListUiState> = _uiTasks.asStateFlow()
 
-    private var _uiTasks = MutableStateFlow(TasksUiState.Loading)
-    val uiTasks: StateFlow<TasksUiState> = _uiTasks.asStateFlow()
-    fun updateScreenSelectedDate(selectedDateList: DateState) {
-        _uiTasksState.update { estadoActual ->
+    fun updateScreenSelectedDate(selectedDate: DateState) {
+        _horizotalListState.update { estadoActual ->
             estadoActual.copy(
-                selectedDate = selectedDateList
+                selectedDate = selectedDate,
             )
         }
     }
 
     fun updateScreenTasks(taskList: List<TaskModel>) {
-        _uiTasksState.update { estadoActual ->
-            estadoActual.copy(
-                taskList = taskList
-            )
+        viewModelScope.launch {
+            try {
+                _uiTasks.value =
+                    TasksListUiState.Success(
+                        taskList = taskList,
+                    )
+            } catch (e: Exception) {
+                _uiTasks.value = TasksListUiState.Error(e.message ?: "Ocurrio un error")
+            }
         }
     }
 
     fun updateScreenDatesList(datesUpcoming: List<DateState>) {
-        _uiTasksState.update { estadoActual ->
+        _horizotalListState.update { estadoActual ->
             estadoActual.copy(
-                datesUpcoming = datesUpcoming
+                datesUpcoming = datesUpcoming,
             )
         }
     }
 
-    private var _newTaskFormState: MutableStateFlow<NewTaskFormState> = MutableStateFlow(NewTaskFormState())
-    val newTaskFormState: StateFlow<NewTaskFormState> = _newTaskFormState.asStateFlow()
+
+    private var _FormTaskState: MutableStateFlow<FormTaskState> = MutableStateFlow(FormTaskState())
+    val formTaskState: StateFlow<FormTaskState> = _FormTaskState.asStateFlow()
 
     fun updateTaskFormScreen(task: TaskState) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = task,
             )
@@ -84,7 +89,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateNewTaskFormScreenDateToDoString(selectedDate: String) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     dateToDoString = selectedDate,
@@ -94,7 +99,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateNewTaskIsComplete(isComplete: Boolean) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     isComplete = isComplete,
@@ -104,7 +109,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateIsEditTask(isEditTask: Boolean) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 isEditTask = isEditTask,
             )
@@ -112,7 +117,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateisEmptyTitleTask(isEmptyTitleTask: Boolean) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 isEmptyTitleTask = isEmptyTitleTask,
             )
@@ -120,7 +125,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateNewTaskFormScreenDateToDo(selectedDate: Date) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     dateToDo = selectedDate,
@@ -130,7 +135,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateTitleNewTaskFormScreen(title: String) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 title = title
             )
@@ -138,7 +143,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateLevelDificultNewTaskFormScreen(levelDificult: LevelDificult) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     levelDificult = levelDificult,
@@ -206,7 +211,7 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch {
             getTaskByDateUseCase(selectedDate)
                 ?.collect { tasks ->
-                    if (!tasks.isNullOrEmpty()) {
+                    if (tasks != null) {
                         updateScreenTasks( taskList = tasks)
                     }
                 }
@@ -214,7 +219,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun setTasksShowDialog(showDialog: Boolean) {
-        _newTaskFormState.update { estadoActual ->
+        _FormTaskState.update { estadoActual ->
             estadoActual.copy(
                 showDialog = showDialog,
             )
@@ -235,7 +240,7 @@ class TaskViewModel @Inject constructor(
     fun collectedSucessTask() {
         viewModelScope.launch {
             taskSuccess?.collect {
-                if (it?.isNotEmpty() == true) {
+                if (it != null) {
                     updateScreenTasks(it)
                 }
             }

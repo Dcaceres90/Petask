@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -19,13 +20,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.deviar.petask.pet.ui.PetScreen
 import com.deviar.petask.tasks.ui.TasksScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.deviar.petask.MainViewModel
-import com.deviar.petask.pet.ui.PetViewModel
 import com.deviar.petask.createpet.CreatePetScreen
 import com.deviar.petask.goals.ui.GoalsScreen
 import com.deviar.petask.onboarding.ui.OnboardingScreen
 import com.deviar.petask.profile.ProfileScreen
 import com.deviar.petask.profile.ProfileViewModel
+import com.deviar.petask.tasks.ui.TaskViewModel
+import java.util.Date
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -36,7 +39,7 @@ fun NavHost(
     isLogged: Boolean,
     hasUserModel: Boolean,
     hasPetModel: Boolean,
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
 
     val navController = rememberNavController()
@@ -149,8 +152,25 @@ fun NavHost(
             }
 
             composable<Tasks> {
+                val viewModel = hiltViewModel<TaskViewModel>()
+
+                val horizotalListState by viewModel.horizotalListState.collectAsStateWithLifecycle()
+                val uiTasks by viewModel.uiTasks.collectAsStateWithLifecycle()
+
+                LaunchedEffect( viewModel.horizotalListState) {
+                    viewModel.horizotalListState.collect {
+                        viewModel.collectedSucessTask()
+                        viewModel.getUID()
+                        viewModel.getTasksByDate(
+                            selectedDate = Date(it.selectedDate.date.time),
+                        )
+                    }
+                }
+
                 TasksScreen(
-                    viewModel = hiltViewModel(),
+                    viewModel = viewModel,
+                    horizotalListState = horizotalListState,
+                    uiTasks = uiTasks,
                 )
             }
 

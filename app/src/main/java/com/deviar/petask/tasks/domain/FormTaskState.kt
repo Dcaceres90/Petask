@@ -1,7 +1,6 @@
 package com.deviar.petask.tasks.domain
-
-data class NewTaskFormState (
-    var title: String = "Título de la tarea",
+data class FormTaskState (
+    var title: String = "",
     var taskEdit: TaskState = TaskState(),
     var showDialog: Boolean = false,
     var isEditTask: Boolean = false,

@@ -8,8 +8,6 @@ import com.deviar.petask.auth.data.GoogleAuthManager
 import com.deviar.petask.auth.domain.LoginUseCase
 import com.deviar.petask.auth.domain.ResetUseCase
 import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

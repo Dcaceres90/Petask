@@ -1,4 +1,6 @@
 package com.deviar.petask.common.ui.components.dialog
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,19 +11,21 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.button.SpinnerCustom
 import com.deviar.petask.common.utils.LevelDificult
-import com.deviar.petask.tasks.domain.NewTaskFormState
+import com.deviar.petask.tasks.domain.FormTaskState
 import java.util.Date
 
 @Composable
 fun FormAlertDialog(
     selectedDateLong: Long,
     idUser: String,
-    newTaskFormState: NewTaskFormState,
+    formTaskState: FormTaskState,
     datePickerState: DatePickerState,
     onDismiss: () -> Unit,
     onValueChangedText: (String) -> Unit,
@@ -40,7 +44,7 @@ fun FormAlertDialog(
         },
         text = {
             DialogView(
-                newTaskFormState = newTaskFormState,
+                formTaskState = formTaskState,
                 selectedDateLong = selectedDateLong,
                 datePickerState = datePickerState,
                 onValueChangedTitle = onValueChangedText,
@@ -54,18 +58,18 @@ fun FormAlertDialog(
             Button(
                 onClick = {
                     val newTask = TaskModel(
-                        idTask = newTaskFormState.taskEdit.idTask,
-                        levelDificult = newTaskFormState.taskEdit.levelDificult,
-                        text = newTaskFormState.title,
-                        toDoDate = newTaskFormState.taskEdit.dateToDo,
+                        idTask = formTaskState.taskEdit.idTask,
+                        levelDificult = formTaskState.taskEdit.levelDificult,
+                        text = formTaskState.title,
+                        toDoDate = formTaskState.taskEdit.dateToDo,
                         idUser = idUser,
                     )
                     onClickConfirm(newTask)
                 },
                 // Opcional: Deshabilitar el botón si algún campo está vacío
                 enabled =
-                    newTaskFormState.title.isNotBlank() &&
-                        newTaskFormState.taskEdit.dateToDoString.isNotBlank()
+                    formTaskState.title.isNotBlank() &&
+                        formTaskState.taskEdit.dateToDoString.isNotBlank()
             ) {
                 Text("Save")
             }
@@ -80,7 +84,7 @@ fun FormAlertDialog(
 
 @Composable
 fun DialogView(
-    newTaskFormState: NewTaskFormState,
+    formTaskState: FormTaskState,
     datePickerState: DatePickerState,
     selectedDateLong: Long = 0L,
     onValueChangedTitle: (String) -> Unit,
@@ -89,27 +93,20 @@ fun DialogView(
     onDismissDateSpicker: () -> Unit,
     onClickSpinner: (String) -> Unit,
 ) {
-
     // Contenedor vertical para organizar los campos de texto
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp) // Espaciado entre campos
     ) {
-        Text(text = "Por favor, introduce tus datos:")
-
-        val title = if (!newTaskFormState.isEditTask && newTaskFormState.isEmptyTitleTask) {
-            "Título de la tarea"
-        } else {
-            newTaskFormState.title
-        }
+        Text(text = "Please, fill the fields")
 
         // Primer campo de entrada
         OutlinedTextField(
-            value = title,
+            value = formTaskState.title,
             onValueChange = onValueChangedTitle,
             label = { Text("Title") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         //Spinner with onclick and alert dialog
         val listado = LevelDificult.entries.map { it.name }
@@ -119,8 +116,8 @@ fun DialogView(
         )
 
         DatePickerDialogCustom(
-            selectedDate = if (!newTaskFormState.isEditTask) selectedDateLong else Date().time,
-            showDialog = newTaskFormState.showDialog,
+            selectedDate = if (!formTaskState.isEditTask) selectedDateLong else Date().time,
+            showDialog = formTaskState.showDialog,
             datePickerState = datePickerState,
             onClickConfirm = onClickConfirmDateSpicker,
             onClickShowDialog = onClickShowDialogDateSpicker,
