@@ -7,20 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deviar.petask.auth.domain.SignOutUseCase
 import com.deviar.petask.common.database.domain.usecase.GetPetUseCase
-import com.deviar.petask.common.database.domain.usecase.UpdateCoinsUseCase
 import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val singOutUseCase: SignOutUseCase,
-    private val updateCoinsUseCase: UpdateCoinsUseCase,
+    private val singOutUseCase: SingOutUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val getPetUseCase: GetPetUseCase
 ): ViewModel() {
@@ -54,18 +51,6 @@ class MainViewModel @Inject constructor(
             }.collect { newState ->
                 state = newState
             }
-        }
-    }
-
-    fun earnCoins(amount: Int) {
-        viewModelScope.launch {
-            updateCoinsUseCase(amount)
-        }
-    }
-
-    fun spendCoins(amount: Int) {
-        viewModelScope.launch {
-            updateCoinsUseCase(-amount)
         }
     }
 
