@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.deviar.petask.auth.domain.SingOutUseCase
+import com.deviar.petask.auth.domain.SignOutUseCase
 import com.deviar.petask.common.database.domain.usecase.GetPetUseCase
 import com.deviar.petask.common.database.domain.usecase.GetUserUseCase
 import com.google.firebase.Firebase
@@ -24,7 +24,6 @@ class MainViewModel @Inject constructor(
 
     val isLogged = Firebase.auth.currentUser != null
 
-
     var state by mutableStateOf(MainState())
 
     init {
@@ -36,12 +35,11 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeUser() {
-
         viewModelScope.launch {
 
             combine(
                 getUserUseCase(),
-                getPetUseCase()
+                getPetUseCase(),
             ) { user, pet ->
 
                 MainState(
