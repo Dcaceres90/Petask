@@ -187,7 +187,7 @@ fun TasksScreen(
                                 dateToDo = it.toDoDate,
                                 dateToDoString = displayDate,
                                 levelDificult = it.levelDificult,
-                                textNewTask = it.text,
+                                titleTask = it.text,
                             )
                             viewModel.updateTaskFormScreen(taskState)
                             viewModel.updateIsEditTask(true)
@@ -241,13 +241,8 @@ fun SuccessTasksListScreen(
                     FormAlertDialog(
                         formTaskState = formTaskState,
                         idUser = viewModel.uuidState.value,
-                        selectedDateLong = selectedDateMillis,
                         datePickerState = datePickerState,
                         onDismiss = onDismiss,
-                        onValueChangedText = {
-                            viewModel.updateisEmptyTitleTask(false)
-                            viewModel.updateTitleNewTaskFormScreen(title = it)
-                        },
                         onClickConfirm = onClickConfirm,
                         onClickConfirmDateSpicker = onClickConfirmDateSpicker,
                         onClickShowDialogDateSpicker = {

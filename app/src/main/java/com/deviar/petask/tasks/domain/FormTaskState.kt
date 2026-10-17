@@ -1,5 +1,5 @@
 package com.deviar.petask.tasks.domain
-data class FormTaskState (
+data class FormTaskState(
     var title: String = "",
     var taskEdit: TaskState = TaskState(),
     var showDialog: Boolean = false,

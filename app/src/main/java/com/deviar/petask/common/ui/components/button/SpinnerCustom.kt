@@ -16,12 +16,13 @@ import androidx.compose.ui.Modifier
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpinnerCustom(
-    listado: List<String>,
+    list: List<String>,
+    selected: String,
     onClickSpinner: (String) -> Unit,
     // TODO agragar un composable que se pase por parametro
 ) {
     var expandido by remember { mutableStateOf(false) }
-    var seleccionado by remember { mutableStateOf(listado[0]) }
+    var seleccionado by remember { mutableStateOf(selected) }
 
     ExposedDropdownMenuBox(
         expanded = expandido,
@@ -39,7 +40,7 @@ fun SpinnerCustom(
             expanded = expandido,
             onDismissRequest = { expandido = false }
         ) {
-            listado.forEach { opcion ->
+            list.forEach { opcion ->
                 DropdownMenuItem(
                     text = { Text(text = opcion) },
                     onClick = {

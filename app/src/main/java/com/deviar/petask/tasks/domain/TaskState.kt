@@ -6,8 +6,8 @@ import java.util.Date
 data class TaskState (
     var idTask: Int = 0,
     var levelDificult: LevelDificult = LevelDificult.EASY,
-    var dateToDoString: String = "02/23",
+    var dateToDoString: String = Date().time.toString(),
     var dateToDo: Date = Date(),
-    var textNewTask: String = "",
+    var titleTask: String = "",
     var isComplete: Boolean = false,
 )

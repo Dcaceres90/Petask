@@ -1,6 +1,4 @@
 package com.deviar.petask.common.ui.components.dialog
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,23 +10,25 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.deviar.petask.common.database.data.model.TaskModel
 import com.deviar.petask.common.ui.components.button.SpinnerCustom
 import com.deviar.petask.common.utils.LevelDificult
 import com.deviar.petask.tasks.domain.FormTaskState
+import com.deviar.petask.tasks.domain.TaskState
 import java.util.Date
 
 @Composable
 fun FormAlertDialog(
-    selectedDateLong: Long,
     idUser: String,
     formTaskState: FormTaskState,
     datePickerState: DatePickerState,
     onDismiss: () -> Unit,
-    onValueChangedText: (String) -> Unit,
     onClickConfirm: (TaskModel) -> Unit,
     onClickConfirmDateSpicker: (Long) -> Unit,
     onClickShowDialogDateSpicker: () -> Unit,
@@ -44,10 +44,9 @@ fun FormAlertDialog(
         },
         text = {
             DialogView(
-                formTaskState = formTaskState,
-                selectedDateLong = selectedDateLong,
+                taskState = if(formTaskState.isEditTask) formTaskState.taskEdit else null,
+                showDialog = formTaskState.showDialog,
                 datePickerState = datePickerState,
-                onValueChangedTitle = onValueChangedText,
                 onClickConfirmDateSpicker = onClickConfirmDateSpicker,
                 onClickShowDialogDateSpicker = onClickShowDialogDateSpicker,
                 onDismissDateSpicker = onDismissDateSpicker,
@@ -84,15 +83,24 @@ fun FormAlertDialog(
 
 @Composable
 fun DialogView(
-    formTaskState: FormTaskState,
+    taskState: TaskState? = null,
+    showDialog: Boolean,
     datePickerState: DatePickerState,
-    selectedDateLong: Long = 0L,
-    onValueChangedTitle: (String) -> Unit,
     onClickConfirmDateSpicker: (Long) -> Unit,
     onClickShowDialogDateSpicker: () -> Unit,
     onDismissDateSpicker: () -> Unit,
     onClickSpinner: (String) -> Unit,
 ) {
+    var titleSelected by remember(taskState) {
+        mutableStateOf(taskState?.titleTask ?: "")
+    }
+    var levelDificultSelected by remember {
+        mutableStateOf(taskState?.levelDificult?.name?: LevelDificult.EASY.name)
+    }
+    var dateToDoStringSelected by remember {
+        mutableLongStateOf(taskState?.dateToDo?.time ?: Date().time)
+    }
+
     // Contenedor vertical para organizar los campos de texto
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -102,22 +110,25 @@ fun DialogView(
 
         // Primer campo de entrada
         OutlinedTextField(
-            value = formTaskState.title,
-            onValueChange = onValueChangedTitle,
+            value = titleSelected,
+            onValueChange = {
+                titleSelected = it
+            },
             label = { Text("Title") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
         //Spinner with onclick and alert dialog
-        val listado = LevelDificult.entries.map { it.name }
+        val list = LevelDificult.entries.map { it.name }
         SpinnerCustom(
-            listado = listado,
+            list = list,
+            selected = levelDificultSelected,
             onClickSpinner = onClickSpinner,
         )
 
         DatePickerDialogCustom(
-            selectedDate = if (!formTaskState.isEditTask) selectedDateLong else Date().time,
-            showDialog = formTaskState.showDialog,
+            selectedDate = dateToDoStringSelected,
+            showDialog = showDialog,
             datePickerState = datePickerState,
             onClickConfirm = onClickConfirmDateSpicker,
             onClickShowDialog = onClickShowDialogDateSpicker,
