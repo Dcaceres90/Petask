@@ -74,9 +74,6 @@ fun TasksScreen(
     horizotalListState: HorizotalListState,
     uiTasks: TasksListUiState,
 ) {
-    // TODO Cambiar los nombres de los state por mas entendibles
-    // cuando cargas una tarea y volves a entrar te quedan los datos de la tarea anterior
-
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     var selectedDateMillis by remember {
