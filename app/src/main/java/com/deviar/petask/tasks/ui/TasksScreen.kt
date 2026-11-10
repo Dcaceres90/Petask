@@ -229,7 +229,7 @@ fun SuccessTasksListScreen(
                 if (showFormAlertDialog) {
                     FormAlertDialog(
                         formTaskState = formTaskState,
-                        idUser = viewModel.uuidState.value,
+                        idUser = viewModel.uuidState.value ?: "-1",
                         onDismiss = onDismiss,
                         onClickConfirm = onClickConfirm,
                         onClickConfirmDateSpicker = onClickConfirmDateSpicker,
