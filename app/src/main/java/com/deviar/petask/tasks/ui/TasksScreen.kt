@@ -75,8 +75,7 @@ fun TasksScreen(
     uiTasks: TasksListUiState,
 ) {
     // TODO Cambiar los nombres de los state por mas entendibles
-    // cancel no funciona en alertdialogo
-    // no funciona la asignacion de la fecha
+    // cuando cargas una tarea y volves a entrar te quedan los datos de la tarea anterior
 
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -107,7 +106,7 @@ fun TasksScreen(
                     viewModel.updateScreenDatesList(
                         datesUpcoming = viewModel.getUpcomingDates(),
                     )
-
+                    viewModel.updateTaskFormScreen(TaskState())
                     Box(
                         modifier =
                             Modifier
@@ -137,6 +136,8 @@ fun TasksScreen(
                         formTaskState = formTaskState,
                         onClickFloating = {
                             showFormAlertDialog = true
+                            viewModel.updateTaskFormScreen(task = TaskState())
+                            viewModel.updateTitleNewTaskFormScreen(title = "")
                             viewModel.updateIsEditTask(false)
                             viewModel.updateisEmptyTitleTask(true)
                         },
@@ -145,13 +146,13 @@ fun TasksScreen(
                         },
                         onClickConfirmDateSpicker = {
                             selectedDateMillis = it
-                            //Capaz cambiar falel guardado del date
+                            //Capaz cambiar falle guardado del date
                             viewModel.updateNewTaskFormScreenDateToDo(
                                 selectedDate = Date(selectedDateMillis),
                             )
-                            val displayDate = selectedDateMillis.let { time ->
+                            val displayDate = selectedDateMillis.let { _ ->
                                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                                sdf.format(Date(time))
+                                sdf.format(Date(selectedDateMillis))
                             } ?: ""
                             viewModel.updateNewTaskFormScreenDateToDoString(
                                 selectedDate = displayDate,
@@ -161,6 +162,7 @@ fun TasksScreen(
                         onClickConfirm = { newTask ->
                             // Enviamos los datos capturados a la función superior
                             if (!formTaskState.isEditTask) {
+                                viewModel.updateTaskFormScreen(task = null)
                                 viewModel.insertTaskDataBase(newTask)
                             } else {
                                 viewModel.updateTaskDataBase(newTask)
@@ -168,7 +170,7 @@ fun TasksScreen(
                             showFormAlertDialog = false
                         },
                         snackbarHostState = snackbarHostState,
-                        onClickArrow = {
+                        onClickEdit = {
                             //Hay que pensar como cambiar el FormAlertDialog
                             val displayDate = it.toDoDate.time.let { time ->
                                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -203,7 +205,7 @@ fun SuccessTasksListScreen(
     onDismiss: () -> Unit = {},
     onClickConfirmDateSpicker: (Long) -> Unit,
     onClickConfirm: (TaskModel) -> Unit,
-    onClickArrow: (TaskModel) -> Unit,
+    onClickEdit: (TaskModel) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     Box(
@@ -240,6 +242,9 @@ fun SuccessTasksListScreen(
                         onDismissDateSpicker = {
                             viewModel.setTasksShowDialog(false)
                         },
+                        onValueChange = {
+                            viewModel.updateTitleNewTaskFormScreen(it)
+                        },
                         onClickSpinner = { entry ->
                             LevelDificult.entries.forEach { levelDificult ->
                                 if(entry == levelDificult.name) {
@@ -257,7 +262,7 @@ fun SuccessTasksListScreen(
                             selectedDate = Date(viewModel.horizotalListState.value.selectedDate.date.time),
                         )
                     },
-                    onClickArrow = onClickArrow,
+                    onClickArrow = onClickEdit,
                     onCheckedChange = {
                         if (it.isComplete) {
                             viewModel.updateNewTaskIsComplete(it.isComplete)
@@ -265,7 +270,6 @@ fun SuccessTasksListScreen(
                             viewModel.deleteTaskDataBase(
                                 taskId = it.idTask,
                             )
-                            // snackBar()
                             scope.launch {
                                 val result = snackbarHostState.showSnackbar(
                                     message = "Elemento eliminado",

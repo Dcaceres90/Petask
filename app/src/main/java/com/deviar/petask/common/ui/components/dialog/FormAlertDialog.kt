@@ -31,6 +31,7 @@ fun FormAlertDialog(
     onClickConfirm: (TaskModel) -> Unit,
     onClickConfirmDateSpicker: (Long) -> Unit,
     onClickShowDialogDateSpicker: () -> Unit,
+    onValueChange: (String) -> Unit,
     onDismissDateSpicker: () -> Unit,
     onClickSpinner: (String) -> Unit,
 ) {
@@ -43,12 +44,11 @@ fun FormAlertDialog(
         },
         text = {
             DialogView(
-                taskState = if(formTaskState.isEditTask) formTaskState.taskEdit else null,
-                showDialog = formTaskState.showDialog,
+                formTaskState = formTaskState,
                 onClickConfirmDateSpicker = onClickConfirmDateSpicker,
                 onClickShowDialogDateSpicker = onClickShowDialogDateSpicker,
-                onDismiss = onDismiss,
                 onDismissDateSpicker = onDismissDateSpicker,
+                onValueChange = onValueChange,
                 onClickSpinner = onClickSpinner,
             )
         },
@@ -56,10 +56,10 @@ fun FormAlertDialog(
             Button(
                 onClick = {
                     val newTask = TaskModel(
-                        idTask = formTaskState.taskEdit.idTask,
-                        levelDificult = formTaskState.taskEdit.levelDificult,
+                        idTask = formTaskState.taskEdit?.idTask ?: 0,
+                        levelDificult = formTaskState.taskEdit?.levelDificult ?: LevelDificult.EASY,
                         text = formTaskState.title,
-                        toDoDate = formTaskState.taskEdit.dateToDo,
+                        toDoDate = formTaskState.taskEdit?.dateToDo ?: Date(),
                         idUser = idUser,
                     )
                     onClickConfirm(newTask)
@@ -67,7 +67,8 @@ fun FormAlertDialog(
                 // Opcional: Deshabilitar el botón si algún campo está vacío
                 enabled =
                     formTaskState.title.isNotBlank() &&
-                        formTaskState.taskEdit.dateToDoString.isNotBlank()
+                        formTaskState.taskEdit?.levelDificult?.name?.isNotBlank() == true &&
+                        formTaskState.taskEdit?.dateToDoString?.isNotBlank() == true
             ) {
                 Text("Save")
             }
@@ -82,28 +83,24 @@ fun FormAlertDialog(
 
 @Composable
 fun DialogView(
-    taskState: TaskState? = null,
-    showDialog: Boolean,
+    formTaskState: FormTaskState,
     onClickConfirmDateSpicker: (Long) -> Unit,
     onClickShowDialogDateSpicker: () -> Unit,
-    onDismiss: () -> Unit,
     onDismissDateSpicker: () -> Unit,
+    onValueChange: (String) -> Unit,
     onClickSpinner: (String) -> Unit,
 ) {
-    var titleSelected by remember(taskState) {
-        mutableStateOf(taskState?.titleTask ?: "")
+    var titleSelected by remember {
+        mutableStateOf(formTaskState.title)
     }
     var levelDificultSelected by remember {
-        mutableStateOf(taskState?.levelDificult?.name?: LevelDificult.EASY.name)
-    }
-    var dateToDoStringSelected by remember {
-        mutableLongStateOf(taskState?.dateToDo?.time ?: Date().time)
+        mutableStateOf(formTaskState.taskEdit?.levelDificult?.name?: LevelDificult.EASY.name)
     }
 
     // Contenedor vertical para organizar los campos de texto
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp) // Espaciado entre campos
+        verticalArrangement = Arrangement.spacedBy(12.dp), // Espaciado entre campos
     ) {
         Text(text = "Please, fill the fields")
 
@@ -112,6 +109,7 @@ fun DialogView(
             value = titleSelected,
             onValueChange = {
                 titleSelected = it
+                onValueChange(it)
             },
             label = { Text("Title") },
             singleLine = true,
@@ -126,13 +124,12 @@ fun DialogView(
         )
 
         DatePickerDialogCustom(
-            selectedDate = dateToDoStringSelected,
-            showDialog = showDialog,
+            selectedDate = formTaskState.taskEdit?.dateToDo?.time ?: Date().time,
+            showDialog = formTaskState.showDialog,
             onClickConfirm = onClickConfirmDateSpicker,
             onClickShowDialog = onClickShowDialogDateSpicker,
             onDismiss = {
                 onDismissDateSpicker()
-                //onDismiss()
             },
         )
     }

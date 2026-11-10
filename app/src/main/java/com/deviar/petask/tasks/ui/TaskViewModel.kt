@@ -80,7 +80,7 @@ class TaskViewModel @Inject constructor(
     private var _formTaskState: MutableStateFlow<FormTaskState> = MutableStateFlow(FormTaskState())
     val formTaskState: StateFlow<FormTaskState> = _formTaskState.asStateFlow()
 
-    fun updateTaskFormScreen(task: TaskState) {
+    fun updateTaskFormScreen(task: TaskState?) {
         _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = task,
@@ -91,7 +91,7 @@ class TaskViewModel @Inject constructor(
     fun updateNewTaskFormScreenDateToDoString(selectedDate: String) {
         _formTaskState.update { estadoActual ->
             estadoActual.copy(
-                taskEdit = estadoActual.taskEdit.copy(
+                taskEdit = estadoActual.taskEdit?.copy(
                     dateToDoString = selectedDate,
                 ),
             )
@@ -101,7 +101,7 @@ class TaskViewModel @Inject constructor(
     fun updateNewTaskIsComplete(isComplete: Boolean) {
         _formTaskState.update { estadoActual ->
             estadoActual.copy(
-                taskEdit = estadoActual.taskEdit.copy(
+                taskEdit = estadoActual.taskEdit?.copy(
                     isComplete = isComplete,
                 ),
             )
@@ -127,7 +127,7 @@ class TaskViewModel @Inject constructor(
     fun updateNewTaskFormScreenDateToDo(selectedDate: Date) {
         _formTaskState.update { estadoActual ->
             estadoActual.copy(
-                taskEdit = estadoActual.taskEdit.copy(
+                taskEdit = estadoActual.taskEdit?.copy(
                     dateToDo = selectedDate,
                 ),
             )
@@ -145,7 +145,7 @@ class TaskViewModel @Inject constructor(
     fun updateLevelDificultNewTaskFormScreen(levelDificult: LevelDificult) {
         _formTaskState.update { estadoActual ->
             estadoActual.copy(
-                taskEdit = estadoActual.taskEdit.copy(
+                taskEdit = estadoActual.taskEdit?.copy(
                     levelDificult = levelDificult,
                 ),
             )
