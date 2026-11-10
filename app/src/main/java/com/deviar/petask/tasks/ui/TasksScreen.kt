@@ -32,7 +32,6 @@ import com.deviar.petask.common.ui.components.listas.ListHorizontalCustom
 import com.deviar.petask.common.ui.theme.PetaskTheme
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +40,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -76,7 +74,9 @@ fun TasksScreen(
     horizotalListState: HorizotalListState,
     uiTasks: TasksListUiState,
 ) {
-    //TODO Cambiar los nombres de los state por mas entendibles
+    // TODO Cambiar los nombres de los state por mas entendibles
+    // cancel no funciona en alertdialogo
+    // no funciona la asignacion de la fecha
 
     var showFormAlertDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -84,11 +84,7 @@ fun TasksScreen(
         mutableLongStateOf(value = horizotalListState.selectedDate.date.time)
     }
 
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = selectedDateMillis
-    )
-
-    val newTaskFormState by viewModel.formTaskState.collectAsStateWithLifecycle()
+    val formTaskState by viewModel.formTaskState.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier.padding(
@@ -138,9 +134,7 @@ fun TasksScreen(
                         taskList = uiTasks.taskList,
                         viewModel = viewModel,
                         showFormAlertDialog = showFormAlertDialog,
-                        formTaskState = newTaskFormState,
-                        datePickerState = datePickerState,
-                        selectedDateMillis = selectedDateMillis,
+                        formTaskState = formTaskState,
                         onClickFloating = {
                             showFormAlertDialog = true
                             viewModel.updateIsEditTask(false)
@@ -151,9 +145,10 @@ fun TasksScreen(
                         },
                         onClickConfirmDateSpicker = {
                             selectedDateMillis = it
-                            newTaskFormState.showDialog = false
                             //Capaz cambiar falel guardado del date
-
+                            viewModel.updateNewTaskFormScreenDateToDo(
+                                selectedDate = Date(selectedDateMillis),
+                            )
                             val displayDate = selectedDateMillis.let { time ->
                                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                                 sdf.format(Date(time))
@@ -161,14 +156,11 @@ fun TasksScreen(
                             viewModel.updateNewTaskFormScreenDateToDoString(
                                 selectedDate = displayDate,
                             )
-                            viewModel.updateNewTaskFormScreenDateToDo(
-                                selectedDate = Date(selectedDateMillis),
-                            )
                             viewModel.setTasksShowDialog(false)
                         },
                         onClickConfirm = { newTask ->
                             // Enviamos los datos capturados a la función superior
-                            if (!newTaskFormState.isEditTask) {
+                            if (!formTaskState.isEditTask) {
                                 viewModel.insertTaskDataBase(newTask)
                             } else {
                                 viewModel.updateTaskDataBase(newTask)
@@ -206,8 +198,6 @@ fun SuccessTasksListScreen(
     viewModel: TaskViewModel,
     showFormAlertDialog: Boolean,
     formTaskState: FormTaskState,
-    datePickerState: DatePickerState,
-    selectedDateMillis: Long,
     snackbarHostState: SnackbarHostState,
     onClickFloating: () -> Unit = {},
     onDismiss: () -> Unit = {},
@@ -241,7 +231,6 @@ fun SuccessTasksListScreen(
                     FormAlertDialog(
                         formTaskState = formTaskState,
                         idUser = viewModel.uuidState.value,
-                        datePickerState = datePickerState,
                         onDismiss = onDismiss,
                         onClickConfirm = onClickConfirm,
                         onClickConfirmDateSpicker = onClickConfirmDateSpicker,
@@ -249,7 +238,7 @@ fun SuccessTasksListScreen(
                             viewModel.setTasksShowDialog(true)
                         },
                         onDismissDateSpicker = {
-                            viewModel.setTasksShowDialog(true)
+                            viewModel.setTasksShowDialog(false)
                         },
                         onClickSpinner = { entry ->
                             LevelDificult.entries.forEach { levelDificult ->

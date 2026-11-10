@@ -28,16 +28,15 @@ import java.util.Locale
 @Composable
 fun DatePickerDialogCustom(
     selectedDate: Long,
-    datePickerState: DatePickerState,
     showDialog: Boolean,
     onClickConfirm: (Long) -> Unit,
     onClickShowDialog: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val displayDate = selectedDate.let {
+    val displayDate = remember(selectedDate) {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        sdf.format(Date(it))
-    } ?: ""
+        sdf.format(Date(selectedDate))
+    }
     //El tiempo seleccionado hay que hacerlo
 
     Box {
@@ -57,6 +56,9 @@ fun DatePickerDialogCustom(
     }
 
     if (showDialog) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDate
+        )
         DatePickerDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
@@ -67,7 +69,11 @@ fun DatePickerDialogCustom(
                 ) { Text("Aceptar") }
             },
             dismissButton = {
-                TextButton(onClick = onDismiss) { Text("Cancelar") }
+                TextButton(
+                    onClick = {
+                            onDismiss()
+                        }
+                ) { Text("Cancel") }
             }
         ) {
             DatePicker(state = datePickerState)

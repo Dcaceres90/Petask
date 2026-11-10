@@ -77,11 +77,11 @@ class TaskViewModel @Inject constructor(
     }
 
 
-    private var _FormTaskState: MutableStateFlow<FormTaskState> = MutableStateFlow(FormTaskState())
-    val formTaskState: StateFlow<FormTaskState> = _FormTaskState.asStateFlow()
+    private var _formTaskState: MutableStateFlow<FormTaskState> = MutableStateFlow(FormTaskState())
+    val formTaskState: StateFlow<FormTaskState> = _formTaskState.asStateFlow()
 
     fun updateTaskFormScreen(task: TaskState) {
-        _FormTaskState.update { estadoActual ->
+        _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = task,
             )
@@ -89,7 +89,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateNewTaskFormScreenDateToDoString(selectedDate: String) {
-        _FormTaskState.update { estadoActual ->
+        _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     dateToDoString = selectedDate,
@@ -99,7 +99,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateNewTaskIsComplete(isComplete: Boolean) {
-        _FormTaskState.update { estadoActual ->
+        _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     isComplete = isComplete,
@@ -109,7 +109,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateIsEditTask(isEditTask: Boolean) {
-        _FormTaskState.update { estadoActual ->
+        _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 isEditTask = isEditTask,
             )
@@ -117,7 +117,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateisEmptyTitleTask(isEmptyTitleTask: Boolean) {
-        _FormTaskState.update { estadoActual ->
+        _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 isEmptyTitleTask = isEmptyTitleTask,
             )
@@ -125,7 +125,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateNewTaskFormScreenDateToDo(selectedDate: Date) {
-        _FormTaskState.update { estadoActual ->
+        _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     dateToDo = selectedDate,
@@ -135,7 +135,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateTitleNewTaskFormScreen(title: String) {
-        _FormTaskState.update { estadoActual ->
+        _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 title = title
             )
@@ -143,7 +143,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateLevelDificultNewTaskFormScreen(levelDificult: LevelDificult) {
-        _FormTaskState.update { estadoActual ->
+        _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 taskEdit = estadoActual.taskEdit.copy(
                     levelDificult = levelDificult,
@@ -219,7 +219,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun setTasksShowDialog(showDialog: Boolean) {
-        _FormTaskState.update { estadoActual ->
+        _formTaskState.update { estadoActual ->
             estadoActual.copy(
                 showDialog = showDialog,
             )

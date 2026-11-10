@@ -27,7 +27,6 @@ import java.util.Date
 fun FormAlertDialog(
     idUser: String,
     formTaskState: FormTaskState,
-    datePickerState: DatePickerState,
     onDismiss: () -> Unit,
     onClickConfirm: (TaskModel) -> Unit,
     onClickConfirmDateSpicker: (Long) -> Unit,
@@ -46,9 +45,9 @@ fun FormAlertDialog(
             DialogView(
                 taskState = if(formTaskState.isEditTask) formTaskState.taskEdit else null,
                 showDialog = formTaskState.showDialog,
-                datePickerState = datePickerState,
                 onClickConfirmDateSpicker = onClickConfirmDateSpicker,
                 onClickShowDialogDateSpicker = onClickShowDialogDateSpicker,
+                onDismiss = onDismiss,
                 onDismissDateSpicker = onDismissDateSpicker,
                 onClickSpinner = onClickSpinner,
             )
@@ -85,9 +84,9 @@ fun FormAlertDialog(
 fun DialogView(
     taskState: TaskState? = null,
     showDialog: Boolean,
-    datePickerState: DatePickerState,
     onClickConfirmDateSpicker: (Long) -> Unit,
     onClickShowDialogDateSpicker: () -> Unit,
+    onDismiss: () -> Unit,
     onDismissDateSpicker: () -> Unit,
     onClickSpinner: (String) -> Unit,
 ) {
@@ -129,10 +128,12 @@ fun DialogView(
         DatePickerDialogCustom(
             selectedDate = dateToDoStringSelected,
             showDialog = showDialog,
-            datePickerState = datePickerState,
             onClickConfirm = onClickConfirmDateSpicker,
             onClickShowDialog = onClickShowDialogDateSpicker,
-            onDismiss = onDismissDateSpicker,
+            onDismiss = {
+                onDismissDateSpicker()
+                //onDismiss()
+            },
         )
     }
 }
