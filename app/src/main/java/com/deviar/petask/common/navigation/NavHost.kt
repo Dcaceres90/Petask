@@ -191,6 +191,7 @@ fun NavHost(
 
             composable<CreatePet> {
                 CreatePetScreen(
+                    modifier = Modifier.padding(innerPadding),
                     createPetViewModel = hiltViewModel(),
                     navigateToPet = {
                         navController.navigate(Pet) {

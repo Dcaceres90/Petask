@@ -1,11 +1,14 @@
 package com.deviar.petask.onboarding.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,6 +37,8 @@ import com.deviar.petask.common.database.data.model.PetType
 import com.deviar.petask.common.ui.components.textfields.PetaskTextField
 import com.deviar.petask.R
 import com.deviar.petask.common.ui.components.PetaskButton
+import com.deviar.petask.common.ui.theme.Primary
+import com.deviar.petask.common.ui.theme.Secondary
 
 @Composable
 fun OnboardingScreen(
@@ -104,11 +111,24 @@ fun OnboardingScreen(
 
             pets.forEach { pet ->
 
+                val isSelected = uiState.selectedPet == pet
+
                 Image(
                     painterResource(getPetImage(pet)),
                     contentDescription = null,
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .size(120.dp)
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .background(
+                            if (isSelected) Secondary.copy(alpha = 0.2f)
+                            else Color.Transparent
+                        )
+                        .border(
+                            width = if (isSelected) 2.dp else 0.dp,
+                            color = if (isSelected) Primary else Color.Transparent,
+                            shape = RoundedCornerShape(16.dp)
+                        )
                         .clickable{ onboardingViewModel.onPetSelected(pet) }
                 )
             }
