@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val singOutUseCase: SingOutUseCase,
+    private val singOutUseCase: SignOutUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val getPetUseCase: GetPetUseCase
 ): ViewModel() {
